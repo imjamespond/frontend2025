@@ -2,29 +2,33 @@ import { MQTTClient } from "./mqtt";
 
 interface Message {
   id: string;
+  type?: "PeerID";
   offer?: RTCSessionDescriptionInit;
   answer?: RTCSessionDescriptionInit;
   candidate?: RTCIceCandidateInit;
 }
 
-export type State = RTCPeerConnectionState | "offer" | void
+export type State = RTCPeerConnectionState | "offer" | void;
 
 export class WebRTCDemo {
   private pc: RTCPeerConnection | null = null;
   // private peers: { [_: string]: RTCPeerConnection } = {}; TODO 广播id后 根据id分别创建peer connection
   private dataChannel: RTCDataChannel | null = null;
-  cli: MQTTClient;
+  private cli: MQTTClient;
   id = crypto.randomUUID();
   peer?: string; // peer id
   onMessage: (message: string) => void;
   onConnState: (_: State) => void;
+  onPeerID: (_: string) => void;
 
   constructor({
     onMessage,
     onConnState,
+    onPeerID
   }: {
     onMessage: WebRTCDemo["onMessage"];
     onConnState: WebRTCDemo["onConnState"];
+    onPeerID: WebRTCDemo["onPeerID"]
   }) {
     console.log("初始化 WebRTCDemo", this.id);
 
@@ -33,6 +37,7 @@ export class WebRTCDemo {
     this.cli = new MQTTClient({ url, topic: "test/webrtc/topic" });
     this.onMessage = onMessage;
     this.onConnState = onConnState;
+    this.onPeerID = onPeerID
 
     this.cli.handleConnectEvent = () => {
       console.log("成功连接到信令服务器");
@@ -47,7 +52,9 @@ export class WebRTCDemo {
       if (message.id === this.id) return;
       console.log("从信令服务器收到消息:", message);
 
-      if (message.offer) {
+      if (message.type === "PeerID")
+        this.onPeerID(message.id)
+      else if (message.offer) {
         if (this.peer) return;
         this.peer = message.id; // 收到发起方id
         await this.receiveOffer(message.offer);
@@ -221,7 +228,15 @@ export class WebRTCDemo {
       this.dataChannel.send(message);
       console.log("已发送消息:", message);
     } else {
-      console.warn("数据通道未打开，无法发送消息。当前状态:", this.dataChannel?.readyState);
+      console.warn(
+        "数据通道未打开，无法发送消息。当前状态:",
+        this.dataChannel?.readyState
+      );
     }
+  }
+
+  // 发送信令
+  public signal(message: Message){
+    this.cli.send(JSON.stringify(message))
   }
 }

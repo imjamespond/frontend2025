@@ -1,5 +1,5 @@
 // App.tsx
-import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { createMemo, createSignal, For, onCleanup, onMount } from "solid-js";
 import { State, WebRTCDemo } from "./WebRTC";
 
 const App = () => {
@@ -10,6 +10,13 @@ const App = () => {
     onMessage(message) {
       setMessages(message);
     },
+    onPeerID(id){
+setPeerIds(prev=>{
+  const list = prev.filter(item=>item!==id)
+list.unshift(id)
+  return list
+})
+    }
   });
   onMount(() => {
     console.log("App mounted");
@@ -19,6 +26,7 @@ const App = () => {
     webrtc.destroy();
   });
 
+  const [peerIds, setPeerIds] = createSignal<string[]>([])
   const [state, setState] = createSignal<State>();
   const [text, setText] = createSignal("");
   const [messages, _setMessages] = createSignal("");
@@ -31,10 +39,21 @@ const App = () => {
 
   return (
     <div>
+      <button onClick={() => webrtc.signal(({id:webrtc.id, type:"PeerID"}))}>广播 Peer ID</button>
+      <label for="peer_ids">Peer ID List: </label>
+      <select id="peer_ids" style="width: 320px;"
+      onChange={e=>{
+        console.log('select peer id', e.target.value);
+      }}
+      >
+        <option value={'none'}>请选择peer id</option>
+       <For each={peerIds()} >
+       {(item) => <option value={item}>{item}</option>}
+</For>
+      </select>
       <button disabled={offer() === false} onClick={() => webrtc.createOffer()}>
-        创建 Offer
+        发送 Offer
       </button>
-      <button onClick={() => webrtc.cli.send(JSON.stringify("foobar"))}>测试信令</button>
       <br />
       <textarea
         rows={3}
