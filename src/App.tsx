@@ -8,15 +8,15 @@ const App = () => {
       setState(state);
     },
     onMessage(message) {
-      setMessages(message);
+      addMsg(message);
     },
-    onPeerID(id){
-setPeerIds(prev=>{
-  const list = prev.filter(item=>item!==id)
-list.unshift(id)
-  return list
-})
-    }
+    onPeerID(id) {
+      setPeerIds((prev) => {
+        const list = prev.filter((item) => item !== id);
+        list.unshift(id);
+        return list;
+      });
+    },
   });
   onMount(() => {
     console.log("App mounted");
@@ -26,54 +26,74 @@ list.unshift(id)
     webrtc.destroy();
   });
 
-  const [peerIds, setPeerIds] = createSignal<string[]>([])
+  let peerId: string = "";
+
+  const [peerIds, setPeerIds] = createSignal<string[]>([]);
   const [state, setState] = createSignal<State>();
   const [text, setText] = createSignal("");
-  const [messages, _setMessages] = createSignal("");
-  const setMessages = (message: string) => {
-    _setMessages((prev) => prev + message + "\n");
+  const [messages, setMessages] = createSignal("");
+  const addMsg = (message: string) => {
+    setMessages((prev) => prev + message + "\n");
   };
 
   const connected = createMemo(() => state() === "connected");
-  const offer = createMemo(() => state() === "offer");
+  const subscribed = createMemo(() => state() === "subscribed");
 
   return (
     <div>
-      <button onClick={() => webrtc.signal(({id:webrtc.id, type:"PeerID"}))}>广播 Peer ID</button>
-      <label for="peer_ids">Peer ID List: </label>
-      <select id="peer_ids" style="width: 320px;"
-      onChange={e=>{
-        console.log('select peer id', e.target.value);
-      }}
-      >
-        <option value={'none'}>请选择peer id</option>
-       <For each={peerIds()} >
-       {(item) => <option value={item}>{item}</option>}
-</For>
-      </select>
-      <button disabled={offer() === false} onClick={() => webrtc.createOffer()}>
-        发送 Offer
-      </button>
-      <br />
-      <textarea
-        rows={3}
-        value={text()}
-        onChange={(e) => setText(e.target.value)}
-        onFocus={(e) => e.target.select()}
-      ></textarea>
-      <button
-        disabled={connected() === false}
-        onClick={() => {
-          webrtc.sendMessage(JSON.stringify(text()));
-        }}
-      >
-        发送
-      </button>
       <p>
-        Id: {webrtc.id}, State: {state() ?? "unknown"}
+        <button disabled={subscribed() === false} onClick={() => webrtc.signal({ id: webrtc.id, type: "PeerID" })}>
+          广播 ID
+        </button>
+        <label for="peer_ids">Peer ID List: </label>
+        <select
+          id="peer_ids"
+          style="width: 320px;"
+          onChange={(e) => {
+            console.log("select peer id", e.target.value);
+            peerId = e.target.value;
+          }}
+        >
+          <option value="">{`==========请${peerIds().length > 0 ? "选择" : "广播"} Peer ID===========`}</option>
+          <For each={peerIds()}>{(item) => <option value={item}>{item}</option>}</For>
+        </select>
+        <button
+          disabled={subscribed() === false}
+          onClick={() => {
+            if (peerId) webrtc.createOffer(peerId);
+            else alert("请选择 Peer ID");
+          }}
+        >
+          发送 Offer
+        </button>
       </p>
-      <h6>Message:</h6>
-      <div class="break">{messages()}</div>
+      <p>
+        <textarea
+          id="text"
+          rows={3}
+          value={text()}
+          onChange={(e) => setText(e.target.value)}
+          onFocus={(e) => e.target.select()}
+        />
+      </p>
+      <p>
+        <button
+          disabled={connected() === false}
+          onClick={() => {
+            webrtc.sendMessage(JSON.stringify(text()));
+          }}
+        >
+          发送
+        </button>
+      </p>
+      <p>
+        Id: <mark>{webrtc.id}</mark>, State:{" "}
+        <b>
+          <i>{state() ?? "unknown"}</i>
+        </b>
+      </p>
+      <p>Message:</p>
+      <div class="break font">{messages()}</div>
     </div>
   );
 };

@@ -3,12 +3,12 @@ import { MQTTClient } from "./mqtt";
 interface Message {
   id: string;
   type?: "PeerID";
-  offer?: RTCSessionDescriptionInit;
+  offer?: { desc: RTCSessionDescriptionInit; peerId: string };
   answer?: RTCSessionDescriptionInit;
   candidate?: RTCIceCandidateInit;
 }
 
-export type State = RTCPeerConnectionState | "offer" | void;
+export type State = RTCPeerConnectionState | "subscribed" | void;
 
 export class WebRTCDemo {
   private pc: RTCPeerConnection | null = null;
@@ -16,7 +16,7 @@ export class WebRTCDemo {
   private dataChannel: RTCDataChannel | null = null;
   private cli: MQTTClient;
   id = crypto.randomUUID();
-  peer?: string; // peer id
+  // peerId?: string; // peer id
   onMessage: (message: string) => void;
   onConnState: (_: State) => void;
   onPeerID: (_: string) => void;
@@ -24,26 +24,27 @@ export class WebRTCDemo {
   constructor({
     onMessage,
     onConnState,
-    onPeerID
+    onPeerID,
   }: {
     onMessage: WebRTCDemo["onMessage"];
     onConnState: WebRTCDemo["onConnState"];
-    onPeerID: WebRTCDemo["onPeerID"]
+    onPeerID: WebRTCDemo["onPeerID"];
   }) {
     console.log("初始化 WebRTCDemo", this.id);
 
     // 1. 初始化 WebSocket 连接
-    const url = "wss://mqtt-dashboard.com:8884/mqtt"; // "wss://test.mosquitto.org:8081"
+    // const url = "wss://mqtt-dashboard.com:8884/mqtt";
+    const url = "wss://test.mosquitto.org:8081";
     this.cli = new MQTTClient({ url, topic: "test/webrtc/topic" });
     this.onMessage = onMessage;
     this.onConnState = onConnState;
-    this.onPeerID = onPeerID
+    this.onPeerID = onPeerID;
 
     this.cli.handleConnectEvent = () => {
       console.log("成功连接到信令服务器");
       // WebSocket 连接成功后才初始化 PeerConnection
       this.initializePeerConnection();
-      this.onConnState("offer");
+      this.onConnState("subscribed");
     };
 
     this.cli.handleMessageEvent = async (msg) => {
@@ -52,18 +53,16 @@ export class WebRTCDemo {
       if (message.id === this.id) return;
       console.log("从信令服务器收到消息:", message);
 
-      if (message.type === "PeerID")
-        this.onPeerID(message.id)
+      if (message.type === "PeerID") this.onPeerID(message.id);
       else if (message.offer) {
-        if (this.peer) return;
-        this.peer = message.id; // 收到发起方id
-        await this.receiveOffer(message.offer);
+        if (message.offer.peerId !== this.id) return;
+        // this.peerId = message.id; // 收到发起方id
+        await this.receiveOffer(message.offer.desc);
       } else if (message.answer) {
-        if (this.peer) return;
-        this.peer = message.id; // 接收方id，只允许一个
+        // if (message.id !== this.peerId) return;
         await this.receiveAnswer(message.answer);
       } else if (message.candidate) {
-        if (message.id !== this.peer) return;
+        // if (message.id !== this.peerId) return;
         await this.addIceCandidate(message.candidate);
       }
     };
@@ -137,7 +136,7 @@ export class WebRTCDemo {
   }
 
   // A 创建 Offer
-  public async createOffer(): Promise<void> {
+  public async createOffer(peerId: string): Promise<void> {
     if (!this.pc) return;
 
     console.log("创建 Offer...");
@@ -150,7 +149,7 @@ export class WebRTCDemo {
 
       // *** 优化点：通过 WebSocket 发送 offer ***
       console.log("发送本地 Offer:", offer);
-      this.sendSignalingMessage({ id: this.id, offer: offer });
+      this.sendSignalingMessage({ id: this.id, offer: { desc: offer, peerId } });
     } catch (error) {
       console.error("创建 Offer 时出错:", error);
     }
@@ -228,15 +227,12 @@ export class WebRTCDemo {
       this.dataChannel.send(message);
       console.log("已发送消息:", message);
     } else {
-      console.warn(
-        "数据通道未打开，无法发送消息。当前状态:",
-        this.dataChannel?.readyState
-      );
+      console.warn("数据通道未打开，无法发送消息。当前状态:", this.dataChannel?.readyState);
     }
   }
 
   // 发送信令
-  public signal(message: Message){
-    this.cli.send(JSON.stringify(message))
+  public signal(message: Message) {
+    this.cli.send(JSON.stringify(message));
   }
 }
