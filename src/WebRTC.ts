@@ -1,6 +1,6 @@
-import { MQTTClient } from "./mqtt";
+import { debugMqtt, MQTTClient } from "./mqtt";
 
-interface Message {
+interface SignalMessage {
   id: string;
   type?: "PeerID";
   offer?: { desc: RTCSessionDescriptionInit; peerId: string };
@@ -8,7 +8,17 @@ interface Message {
   candidate?: RTCIceCandidateInit;
 }
 
-export type State = RTCPeerConnectionState | "subscribed" | void;
+export interface Message {
+  file?:
+    | { type: "showSaveFilePicker"; name: string; chunks: number }
+    | { type: "beginRecieve" }
+    | { type: "chunk"; chunk: number };
+}
+
+export type State = RTCPeerConnectionState | "cli_connected" | "cli_disconnected" | void;
+
+const MAX_BUFFER = 8 * 1024 * 1024; // 8MB，自行设定, 实际大小应该是15MB
+const LOW_THRESHOLD = 1 * 1024 * 1024;
 
 export class WebRTCDemo {
   private pc: RTCPeerConnection | null = null;
@@ -17,7 +27,7 @@ export class WebRTCDemo {
   private cli: MQTTClient;
   id = crypto.randomUUID();
   // peerId?: string; // peer id
-  onMessage: (message: string) => void;
+  onMessage: (message: unknown) => void;
   onConnState: (_: State) => void;
   onPeerID: (_: string) => void;
 
@@ -34,7 +44,7 @@ export class WebRTCDemo {
 
     // 1. 初始化 WebSocket 连接
     // const url = "wss://mqtt-dashboard.com:8884/mqtt";
-    const url = "wss://test.mosquitto.org:8081";
+    const url = debugMqtt ? "wss://foobar:8080" : "wss://test.mosquitto.org:8081";
     this.cli = new MQTTClient({ url, topic: "test/webrtc/topic" });
     this.onMessage = onMessage;
     this.onConnState = onConnState;
@@ -44,11 +54,11 @@ export class WebRTCDemo {
       console.log("成功连接到信令服务器");
       // WebSocket 连接成功后才初始化 PeerConnection
       this.initializePeerConnection();
-      this.onConnState("subscribed");
+      this.onConnState("cli_connected");
     };
 
     this.cli.handleMessageEvent = async (msg) => {
-      const message = JSON.parse(msg) as Message;
+      const message = JSON.parse(msg) as SignalMessage;
 
       if (message.id === this.id) return;
       console.log("从信令服务器收到消息:", message);
@@ -83,7 +93,7 @@ export class WebRTCDemo {
   }
 
   // 2. 发送信令消息的通用方法
-  private sendSignalingMessage(message: Message): void {
+  private sendSignalingMessage(message: SignalMessage): void {
     this.cli.send(JSON.stringify(message));
   }
 
@@ -201,9 +211,11 @@ export class WebRTCDemo {
   private setupDataChannel(): void {
     if (!this.dataChannel) return;
 
+    this.dataChannel.bufferedAmountLowThreshold = LOW_THRESHOLD;
+
     this.dataChannel.onopen = () => {
       console.log("数据通道已打开");
-      this.sendMessage(JSON.stringify(`hello from ${this.id}`));
+      this.sendMessage(`hello from ${this.id}`);
     };
 
     this.dataChannel.onclose = () => {
@@ -215,24 +227,56 @@ export class WebRTCDemo {
     };
 
     this.dataChannel.onmessage = (event: MessageEvent) => {
-      console.log("收到消息:", event.data);
+      console.log("收到消息:", typeof event.data);
       // 可以在这里处理收到的消息，例如更新 UI
       this.onMessage(event.data);
     };
+
+    this.dataChannel.onbufferedamountlow = () => {
+      console.log("数据通道缓冲区已空闲");
+      const resolve = this.writable;
+      this.writable = undefined;
+      resolve?.();
+    };
   }
 
-  // 发送消息
-  public sendMessage(message: string): void {
+  writable?: () => void;
+  // 发送消息，MAX_BUFFER已经预留，因此不判断缓冲区是否已满
+  public sendMessage(message: string | Message): void {
     if (this.dataChannel && this.dataChannel.readyState === "open") {
-      this.dataChannel.send(message);
+      this.dataChannel.send(JSON.stringify(message));
       console.log("已发送消息:", message);
     } else {
       console.warn("数据通道未打开，无法发送消息。当前状态:", this.dataChannel?.readyState);
     }
   }
 
+  public async sendData(data: Blob) {
+    if (this.writable) {
+      throw new Error("wait until writable");
+    }
+    if (this.dataChannel && this.dataChannel.readyState === "open") {
+      if (this.dataChannel.bufferedAmount > MAX_BUFFER) {
+        await new Promise<void>((resolve) => {
+          this.writable = resolve;
+        });
+        this.sendData(data); // retry
+        return;
+      }
+
+      try {
+        this.dataChannel.send(data);
+        // console.log("已发送data:", data.size);
+      } catch (error) {
+        console.error("发送数据时出错:", error);
+      }
+    } else {
+      console.warn("数据通道未打开，无法发送消息。当前状态:", this.dataChannel?.readyState);
+    }
+  }
+
   // 发送信令
-  public signal(message: Message) {
+  public signal(message: SignalMessage) {
     this.cli.send(JSON.stringify(message));
   }
 }

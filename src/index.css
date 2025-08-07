@@ -19,12 +19,22 @@ textarea {
   word-break: break-all;
 }
 
-button + *, select + *, input + * {
+button,
+input,
+select {
+  height: 24px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+button + *,
+select + *,
+input + * {
   margin-left: 10px;
 }
 
-.p {
-  padding: 10px;
+p {
+  margin: 6px 0;
 }
 
 .mr {
@@ -38,7 +48,10 @@ button + *, select + *, input + * {
   font-size: 12px;
 }
 
-button, input, select {
-  height: 24px;
-  box-sizing: border-box;
+.flex {
+  display: flex;
+  gap: 10px;
+}
+.flex-1 {
+  flex: 1;
 }

@@ -1,12 +1,14 @@
 import MQTT from "mqtt";
 
+export const debugMqtt = false;
+
 export class MQTTClient {
   private client: MQTT.MqttClient;
   private topic: string;
 
   constructor({ url, topic }: { url: string; topic: string }) {
     this.topic = topic;
-    this.client = MQTT.connect(url);
+    this.client = MQTT.connect(url, { reconnectPeriod: debugMqtt ? 600_000 : 5_000 });
   }
   // 处理连接成功事件
   set handleConnectEvent(callback: () => void) {
