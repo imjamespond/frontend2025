@@ -3,6 +3,7 @@ import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-j
 import { Message, State, WebRTCDemo } from "./WebRTC";
 import { createChunks } from "./utils";
 import { createFileWriter, FileWriter } from "./chrome";
+import { useMediaDlg } from "./MediaDlg";
 
 const App = () => {
   const webrtc = new WebRTCDemo({
@@ -55,6 +56,10 @@ const App = () => {
         return list;
       });
     },
+
+    onStream(stream) {
+      peerStream(stream);
+    },
   });
   onMount(() => {
     console.log("App mounted");
@@ -78,6 +83,8 @@ const App = () => {
 
   const connected = createMemo(() => state() === "connected");
   const [cliConnected, setCliConnected] = createSignal(false);
+
+  const [mdDlg, mdDlgBtn, peerStream] = useMediaDlg(webrtc);
 
   return (
     <div>
@@ -135,6 +142,7 @@ const App = () => {
         {/* 传输文件 */}
         <div class="flex-1">
           <div>
+            {mdDlgBtn}
             <input
               id="file"
               type="file"
@@ -180,6 +188,7 @@ const App = () => {
       </p>
       <p>Message:</p>
       <div class="break font">{messages()}</div>
+      {mdDlg}
     </div>
   );
 };

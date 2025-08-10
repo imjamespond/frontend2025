@@ -9,6 +9,15 @@ export default defineConfig({
   build: {
     target: "esnext",
     outDir: "dist/webrtc",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            return "vendor"; // 生成 vendor-[hash].js
+          }
+        },
+      },
+    },
   },
   base: "/webrtc/",
 });

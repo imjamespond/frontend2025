@@ -26,29 +26,33 @@ export class WebRTCDemo {
   private dataChannel: RTCDataChannel | null = null;
   private cli: MQTTClient;
   id = crypto.randomUUID();
-  // peerId?: string; // peer id
+  peerId?: string; // peer id
   onMessage: (message: unknown) => void;
   onConnState: (_: State) => void;
   onPeerID: (_: string) => void;
+  onStream: (stream: MediaStream) => void;
 
   constructor({
     onMessage,
     onConnState,
     onPeerID,
+    onStream,
   }: {
     onMessage: WebRTCDemo["onMessage"];
     onConnState: WebRTCDemo["onConnState"];
     onPeerID: WebRTCDemo["onPeerID"];
+    onStream: WebRTCDemo["onStream"];
   }) {
     console.log("初始化 WebRTCDemo", this.id);
 
     // 1. 初始化 WebSocket 连接
     // const url = "wss://mqtt-dashboard.com:8884/mqtt";
-    const url = debugMqtt ? "wss://foobar:8080" : "wss://test.mosquitto.org:8081";
+    const url = debugMqtt ? "" : "wss://test.mosquitto.org:8081";
     this.cli = new MQTTClient({ url, topic: "test/webrtc/topic" });
     this.onMessage = onMessage;
     this.onConnState = onConnState;
     this.onPeerID = onPeerID;
+    this.onStream = onStream;
 
     this.cli.handleConnectEvent = () => {
       console.log("成功连接到信令服务器");
@@ -67,7 +71,7 @@ export class WebRTCDemo {
       else if (message.offer) {
         if (message.offer.peerId !== this.id) return;
         // this.peerId = message.id; // 收到发起方id
-        await this.receiveOffer(message.offer.desc);
+        await this.receiveOffer(message.id, message.offer.desc);
       } else if (message.answer) {
         // if (message.id !== this.peerId) return;
         await this.receiveAnswer(message.answer);
@@ -141,13 +145,21 @@ export class WebRTCDemo {
     // 当收到远程流时 (如果有的话)
     this.pc.ontrack = (event: RTCTrackEvent) => {
       // 实现处理接收到的媒体流的逻辑
-      console.log("收到远程媒体流", event.streams[0]);
+      for (const stream of event.streams) this.onStream(stream);
+      console.log("收到远程媒体流", event.streams.length);
+    };
+
+    this.pc.onnegotiationneeded = async () => {
+      console.log("🧠 触发 renegotiation");
+      if (this.peerId) this.renegotiate(this.peerId);
     };
   }
 
   // A 创建 Offer
   public async createOffer(peerId: string): Promise<void> {
     if (!this.pc) return;
+
+    this.peerId = peerId;
 
     console.log("创建 Offer...");
     this.dataChannel = this.pc.createDataChannel("messageChannel"); // 发起连接方
@@ -166,8 +178,10 @@ export class WebRTCDemo {
   }
 
   // B 接收 Offer 并创建 Answer
-  public async receiveOffer(offer: RTCSessionDescriptionInit): Promise<void> {
+  public async receiveOffer(peerId: string, offer: RTCSessionDescriptionInit): Promise<void> {
     if (!this.pc) return;
+
+    this.peerId = peerId;
 
     console.log("收到 Offer, 创建 Answer...");
     try {
@@ -278,5 +292,29 @@ export class WebRTCDemo {
   // 发送信令
   public signal(message: SignalMessage) {
     this.cli.send(JSON.stringify(message));
+  }
+
+  public addTrack(track: MediaStreamTrack, stream: MediaStream) {
+    return this.pc?.addTrack(track, stream);
+  }
+  public removeTrack(sender: RTCRtpSender) {
+    return this.pc?.removeTrack(sender);
+  }
+
+  public async renegotiate(peerId: string): Promise<void> {
+    if (!this.pc) return;
+
+    console.log("重新协商 Offer...");
+
+    try {
+      const offer = await this.pc.createOffer();
+      await this.pc.setLocalDescription(offer);
+
+      // *** 优化点：通过 WebSocket 发送 offer ***
+      console.log("发送本地 Offer:", offer);
+      this.sendSignalingMessage({ id: this.id, offer: { desc: offer, peerId } });
+    } catch (error) {
+      console.error("创建 Offer 时出错:", error);
+    }
   }
 }
