@@ -10,6 +10,7 @@ const App = () => {
     onConnState(state) {
       if (state === "cli_connected") {
         setCliConnected(true);
+        webrtc.signal({ type: "PeerID", id: webrtc.id });
       } else if (state === "cli_disconnected") {
         setCliConnected(false);
       } else {

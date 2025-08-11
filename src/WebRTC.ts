@@ -1,5 +1,9 @@
 import { debugMqtt, MQTTClient } from "./mqtt";
 
+if (!window.name) {
+  window.name = crypto.randomUUID();
+}
+
 interface SignalMessage {
   id: string;
   type?: "PeerID";
@@ -25,7 +29,7 @@ export class WebRTCDemo {
   // private peers: { [_: string]: RTCPeerConnection } = {}; TODO 广播id后 根据id分别创建peer connection
   private dataChannel: RTCDataChannel | null = null;
   private cli: MQTTClient;
-  id = crypto.randomUUID();
+  id = window.name;
   peerId?: string; // peer id
   onMessage: (message: unknown) => void;
   onConnState: (_: State) => void;
