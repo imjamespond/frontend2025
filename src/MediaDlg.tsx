@@ -21,6 +21,24 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
     peerRef.srcObject = stream;
   };
 
+  /**
+   * 与 go2rtc 通信
+   * HTTP REST API 信令通信
+   * https://github.com/AlexxIT/go2rtc/blob/master/www/webrtc-sync.html
+   * web page <=mqtt=> nodejs proxy <=http=> go2rtc
+  const url = new URL('api/webrtc' + location.search, location.href);  
+  const r = await fetch(url, {method: 'POST', body: await getCompleteOffer(pc)}); // include candidates
+  const answerSDP = await r.text();
+  await pc.setRemoteDescription({ type: 'answer', sdp: answerSDP });
+   */
+  // onMount(() => {
+  //   if (peerRef === null || webrtc.peerConnection === null) return;
+  //   peerRef.srcObject = new MediaStream([
+  //     webrtc.peerConnection.addTransceiver("audio", { direction: "recvonly" }).receiver.track,
+  //     webrtc.peerConnection.addTransceiver("video", { direction: "recvonly" }).receiver.track,
+  //   ]);
+  // });
+
   const dlgBtn = (
     <button
       onClick={() => {

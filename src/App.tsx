@@ -58,7 +58,7 @@ const App = () => {
         list.unshift(id);
         return list;
       });
-      addMsg(`收到 PeerID： ${id} - ${new Date().toLocaleString()}`);
+      addMsg(`收到 PeerID： ${id} - ${new Date().toLocaleTimeString()}`);
     },
 
     onStream(stream) {

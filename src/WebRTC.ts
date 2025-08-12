@@ -348,4 +348,8 @@ export class WebRTCDemo {
       console.error("创建 Offer 时出错:", error);
     }
   }
+
+  get peerConnection () {
+    return this.pc;
+  }
 }
