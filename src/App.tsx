@@ -5,12 +5,14 @@ import { createChunks } from "./utils";
 import { createFileWriter, FileWriter } from "./chrome";
 import { useMediaDlg } from "./MediaDlg";
 
+const master = new URLSearchParams(window.location.search).has("master");
+
 const App = () => {
   const webrtc = new WebRTCDemo({
     onConnState(state) {
       if (state === "cli_connected") {
         setCliConnected(true);
-        webrtc.signal({ type: "PeerID", id: webrtc.id });
+        webrtc.sendSignalingMessage({ type: "PeerID", id: webrtc.id });
       } else if (state === "cli_disconnected") {
         setCliConnected(false);
       } else {
@@ -77,20 +79,26 @@ const App = () => {
   const [peerIds, setPeerIds] = createSignal<string[]>([]);
   const [state, setState] = createSignal<State>();
   const [text, setText] = createSignal("");
-  const [messages, setMessages] = createSignal("");
+  const [messages, setMessages] = createSignal<string[]>([]);
   const addMsg = (message: string) => {
-    setMessages((prev) => message + "\n" + prev);
+    setMessages((prev) => {
+      prev.unshift(message);
+      return prev.slice(0, 30);
+    });
   };
 
   const connected = createMemo(() => state() === "connected");
-  const [cliConnected, setCliConnected] = createSignal(false);
+  const [signalConnected, setCliConnected] = createSignal(false);
 
   const [mdDlg, mdDlgBtn, peerStream] = useMediaDlg(webrtc);
 
   return (
     <div>
       <p>
-        <button disabled={!cliConnected()} onClick={() => webrtc.signal({ id: webrtc.id, type: "PeerID" })}>
+        <button
+          disabled={!signalConnected()}
+          onClick={() => webrtc.sendSignalingMessage({ id: webrtc.id, type: "PeerID" })}
+        >
           广播 ID
         </button>
         <Show when={peerIds().length > 0}>
@@ -107,7 +115,7 @@ const App = () => {
             <For each={peerIds()}>{(item) => <option value={item}>{item}</option>}</For>
           </select>
           <button
-            disabled={!cliConnected()}
+            disabled={!signalConnected()}
             onClick={() => {
               if (peerId) webrtc.createOffer(peerId);
               else alert("请选择 Peer ID");
@@ -116,6 +124,20 @@ const App = () => {
             发送 Offer
           </button>
         </Show>
+        {master && (
+          <>
+            <button
+              onClick={() => {
+                webrtc.sendSignalingMessage({
+                  type: "Reload",
+                  id: webrtc.id,
+                });
+              }}
+            >
+              Reload
+            </button>
+          </>
+        )}
       </p>
       <div class="flex">
         {/* 发消息 */}
@@ -133,6 +155,7 @@ const App = () => {
             <button
               disabled={connected() === false}
               onClick={() => {
+                addMsg("me: " + text());
                 webrtc.sendMessage(text());
               }}
             >
@@ -143,7 +166,7 @@ const App = () => {
         {/* 传输文件 */}
         <div class="flex-1">
           <div>
-            {mdDlgBtn}
+            {connected() && mdDlgBtn}
             <input
               id="file"
               type="file"
@@ -188,7 +211,7 @@ const App = () => {
         </b>
       </p>
       <p>Message:</p>
-      <div class="break font">{messages()}</div>
+      <div class="break font">{messages().join("\n")}</div>
       {mdDlg}
     </div>
   );

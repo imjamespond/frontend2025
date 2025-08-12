@@ -6,7 +6,7 @@ if (!window.name) {
 
 interface SignalMessage {
   id: string;
-  type?: "PeerID";
+  type?: "PeerID" | "Reload" | "Reloading";
   offer?: { desc: RTCSessionDescriptionInit; peerId: string };
   answer?: RTCSessionDescriptionInit;
   candidate?: RTCIceCandidateInit;
@@ -68,11 +68,23 @@ export class WebRTCDemo {
     this.cli.handleMessageEvent = async (msg) => {
       const message = JSON.parse(msg) as SignalMessage;
 
-      if (message.id === this.id) return;
+      if (message.id === this.id) return; // ignore from self
       console.log("从信令服务器收到消息:", message);
 
       if (message.type === "PeerID") this.onPeerID(message.id);
-      else if (message.offer) {
+      else if (message.type === "Reload") {
+        console.log("Reload", message);
+        this.onMessage(message);
+        this.sendSignalingMessage({
+          type: "Reloading",
+          id: this.id,
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else if (message.type === "Reloading") {
+        console.log("Reloading", message);
+      } else if (message.offer) {
         if (message.offer.peerId !== this.id) return;
         // this.peerId = message.id; // 收到发起方id
         await this.receiveOffer(message.id, message.offer.desc);
@@ -101,7 +113,7 @@ export class WebRTCDemo {
   }
 
   // 2. 发送信令消息的通用方法
-  private sendSignalingMessage(message: SignalMessage): void {
+  sendSignalingMessage(message: SignalMessage): void {
     this.cli.send(JSON.stringify(message));
   }
 
@@ -294,15 +306,19 @@ export class WebRTCDemo {
   }
 
   // 发送信令
-  public signal(message: SignalMessage) {
-    this.cli.send(JSON.stringify(message));
-  }
+  // public signal(message: SignalMessage) {
+  //   this.cli.send(JSON.stringify(message));
+  // }
 
   public addTrack(track: MediaStreamTrack, stream: MediaStream) {
     return this.pc?.addTrack(track, stream);
   }
   public removeTrack(sender: RTCRtpSender) {
-    return this.pc?.removeTrack(sender);
+    try {
+      return this.pc?.removeTrack(sender);
+    } catch (error) {
+      console.error("Failed to remove track:", error);
+    }
   }
 
   public async renegotiate(peerId: string): Promise<void> {

@@ -38,19 +38,14 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
           if (videoRef === null) return;
           if (!videoTrack) {
             // 获取视频 track
-            const stream = await navigator.mediaDevices.getUserMedia({
-              video: {
-                width: { min: 320, ideal: 640, max: 640 },
-                height: { min: 240, ideal: 480, max: 480 },
-              },
-            });
+            const stream = await navigator.mediaDevices.getUserMedia(videoConstraints);
             videoTrack = stream.getVideoTracks()[0];
-            try {
-              await videoTrack.applyConstraints(videoConstraints);
-              console.log("Video constraints applied successfully.");
-            } catch (err) {
-              console.error("Failed to apply video constraints:", err);
-            }
+            // try {
+            //   await videoTrack.applyConstraints(videoConstraints);
+            //   console.log("Video constraints applied successfully.");
+            // } catch (err) {
+            //   console.error("Failed to apply video constraints:", err);
+            // }
             localStream.addTrack(videoTrack); // 添加到本地显示
 
             videoSender = webrtc.addTrack(videoTrack, localStream);
@@ -125,12 +120,20 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
 }
 
 const videoConstraints = {
-  // 设置理想的码率（例如，3 Mbps）
-  advanced: [
-    {
-      frameRate: { ideal: 10 }, // 帧率
+  video: {
+    width: 160,
+    height: 120,
+    frameRate: {
+      ideal: 10,
+      max: 15,
     },
-  ],
+  },
+  // 设置理想的码率（例如，3 Mbps）
+  // advanced: [
+  //   {
+  //     frameRate: { ideal: 10 }, // 帧率
+  //   },
+  // ],
 };
 
 const audioConstraints = {
