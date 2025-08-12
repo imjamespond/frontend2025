@@ -6,8 +6,9 @@ if (!window.name) {
 
 interface SignalMessage {
   id: string;
-  type?: "PeerID" | "Reload" | "Reloading";
-  offer?: { desc: RTCSessionDescriptionInit; peerId: string };
+  type?: "PeerID" | "Reload" | "Reloading" | "GiveMeOffer";
+  peerId?: string;
+  offer?: { desc: RTCSessionDescriptionInit };
   answer?: RTCSessionDescriptionInit;
   candidate?: RTCIceCandidateInit;
 }
@@ -19,7 +20,7 @@ export interface Message {
     | { type: "chunk"; chunk: number };
 }
 
-export type State = RTCPeerConnectionState | "cli_connected" | "cli_disconnected" | void;
+export type State = RTCPeerConnectionState | "signal_connected" | "signal_disconnected" | void;
 
 const MAX_BUFFER = 8 * 1024 * 1024; // 8MB，自行设定, 实际大小应该是15MB
 const LOW_THRESHOLD = 1 * 1024 * 1024;
@@ -28,7 +29,7 @@ export class WebRTCDemo {
   private pc: RTCPeerConnection | null = null;
   // private peers: { [_: string]: RTCPeerConnection } = {}; TODO 广播id后 根据id分别创建peer connection
   private dataChannel: RTCDataChannel | null = null;
-  private cli: MQTTClient;
+  private signal: MQTTClient; // 信令 client
   id = window.name;
   peerId?: string; // peer id
   onMessage: (message: unknown) => void;
@@ -52,20 +53,20 @@ export class WebRTCDemo {
     // 1. 初始化 WebSocket 连接
     // const url = "wss://mqtt-dashboard.com:8884/mqtt";
     const url = debugMqtt ? "" : "wss://test.mosquitto.org:8081";
-    this.cli = new MQTTClient({ url, topic: "test/webrtc/topic" });
+    this.signal = new MQTTClient({ url, topic: "test/webrtc/topic" });
     this.onMessage = onMessage;
     this.onConnState = onConnState;
     this.onPeerID = onPeerID;
     this.onStream = onStream;
 
-    this.cli.handleConnectEvent = () => {
+    this.signal.handleConnectEvent = () => {
       console.log("成功连接到信令服务器");
       // WebSocket 连接成功后才初始化 PeerConnection
       this.initializePeerConnection();
-      this.onConnState("cli_connected");
+      this.onConnState("signal_connected");
     };
 
-    this.cli.handleMessageEvent = async (msg) => {
+    this.signal.handleMessageEvent = async (msg) => {
       const message = JSON.parse(msg) as SignalMessage;
 
       if (message.id === this.id) return; // ignore from self
@@ -73,7 +74,6 @@ export class WebRTCDemo {
 
       if (message.type === "PeerID") this.onPeerID(message.id);
       else if (message.type === "Reload") {
-        console.log("Reload", message);
         this.onMessage(message);
         this.sendSignalingMessage({
           type: "Reloading",
@@ -82,10 +82,11 @@ export class WebRTCDemo {
         setTimeout(() => {
           window.location.reload();
         }, 2000);
-      } else if (message.type === "Reloading") {
-        console.log("Reloading", message);
+      } else if (message.type === "GiveMeOffer") {
+        if (message.peerId !== this.id) return;
+        this.createOffer(message.id);
       } else if (message.offer) {
-        if (message.offer.peerId !== this.id) return;
+        if (message.peerId !== this.id) return;
         // this.peerId = message.id; // 收到发起方id
         await this.receiveOffer(message.id, message.offer.desc);
       } else if (message.answer) {
@@ -97,24 +98,30 @@ export class WebRTCDemo {
       }
     };
 
-    this.cli.handleErrorEvent = (error) => {
+    this.signal.handleErrorEvent = (error) => {
       console.error("信令服务器连接错误:", error);
     };
 
-    this.cli.handleCloseEvent = () => {
+    this.signal.handleCloseEvent = () => {
       console.log("与信令服务器的连接已断开");
     };
   }
 
   destroy() {
     // 销毁webrtc实例
-    this.cli.close();
+    this.signal.close();
     this.pc?.close();
+  }
+
+  disconnect() {
+    // 断开webrtc连接
+    this.pc?.close();
+    this.onConnState("closed");
   }
 
   // 2. 发送信令消息的通用方法
   sendSignalingMessage(message: SignalMessage): void {
-    this.cli.send(JSON.stringify(message));
+    this.signal.send(JSON.stringify(message));
   }
 
   private initializePeerConnection(): void {
@@ -158,6 +165,10 @@ export class WebRTCDemo {
       this.onConnState(this.pc?.connectionState);
     };
 
+    this.pc.onsignalingstatechange = () => {
+      console.log("Signaling 状态:", this.pc?.signalingState);
+    };
+
     // 当收到远程流时 (如果有的话)
     this.pc.ontrack = (event: RTCTrackEvent) => {
       // 实现处理接收到的媒体流的逻辑
@@ -187,7 +198,7 @@ export class WebRTCDemo {
 
       // *** 优化点：通过 WebSocket 发送 offer ***
       console.log("发送本地 Offer:", offer);
-      this.sendSignalingMessage({ id: this.id, offer: { desc: offer, peerId } });
+      this.sendSignalingMessage({ id: this.id, peerId, offer: { desc: offer } });
     } catch (error) {
       console.error("创建 Offer 时出错:", error);
     }
@@ -332,7 +343,7 @@ export class WebRTCDemo {
 
       // *** 优化点：通过 WebSocket 发送 offer ***
       console.log("发送本地 Offer:", offer);
-      this.sendSignalingMessage({ id: this.id, offer: { desc: offer, peerId } });
+      this.sendSignalingMessage({ id: this.id, peerId, offer: { desc: offer } });
     } catch (error) {
       console.error("创建 Offer 时出错:", error);
     }

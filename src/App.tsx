@@ -10,10 +10,10 @@ const master = new URLSearchParams(window.location.search).has("master");
 const App = () => {
   const webrtc = new WebRTCDemo({
     onConnState(state) {
-      if (state === "cli_connected") {
+      if (state === "signal_connected") {
         setCliConnected(true);
         webrtc.sendSignalingMessage({ type: "PeerID", id: webrtc.id });
-      } else if (state === "cli_disconnected") {
+      } else if (state === "signal_disconnected") {
         setCliConnected(false);
       } else {
         setState(state);
@@ -58,6 +58,7 @@ const App = () => {
         list.unshift(id);
         return list;
       });
+      addMsg(`收到 PeerID： ${id} - ${new Date().toLocaleString()}`);
     },
 
     onStream(stream) {
@@ -72,10 +73,11 @@ const App = () => {
     webrtc.destroy();
   });
 
-  let peerId: string = ""; // 选中 PeerID
+  // let peerId: string = ""; // 选中 PeerID
   let fileWriter: FileWriter | null = null;
   let chunksToSend: Blob[] | null = null;
 
+  const [peerId, setPeerId] = createSignal("");
   const [peerIds, setPeerIds] = createSignal<string[]>([]);
   const [state, setState] = createSignal<State>();
   const [text, setText] = createSignal("");
@@ -101,29 +103,6 @@ const App = () => {
         >
           广播 ID
         </button>
-        <Show when={peerIds().length > 0}>
-          <label for="peer_ids">Peer ID List: </label>
-          <select
-            id="peer_ids"
-            style="width: 320px;"
-            onChange={(e) => {
-              console.log("select peer id", e.target.value);
-              peerId = e.target.value;
-            }}
-          >
-            <option value="">{`========== 请选择 Peer ID ===========`}</option>
-            <For each={peerIds()}>{(item) => <option value={item}>{item}</option>}</For>
-          </select>
-          <button
-            disabled={!signalConnected()}
-            onClick={() => {
-              if (peerId) webrtc.createOffer(peerId);
-              else alert("请选择 Peer ID");
-            }}
-          >
-            发送 Offer
-          </button>
-        </Show>
         {master && (
           <>
             <button
@@ -136,8 +115,51 @@ const App = () => {
             >
               Reload
             </button>
+            <button
+              onClick={() => {
+                if (peerId())
+                  webrtc.sendSignalingMessage({
+                    type: "GiveMeOffer",
+                    id: webrtc.id,
+                    peerId: peerId(),
+                  });
+              }}
+              disabled={!peerId()}
+            >
+              GiveMeOffer
+            </button>
+            <button
+              disabled={!connected()}
+              onClick={() => {
+                webrtc.disconnect();
+              }}
+            >
+              Close
+            </button>
           </>
         )}
+        <Show when={peerIds().length > 0}>
+          <label for="peer_ids">Peer ID List: </label>
+          <select
+            id="peer_ids"
+            style="width: 320px;"
+            onChange={(e) => {
+              console.log("select peer id", e.target.value);
+              setPeerId(e.target.value);
+            }}
+          >
+            <option value="">{`========== 请选择 Peer ID ===========`}</option>
+            <For each={peerIds()}>{(item) => <option value={item}>{item}</option>}</For>
+          </select>
+          <button
+            disabled={!signalConnected() || !peerId()}
+            onClick={() => {
+              if (peerId()) webrtc.createOffer(peerId());
+            }}
+          >
+            发送 Offer
+          </button>
+        </Show>
       </p>
       <div class="flex">
         {/* 发消息 */}
