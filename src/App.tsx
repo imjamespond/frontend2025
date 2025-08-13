@@ -103,41 +103,39 @@ const App = () => {
         >
           广播 ID
         </button>
-        {master && (
-          <>
-            <button
-              onClick={() => {
+        <Show when={master}>
+          <button
+            onClick={() => {
+              webrtc.sendSignalingMessage({
+                type: "Reload",
+                id: webrtc.id,
+              });
+            }}
+          >
+            Reload
+          </button>
+          <button
+            onClick={() => {
+              if (peerId())
                 webrtc.sendSignalingMessage({
-                  type: "Reload",
+                  type: "GiveMeOffer",
                   id: webrtc.id,
+                  peerId: peerId(),
                 });
-              }}
-            >
-              Reload
-            </button>
-            <button
-              onClick={() => {
-                if (peerId())
-                  webrtc.sendSignalingMessage({
-                    type: "GiveMeOffer",
-                    id: webrtc.id,
-                    peerId: peerId(),
-                  });
-              }}
-              disabled={!peerId()}
-            >
-              GiveMeOffer
-            </button>
-            <button
-              disabled={!connected()}
-              onClick={() => {
-                webrtc.disconnect();
-              }}
-            >
-              Close
-            </button>
-          </>
-        )}
+            }}
+            disabled={!peerId()}
+          >
+            GiveMeOffer
+          </button>
+          <button
+            disabled={!connected()}
+            onClick={() => {
+              webrtc.disconnect();
+            }}
+          >
+            Close
+          </button>
+        </Show>
         <Show when={peerIds().length > 0}>
           <label for="peer_ids">Peer ID List: </label>
           <select
@@ -161,9 +159,9 @@ const App = () => {
           </button>
         </Show>
       </p>
-      <div class="flex">
+      <div class="flex wrap">
         {/* 发消息 */}
-        <div class="flex-1">
+        <div style="flex: 0 0 300px;">
           <div>
             <textarea
               id="text"
@@ -187,28 +185,30 @@ const App = () => {
         </div>
         {/* 传输文件 */}
         <div class="flex-1">
-          <div>
-            {connected() && mdDlgBtn}
-            <input
-              id="file"
-              type="file"
-              placeholder="文件"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (file === undefined) return;
-                console.log("文件选择", file);
-                e.target.value = "";
-                chunksToSend = createChunks(file, 32 * 1024);
-                console.log("分块", chunksToSend);
+          <Show when={connected() || master}>
+            <div>
+              {mdDlgBtn}
+              <input
+                id="file"
+                type="file"
+                placeholder="文件"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file === undefined) return;
+                  console.log("文件选择", file);
+                  e.target.value = "";
+                  chunksToSend = createChunks(file, 32 * 1024);
+                  console.log("分块", chunksToSend);
 
-                webrtc.sendMessage({
-                  file: { type: "showSaveFilePicker", name: file.name, chunks: chunksToSend.length },
-                });
+                  webrtc.sendMessage({
+                    file: { type: "showSaveFilePicker", name: file.name, chunks: chunksToSend.length },
+                  });
 
-                // finish();
-              }}
-            />
-          </div>
+                  // finish();
+                }}
+              />
+            </div>
+          </Show>
           <p>
             <SaveFile
               onFileWriter={(fw) => {
