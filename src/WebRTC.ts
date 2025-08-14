@@ -81,7 +81,7 @@ export class WebRTCDemo {
         });
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 2_000);
       } else if (message.type === "GiveMeOffer") {
         if (message.peerId !== this.id) return;
         this.createOffer(message.id);

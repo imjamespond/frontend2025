@@ -8,7 +8,7 @@ export class MQTTClient {
 
   constructor({ url, topic }: { url: string; topic: string }) {
     this.topic = topic;
-    this.client = MQTT.connect(url, { reconnectPeriod: debugMqtt ? 600_000 : 5_000 });
+    this.client = MQTT.connect(url, { reconnectPeriod: debugMqtt ? 600_000 : 10_000 });
   }
   // 处理连接成功事件
   set handleConnectEvent(callback: () => void) {

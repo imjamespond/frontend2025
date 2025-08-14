@@ -52,7 +52,7 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
   );
 
   const dlg = (
-    <dialog ref={(el) => (dialogRef = el)} style="width:50rem; height:30rem; max-width: 88%; max-height: 88%;"> 
+    <dialog ref={(el) => (dialogRef = el)} style="width:50rem; height:30rem; max-width: 88%; max-height: 88%;">
       <button
         onClick={async () => {
           if (videoRef === null) return;
@@ -126,7 +126,10 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
       >
         Mute
       </button>
-      <button disabled={video() || audio()} onClick={() => dialogRef?.close()}>
+      <button
+        // disabled={video() || audio()}
+        onClick={() => dialogRef?.close()}
+      >
         关闭
       </button>
       <p>
