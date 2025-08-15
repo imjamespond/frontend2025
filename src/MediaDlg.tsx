@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import { WebRTCDemo } from "./WebRTC";
 
 export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
@@ -13,7 +13,9 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
   let videoSender: RTCRtpSender | undefined = undefined;
   let audioSender: RTCRtpSender | undefined = undefined;
 
-  let videoConstraint: { video: Video | boolean } = { video: true };
+  let videoConstraint: Video | true = true;
+
+  let facingMode: string | undefined = undefined;
 
   const [video, setVideo] = createSignal(false);
   const [audio, setAudio] = createSignal(false);
@@ -58,7 +60,9 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
           if (videoRef === null) return;
           if (!videoTrack) {
             // 获取视频 track
-            const stream = await navigator.mediaDevices.getUserMedia(videoConstraint);
+            const video =
+              videoConstraint === true ? true : Object.assign({ facingMode }, defaultVideoConfig, videoConstraint);
+            const stream = await navigator.mediaDevices.getUserMedia({ video });
             videoTrack = stream.getVideoTracks()[0];
             // try {
             //   await videoTrack.applyConstraints(videoConstraints);
@@ -133,16 +137,27 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
         关闭
       </button>
       <p>
+        <Show when={supportedConstraints.frameRate && supportedConstraints.width && supportedConstraints.height}>
+          <select
+            onChange={(e) => {
+              const video = videoConstraints[e.currentTarget.value];
+              videoConstraint = video ?? true;
+            }}
+          >
+            <option value="">分辨率</option>
+            {Object.keys(videoConstraints).map((k) => (
+              <option value={k}>{k}</option>
+            ))}
+          </select>
+        </Show>
         <select
           onChange={(e) => {
-            const video = videoConstraints[e.currentTarget.value];
-            videoConstraint = { video: video ?? true };
+            facingMode = e.currentTarget.value;
           }}
         >
-          <option value="">分辨率</option>
-          {Object.keys(videoConstraints).map((k) => (
-            <option value={k}>{k}</option>
-          ))}
+          <option value="">摄像头</option>
+          <option value="user">前置摄像头</option>
+          <option value="environment">后置摄像头</option>
         </select>
       </p>
       <hr />
@@ -154,47 +169,72 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
   return [dlg, dlgBtn, peerStream] as const;
 }
 
+const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+console.debug("supportedConstraints", supportedConstraints);
+
 const audioConstraints: MediaStreamConstraints = {
-  audio: {
-    sampleSize: { ideal: 16000 },
+  audio:
+    supportedConstraints.sampleRate &&
+    supportedConstraints.sampleSize &&
+    supportedConstraints.echoCancellation &&
+    supportedConstraints.channelCount
+      ? {
+          sampleSize: { ideal: 8 },
+          // sampleRate: { ideal: 16_000 },
 
-    // 使用单声道以减少数据量。
-    channelCount: { ideal: 1 },
+          // 使用单声道以减少数据量。
+          channelCount: { ideal: 1 },
 
-    // 开启回声消除以保证通话质量。
-    echoCancellation: true,
-  },
+          // 开启回声消除以保证通话质量。
+          echoCancellation: true,
+        }
+      : true,
 };
 
 type Video = Extract<MediaStreamConstraints["video"], object>;
 
 const defaultVideoConfig: Video = {
-  aspectRatio: { ideal: 4 / 3 },
+  // aspectRatio: { ideal: 4 / 3 },
   width: { min: 640, ideal: 800, max: 1024 },
   height: { min: 480, ideal: 600, max: 768 },
-  frameRate: { min: 10, ideal: 15, max: 20 },
+  frameRate: { min: 5, ideal: 5, max: 5 },
 };
 
 const videoConstraints: { [key: string]: Video } = {
   default: defaultVideoConfig,
   "160*120": {
-    ...defaultVideoConfig,
     width: 160,
     height: 120,
   },
   "320*240": {
-    ...defaultVideoConfig,
     width: 320,
     height: 240,
   },
   "640*480": {
-    ...defaultVideoConfig,
     width: 640,
     height: 480,
   },
   "800*600": {
-    ...defaultVideoConfig,
     width: 800,
     height: 600,
   },
 };
+
+if (import.meta.env.DEV) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+    console.log("不支持 enumerateDevices() .");
+  } else {
+    // 列出相机和麦克风。
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then(function (devices) {
+        devices.forEach(function (device) {
+          // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia + deviceId
+          console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+        });
+      })
+      .catch(function (err) {
+        console.log(err.name + ": " + err.message);
+      });
+  }
+}
