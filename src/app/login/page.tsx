@@ -19,9 +19,18 @@ function FC() {
       <hr />
       {/* <iframe style={{ width: "100%", height: "300px" }} src="/api/auth/signin" /> */}
       Sign in by：
+      <button onClick={() => signIn("credentials", { callbackUrl: "/", password: "password", username: "admin" })}>
+        credentials
+      </button>
       <button onClick={() => signIn("github", { callbackUrl: "/" })}>github</button>
       <button onClick={() => signIn("gitlab", { callbackUrl: "/" })}>gitlab</button>
-      <button onClick={() => signIn("google", { callbackUrl: "/" })}>google</button>
+      <button
+        onClick={() => {
+          signIn("google", { callbackUrl: "/" });
+        }}
+      >
+        google
+      </button>
       <button onClick={() => signIn("battlenet", { callbackUrl: "/" })}>battlenet</button>
       <hr />
       <pre>{JSON.stringify({ csrf, providers }, null, 1)}</pre>

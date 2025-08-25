@@ -2,9 +2,13 @@ import GithubProvider from "next-auth/providers/github";
 import GitLabProvider from "next-auth/providers/gitlab";
 import GoogleProvider from "next-auth/providers/google";
 import BattleNetProvider from "next-auth/providers/battlenet";
+
 import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
+import { credentialsProvider } from "./auth/credentialsProvider";
+
+// const agent = new HttpProxyAgent(process.env.HTTP_PROXY!);
 
 // You'll need to import and pass this
 // to `NextAuth` in `app/api/auth/[...nextauth]/route.ts`
@@ -32,6 +36,7 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_SECRET!,
       httpOptions: {
         timeout: 10_000,
+        // agent, // need TUN proxy mode
       },
     }),
     BattleNetProvider({
@@ -41,6 +46,7 @@ export const authOptions = {
       checks: ["nonce", "state"], // Use both nonce and state
       issuer: "https://us.battle.net/oauth",
     }),
+    credentialsProvider,
   ],
 } satisfies NextAuthOptions;
 
