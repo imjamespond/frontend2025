@@ -1,5 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { User } from "next-auth";
+// import type { User } from "next-auth";
+import { db } from "../db";
+import { usersTable } from "../db/schema";
+import { and, eq } from "drizzle-orm";
 
 export const credentialsProvider = CredentialsProvider({
   // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -20,9 +23,22 @@ export const credentialsProvider = CredentialsProvider({
     // You can also use the `req` object to obtain additional parameters
     // (i.e., the request IP address)
 
-    if (credentials?.username === "admin") {
-      return Promise.resolve<User>({ id: "123", name: "admin", email: "admin@example.com" });
+    // if (credentials?.username === "admin") {
+    //   return Promise.resolve<User>({ id: "123", name: "admin", email: "admin@example.com" });
+    // }
+
+    if (credentials && credentials.username !== "null" && credentials.password !== "null") {
+      const users = await db
+        .select()
+        .from(usersTable)
+        .where(and(eq(usersTable.email, credentials.username)));
+
+      if (users.length > 0) {
+        const user = users[0];
+        return { ...user, id: user.id.toString() };
+      }
     }
+
     // const res = await fetch("/your/endpoint", {
     //   method: "POST",
     //   body: JSON.stringify(credentials),

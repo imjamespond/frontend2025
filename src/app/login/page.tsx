@@ -1,9 +1,12 @@
 "use client";
 
 import { getProviders, signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import React from "react";
 import useSWR from "swr";
 
 function FC() {
+  const searchParams = useSearchParams();
   const { data: csrf } = useSWR("/api/auth/csrf", async () => {
     return "";
     // https://next-auth.js.org/getting-started/client
@@ -19,7 +22,16 @@ function FC() {
       <hr />
       {/* <iframe style={{ width: "100%", height: "300px" }} src="/api/auth/signin" /> */}
       Sign in by：
-      <button onClick={() => signIn("credentials", { callbackUrl: "/", password: "password", username: "admin" })}>
+      <button
+        onClick={() =>
+          signIn("credentials", {
+            // redirect: false,
+            callbackUrl: "/",
+            username: searchParams.get("username"),
+            password: searchParams.get("password"),
+          })
+        }
+      >
         credentials
       </button>
       <button onClick={() => signIn("github", { callbackUrl: "/" })}>github</button>
