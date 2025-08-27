@@ -1,12 +1,13 @@
 "use client";
 
+import { useSignUpMut, useUserMut } from "@/lib/service/user";
 import { getProviders, signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import React from "react";
+// import { useSearchParams } from "next/navigation";
+import React, { FormEventHandler, useRef } from "react";
 import useSWR from "swr";
 
 function FC() {
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const { data: csrf } = useSWR("/api/auth/csrf", async () => {
     return "";
     // https://next-auth.js.org/getting-started/client
@@ -14,15 +15,23 @@ function FC() {
     // https://next-auth.js.org/getting-started/rest-api
     // return (await fetch(url)).json();
   });
-  const { data: providers } = useSWR("/api/auth/providers", async () => {
-    return await getProviders();
-  });
+  const { data: providers } = useSWR(
+    "/api/auth/providers",
+    async () => {
+      return await getProviders();
+    },
+    { refreshInterval: 1000_000 }
+  );
+  const [signInBtn, signInDlg] = useSignIn();
+  const [signUpBtn, signUpDlg] = useSignUp();
+  const [signInPageBtn, signInPageDlg] = useSignInPage();
   return (
     <>
-      <hr />
-      {/* <iframe style={{ width: "100%", height: "300px" }} src="/api/auth/signin" /> */}
       Sign in by：
-      <button
+      {signUpBtn}
+      {signInBtn}
+      {signInPageBtn}
+      {/* <button
         onClick={() =>
           signIn("credentials", {
             // redirect: false,
@@ -33,7 +42,7 @@ function FC() {
         }
       >
         credentials
-      </button>
+      </button> */}
       <button onClick={() => signIn("github", { callbackUrl: "/" })}>github</button>
       <button onClick={() => signIn("gitlab", { callbackUrl: "/" })}>gitlab</button>
       <button
@@ -46,8 +55,109 @@ function FC() {
       <button onClick={() => signIn("battlenet", { callbackUrl: "/" })}>battlenet</button>
       <hr />
       <pre>{JSON.stringify({ csrf, providers }, null, 1)}</pre>
+      {signUpDlg}
+      {signInDlg}
+      {signInPageDlg}
     </>
   );
 }
 
 export default FC;
+
+function useSignIn() {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    const { username, password } = e.currentTarget;
+    const response = await signIn("credentials", {
+      redirect: false,
+      // callbackUrl: "/",
+      username: username.value,
+      password: password.value,
+    });
+    if (response?.ok) {
+      alert("Sign in successful!");
+    } else {
+      alert("Sign in failed!");
+    }
+  };
+
+  const ref = useRef<HTMLDialogElement>(null);
+
+  const dialog = (
+    <dialog ref={ref} style={{ width: 500, height: 400, margin: "150px auto" }}>
+      <form onSubmit={handleSubmit}>
+        <Input name="username" label="Username" />
+        <br />
+        <Input name="password" label="Password" />
+        <br />
+        <button type="button" onClick={() => ref.current?.close()}>
+          Cancel
+        </button>
+        <button type="submit">Sign In</button>
+      </form>
+    </dialog>
+  );
+
+  const btn = <button onClick={() => ref.current?.showModal()}>Sign In</button>;
+
+  return [btn, dialog] as const;
+}
+
+function useSignUp() {
+  const [trigger, isMutating, data, error] = useSignUpMut();
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    const { username, password } = e.currentTarget;
+    await trigger({
+      body: { username: username.value, password: password.value },
+    });
+  };
+
+  const ref = useRef<HTMLDialogElement>(null);
+
+  const dialog = (
+    <dialog ref={ref} style={{ width: 500, height: 400, margin: "150px auto" }}>
+      <form onSubmit={handleSubmit}>
+        <Input name="username" label="Username" />
+        <br />
+        <Input name="password" label="Password" />
+        <br />
+        <button type="button" onClick={() => ref.current?.close()}>
+          Cancel
+        </button>
+        <button type="submit" disabled={isMutating}>
+          Sign Up
+        </button>
+      </form>
+      <pre> {JSON.stringify({ data, error }, null, 2)}</pre>
+      <br />
+    </dialog>
+  );
+
+  const btn = <button onClick={() => ref.current?.showModal()}>Sign Up</button>;
+
+  return [btn, dialog] as const;
+}
+
+const Input = ({ name, label }: { name: string; label?: string }) => {
+  return (
+    <>
+      <label htmlFor={name}>{label || name}:</label>
+      <input id={name} name={name} type="text" />
+    </>
+  );
+};
+
+function useSignInPage() {
+  const ref = useRef<HTMLDialogElement>(null);
+  const dialog = (
+    <dialog ref={ref} style={{ width: 600, height: 600, margin: "150px auto", overflow: "hidden" }}>
+      {/* <iframe style={{ width: "100%", height: "100%" }} src="/api/auth/signin" /> */}
+      <button type="button" onClick={() => ref.current?.close()}>
+        Cancel
+      </button>
+    </dialog>
+  );
+  const btn = <button onClick={() => ref.current?.showModal()}>Sign In Page</button>;
+  return [btn, dialog] as const;
+}
