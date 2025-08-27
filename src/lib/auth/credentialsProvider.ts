@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "../db";
 import { usersTable } from "../db/schema";
 import { and, eq } from "drizzle-orm";
+import { User } from "next-auth";
 
 export const credentialsProvider = CredentialsProvider({
   // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -35,7 +36,7 @@ export const credentialsProvider = CredentialsProvider({
 
       if (users.length > 0) {
         const user = users[0];
-        return { ...user, id: user.id.toString() };
+        return user as unknown as User;
       }
     }
 

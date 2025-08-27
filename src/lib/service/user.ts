@@ -18,7 +18,7 @@ export function useUserMut() {
 async function signUpFn(
   key: string,
   options: {
-    arg: Arg<void, { username: string; password: string }>;
+    arg: Arg<void, { username: string; password: string; email: string }>;
   }
 ): Promise<string> {
   return post(key, options.arg);

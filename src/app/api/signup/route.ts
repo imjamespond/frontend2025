@@ -6,11 +6,11 @@ import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { username } = await request.json();
+    const { username, email } = await request.json();
     const user: typeof usersTable.$inferInsert = {
       name: username,
       age: 30,
-      email: username + "@example.com",
+      email: email,
     };
     await db.insert(usersTable).values(user);
   } catch (e) {

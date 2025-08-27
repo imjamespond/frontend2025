@@ -3,7 +3,7 @@
 import { useSignUpMut, useUserMut } from "@/lib/service/user";
 import { getProviders, signIn } from "next-auth/react";
 // import { useSearchParams } from "next/navigation";
-import React, { FormEventHandler, useRef } from "react";
+import React, { FormEventHandler, InputHTMLAttributes, useRef } from "react";
 import useSWR from "swr";
 
 function FC() {
@@ -68,17 +68,18 @@ function useSignIn() {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const { username, password } = e.currentTarget;
-    const response = await signIn("credentials", {
-      redirect: false,
-      // callbackUrl: "/",
+    const resp = await signIn("credentials", {
+      redirect: true, // 为true时 resp也为空
+      callbackUrl: "/",
       username: username.value,
       password: password.value,
     });
-    if (response?.ok) {
-      alert("Sign in successful!");
-    } else {
-      alert("Sign in failed!");
-    }
+    console.log(resp)
+    // if (resp?.ok) {
+    //   alert("Sign in successful!");
+    // } else {
+    //   alert("Sign in failed!");
+    // }
   };
 
   const ref = useRef<HTMLDialogElement>(null);
@@ -86,9 +87,9 @@ function useSignIn() {
   const dialog = (
     <dialog ref={ref} style={{ width: 500, height: 400, margin: "150px auto" }}>
       <form onSubmit={handleSubmit}>
-        <Input name="username" label="Username" />
+        <Input name="username" label="Email" />
         <br />
-        <Input name="password" label="Password" />
+        <Input name="password" label="Password" type="password" />
         <br />
         <button type="button" onClick={() => ref.current?.close()}>
           Cancel
@@ -107,9 +108,9 @@ function useSignUp() {
   const [trigger, isMutating, data, error] = useSignUpMut();
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const { username, password } = e.currentTarget;
+    const { username, password, email } = e.currentTarget;
     await trigger({
-      body: { username: username.value, password: password.value },
+      body: { username: username.value, password: password.value, email: email.value },
     });
   };
 
@@ -120,7 +121,9 @@ function useSignUp() {
       <form onSubmit={handleSubmit}>
         <Input name="username" label="Username" />
         <br />
-        <Input name="password" label="Password" />
+        <Input name="email" label="Email" type="email" />
+        <br />
+        <Input name="password" label="Password" type="password" />
         <br />
         <button type="button" onClick={() => ref.current?.close()}>
           Cancel
@@ -139,11 +142,19 @@ function useSignUp() {
   return [btn, dialog] as const;
 }
 
-const Input = ({ name, label }: { name: string; label?: string }) => {
+const Input = ({
+  name,
+  label,
+  type,
+}: {
+  name: string;
+  label?: string;
+  type?: InputHTMLAttributes<HTMLInputElement>["type"];
+}) => {
   return (
     <>
       <label htmlFor={name}>{label || name}:</label>
-      <input id={name} name={name} type="text" />
+      <input id={name} name={name} type={type ?? "text"} />
     </>
   );
 };
