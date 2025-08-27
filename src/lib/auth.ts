@@ -48,6 +48,15 @@ export const authOptions = {
     }),
     credentialsProvider,
   ],
+  // https://next-auth.js.org/configuration/options#jwt
+  // jwt: {
+  //   maxAge: , // 如果 updateAge 触发，NextAuth 会尝试刷新 JWT（重新生成 token）
+  // },
+  // https://next-auth.js.org/configuration/options#session
+  session: {
+    maxAge: 36_000, // 如果用户 maxAge 秒内没有任何请求，Cookie 就失效，Session 会过期。控制 用户是否被认为已登录。
+    // updateAge: , // 每次请求，如果距离上次刷新超过 updateAge 秒，就刷新一次 JWT & Cookie。
+  },
   // https://next-auth.js.org/configuration/options#callbacks
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {

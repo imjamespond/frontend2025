@@ -24,9 +24,9 @@ export const credentialsProvider = CredentialsProvider({
     // You can also use the `req` object to obtain additional parameters
     // (i.e., the request IP address)
 
-    // if (credentials?.username === "admin") {
-    //   return Promise.resolve<User>({ id: "123", name: "admin", email: "admin@example.com" });
-    // }
+    if (credentials?.username === "admin") {
+      return { id: "123", name: "admin", email: "admin@example.com" };
+    }
 
     if (credentials && credentials.username !== "null" && credentials.password !== "null") {
       const users = await db

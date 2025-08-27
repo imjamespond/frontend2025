@@ -2,6 +2,7 @@
 
 import { useSignUpMut, useUserMut } from "@/lib/service/user";
 import { getProviders, signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 // import { useSearchParams } from "next/navigation";
 import React, { FormEventHandler, InputHTMLAttributes, useRef } from "react";
 import useSWR from "swr";
@@ -65,16 +66,17 @@ function FC() {
 export default FC;
 
 function useSignIn() {
+  const searchParams = useSearchParams();
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const { username, password } = e.currentTarget;
     const resp = await signIn("credentials", {
       redirect: true, // 为true时 resp也为空
-      callbackUrl: "/",
+      callbackUrl: searchParams.get("callbackUrl") || "/",
       username: username.value,
       password: password.value,
     });
-    console.log(resp)
+    console.log(resp);
     // if (resp?.ok) {
     //   alert("Sign in successful!");
     // } else {
