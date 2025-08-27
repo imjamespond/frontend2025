@@ -48,6 +48,29 @@ export const authOptions = {
     }),
     credentialsProvider,
   ],
+  // https://next-auth.js.org/configuration/options#callbacks
+  // https://next-auth.js.org/configuration/callbacks
+  callbacks: {
+    async jwt(params) {
+      // console.log("jwt callback called", params);
+      if (params.account) {
+        params.token.provider = params.account.provider;
+        // preserve access_token, refresh_token in for further use
+      }
+      if (params.user) {
+        return { id: params.user.id, ...params.token }; // save user id to token
+      }
+      return params.token;
+    },
+    async session(params) {
+      // console.log("session callback called", params);
+      if (params.session.user) {
+        (params.session.user as any)["id"] = params.token.id;
+        (params.session.user as any)["provider"] = params.token.provider;
+      }
+      return params.session;
+    },
+  },
 } satisfies NextAuthOptions;
 
 // Use it in server contexts
