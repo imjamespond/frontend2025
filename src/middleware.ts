@@ -12,7 +12,7 @@ export const config = { matcher: ["/admin/:path*", "/api/admin/:path*"] };
 export default withAuth(
   // `withAuth` augments your `Request` with the user's token.
   function middleware(req) {
-    console.log("middleware", req.nextauth.token);
+    // console.log("middleware", req.nextauth.token);
 
     const token = req.nextauth.token;
     if (token === null) {

@@ -1,9 +1,10 @@
 "use client";
 
 import { useSession } from "next-auth/react";
+import { Providers } from "../helper";
 
 // Frontend - Add React Hook
-function FC() {
+function Bar() {
   const { data: session } = useSession();
   return (
     <>
@@ -14,4 +15,10 @@ function FC() {
   );
 }
 
-export default FC;
+export default function FC() {
+  return (
+    <Providers>
+      <Bar />
+    </Providers>
+  );
+}

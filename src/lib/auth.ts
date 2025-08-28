@@ -50,18 +50,33 @@ export const authOptions = {
   ],
   // https://next-auth.js.org/configuration/options#jwt
   // jwt: {
-  //   maxAge: , // 如果 updateAge 触发，NextAuth 会尝试刷新 JWT（重新生成 token）
+  //   // The maximum age of the NextAuth.js issued JWT in seconds.
+  //   // Defaults to `session.maxAge`.
+  //   // !!! 被覆盖了
+  //   // next-auth/jwt/index.js
+  //   //   const newToken = await jwt.encode({
+  //   //   ...jwt,
+  //   //   token,
+  //   //   maxAge: options.session.maxAge
+  //   // });
+  //   // maxAge: ,
   // },
   // https://next-auth.js.org/configuration/options#session
   session: {
-    maxAge: 36_000, // 如果用户 maxAge 秒内没有任何请求，Cookie 就失效，Session 会过期。控制 用户是否被认为已登录。
-    // updateAge: , // 每次请求，如果距离上次刷新超过 updateAge 秒，就刷新一次 JWT & Cookie。
+    // Seconds - How long until an idle session expires and is no longer valid.
+    // 只要用户持续有操作（比如刷新页面、调用 useSession），session 的过期时间会不断被延长，始终保持在 maxAge 设定的时长内（滑动过期/sliding expiration）。
+    // 只有在用户长时间没有任何操作，超过 maxAge，session 才会真正过期。
+    maxAge: 3600,
+    // Seconds - Throttle how frequently to write to database to extend a session. 避免频繁写数据库。
+    // Use it to limit write operations. Set to 0 to always update the database.
+    // Note: This option is ignored if using JSON Web Tokens. 忽略 JWT。
+    // updateAge: ,
   },
   // https://next-auth.js.org/configuration/options#callbacks
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
     async jwt(params) {
-      // console.log("jwt callback called", params);
+      console.log("jwt callback called", Object.keys(params));
       if (params.account) {
         params.token.provider = params.account.provider;
         // preserve access_token, refresh_token in for further use

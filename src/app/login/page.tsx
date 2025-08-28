@@ -1,5 +1,6 @@
 "use client";
 
+import { useMut } from "@/lib/api";
 import { useSignUpMut, useUserMut } from "@/lib/service/user";
 import { getProviders, signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -67,21 +68,27 @@ export default FC;
 
 function useSignIn() {
   const searchParams = useSearchParams();
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+  const [signInFn, signIning] = useMut<{ username: string; password: string }>(
+    "signIn",
+    async (_, { arg: { username, password } }) => {
+      const resp = await signIn("credentials", {
+        redirect: true, // 为true时 resp也为空
+        callbackUrl: searchParams.get("callbackUrl") || "/",
+        username,
+        password,
+      });
+      console.log(resp);
+      // if (resp?.ok) {
+      //   alert("Sign in successful!");
+      // } else {
+      //   alert("Sign in failed!");
+      // }
+    }
+  );
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const { username, password } = e.currentTarget;
-    const resp = await signIn("credentials", {
-      redirect: true, // 为true时 resp也为空
-      callbackUrl: searchParams.get("callbackUrl") || "/",
-      username: username.value,
-      password: password.value,
-    });
-    console.log(resp);
-    // if (resp?.ok) {
-    //   alert("Sign in successful!");
-    // } else {
-    //   alert("Sign in failed!");
-    // }
+    signInFn({ username: username.value, password: password.value });
   };
 
   const ref = useRef<HTMLDialogElement>(null);
@@ -96,7 +103,9 @@ function useSignIn() {
         <button type="button" onClick={() => ref.current?.close()}>
           Cancel
         </button>
-        <button type="submit">Sign In</button>
+        <button type="submit" disabled={signIning}>
+          Sign In{signIning ? "..." : ""}
+        </button>
       </form>
     </dialog>
   );

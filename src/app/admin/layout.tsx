@@ -1,4 +1,4 @@
-import { Navigator, Providers } from "./helper";
+import { Navigator } from "./helper";
 
 export default function RootLayout({
   children,
@@ -9,7 +9,7 @@ export default function RootLayout({
     <>
       admin: <Navigator />
       <hr />
-      <Providers>{children}</Providers>
+      {children}
     </>
   );
 }
