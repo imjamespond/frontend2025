@@ -1,3 +1,4 @@
+import { SWRConfig } from "swr";
 import { Navigator } from "./helper";
 
 export default function RootLayout({
@@ -9,7 +10,17 @@ export default function RootLayout({
     <>
       admin: <Navigator />
       <hr />
-      {children}
+      <SWRConfig
+        value={{
+          dedupingInterval: 10_000,
+          revalidateIfStale: true, // 当有旧数据时是否刷新
+          revalidateOnMount: true,
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+        }}
+      >
+        {children}
+      </SWRConfig>
     </>
   );
 }

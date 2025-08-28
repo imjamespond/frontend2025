@@ -1,11 +1,12 @@
 "use client";
 
 import { useMut } from "@/lib/api";
-import { useSignUpMut, useUserMut } from "@/lib/service/user";
+import { Input } from "@/lib/components/input";
+import { useSignUpMut } from "@/lib/service/user";
 import { getProviders, signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 // import { useSearchParams } from "next/navigation";
-import React, { FormEventHandler, InputHTMLAttributes, useRef } from "react";
+import React, { FormEventHandler, useRef } from "react";
 import useSWR from "swr";
 
 function FC() {
@@ -152,23 +153,6 @@ function useSignUp() {
 
   return [btn, dialog] as const;
 }
-
-const Input = ({
-  name,
-  label,
-  type,
-}: {
-  name: string;
-  label?: string;
-  type?: InputHTMLAttributes<HTMLInputElement>["type"];
-}) => {
-  return (
-    <>
-      <label htmlFor={name}>{label || name}:</label>
-      <input id={name} name={name} type={type ?? "text"} />
-    </>
-  );
-};
 
 function useSignInPage() {
   const ref = useRef<HTMLDialogElement>(null);

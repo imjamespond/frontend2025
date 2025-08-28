@@ -7,7 +7,8 @@
     "dev:debug": "NODE_OPTIONS='--inspect=localhost:9400' next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "dz": "drizzle-kit"
   },
   "dependencies": {
     "drizzle-orm": "^0.44.4",
@@ -24,6 +25,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.1",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9",
     "eslint-config-next": "15.5.0",
     "tailwindcss": "^4",
