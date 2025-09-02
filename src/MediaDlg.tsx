@@ -86,7 +86,7 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
             videoTrack.stop();
             videoTrack = null;
             console.log("📹 Video track removed");
-            videoRef.srcObject = null;
+            videoRef.pause();
             setVideo(false);
           }
         }}
@@ -116,7 +116,7 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
             audioTrack.stop();
             audioTrack = null;
             console.log("📹 Audio track removed");
-            videoRef.srcObject = null;
+            videoRef.muted = true;
             setAudio(false);
           }
         }}
