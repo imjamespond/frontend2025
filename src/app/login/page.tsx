@@ -6,10 +6,10 @@ import { useSignUpMut } from "@/lib/service/user";
 import { getProviders, signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 // import { useSearchParams } from "next/navigation";
-import React, { FormEventHandler, useRef } from "react";
+import React, { FormEventHandler, Suspense, useRef } from "react";
 import useSWR from "swr";
 
-function FC() {
+function Login() {
   // const searchParams = useSearchParams();
   const { data: csrf } = useSWR("/api/auth/csrf", async () => {
     return "";
@@ -65,7 +65,14 @@ function FC() {
   );
 }
 
-export default FC;
+export default function FC() {
+  // Due to build Error: useSearchParams() should be wrapped in a suspense boundary at page
+  return (
+    <Suspense>
+      <Login />
+    </Suspense>
+  );
+}
 
 function useSignIn() {
   const searchParams = useSearchParams();

@@ -89,8 +89,8 @@ export const authOptions = {
     async session(params) {
       // console.log("session callback called", params);
       if (params.session.user) {
-        (params.session.user as any)["id"] = params.token.id;
-        (params.session.user as any)["provider"] = params.token.provider;
+        (params.session.user as { [k: string]: unknown })["id"] = params.token.id;
+        (params.session.user as { [k: string]: unknown })["provider"] = params.token.provider;
       }
       return params.session;
     },

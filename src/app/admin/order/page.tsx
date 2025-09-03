@@ -15,9 +15,10 @@ export default function FC() {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          const { customer, quantityKg, unitPrice } = e.currentTarget;
+          const { quantityKg, unitPrice } = e.currentTarget;
+          if (!session?.user?.email) return;
           await order({
-            customer: session?.user?.email!,
+            customer: session.user.email,
             quantityKg: quantityKg.value,
             unitPrice: unitPrice.value,
             totalPrice: "0",

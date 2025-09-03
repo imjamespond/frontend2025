@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { usersTable } from "@/lib/db/schema";
 import { ResponseError, ResponseOK } from "@/lib/utils/next";
-import { eq } from "drizzle-orm";
+// import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
