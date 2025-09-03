@@ -56,6 +56,7 @@ function Login() {
         google
       </button>
       <button onClick={() => signIn("battlenet", { callbackUrl: "/" })}>battlenet</button>
+      <button onClick={() => signIn("gitee", { callbackUrl: "/" })}>gitee</button>
       <hr />
       <pre>{JSON.stringify({ csrf, providers }, null, 1)}</pre>
       {signUpDlg}
@@ -79,6 +80,7 @@ function useSignIn() {
   const [signInFn, signIning] = useMut<{ username: string; password: string }>(
     "signIn",
     async (_, { arg: { username, password } }) => {
+      if (!username || !password) throw "username or password is empty";
       const resp = await signIn("credentials", {
         redirect: true, // 为true时 resp也为空
         callbackUrl: searchParams.get("callbackUrl") || "/",
@@ -104,9 +106,9 @@ function useSignIn() {
   const dialog = (
     <dialog ref={ref} style={{ width: 500, height: 400, margin: "150px auto" }}>
       <form onSubmit={handleSubmit}>
-        <Input name="username" label="Email" />
+        <Input id="si_username" name="username" label="Email" />
         <br />
-        <Input name="password" label="Password" type="password" />
+        <Input id="si_password" name="password" label="Password" type="password" autoComplete="current-password" />
         <br />
         <button type="button" onClick={() => ref.current?.close()}>
           Cancel
@@ -138,11 +140,11 @@ function useSignUp() {
   const dialog = (
     <dialog ref={ref} style={{ width: 500, height: 400, margin: "150px auto" }}>
       <form onSubmit={handleSubmit}>
-        <Input name="username" label="Username" />
+        <Input id="su_username" name="username" label="Username" />
         <br />
         <Input name="email" label="Email" type="email" />
         <br />
-        <Input name="password" label="Password" type="password" />
+        <Input id="su_password" name="password" label="Password" type="password" autoComplete="current-password" />
         <br />
         <button type="button" onClick={() => ref.current?.close()}>
           Cancel

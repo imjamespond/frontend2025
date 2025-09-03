@@ -46,6 +46,31 @@ export const authOptions = {
       checks: ["nonce", "state"], // Use both nonce and state
       issuer: "https://us.battle.net/oauth",
     }),
+    {
+      id: "gitee",
+      name: "Gitee",
+      type: "oauth",
+      clientId: process.env.GITEE_CLIENT_ID!,
+      clientSecret: process.env.GITEE_CLIENT_SECRET,
+      authorization: {
+        url: "https://gitee.com/oauth/authorize",
+        params: {
+          scope: "user_info",
+        },
+      },
+
+      token: "https://gitee.com/oauth/token",
+      userinfo: "https://gitee.com/api/v5/user",
+      profile(profile) {
+        console.log("gitee", profile);
+        return {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email ?? profile.name,
+          image: profile.avatar_url,
+        };
+      },
+    },
     credentialsProvider,
   ],
   // https://next-auth.js.org/configuration/options#jwt

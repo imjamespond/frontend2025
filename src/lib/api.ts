@@ -33,18 +33,19 @@ export function useMut<ExtraArg, Data = unknown>(key: string, fetcher: MutationF
   const { trigger, isMutating, data, error } = useSWRMutation<Data, unknown, string, ExtraArg>(key, fetcher);
   const ref = useRef({ trigger });
   type TriggerT = typeof trigger;
-  const triggerFn = useCallback((...args: Parameters<TriggerT>) => {
+  const triggerFn = useCallback(async (...args: Parameters<TriggerT>) => {
     try {
       const _trigger = ref.current.trigger;
       if (args.length === 0) {
-        return (_trigger as unknown as TriggerWithoutArgs<Data, unknown, string, ExtraArg>)();
+        return await (_trigger as unknown as TriggerWithoutArgs<Data, unknown, string, ExtraArg>)();
       }
       const arg = args[0];
       if (arg) {
-        return (_trigger as unknown as TriggerWithArgs<Data, unknown, string, ExtraArg>)(arg);
+        return await (_trigger as unknown as TriggerWithArgs<Data, unknown, string, ExtraArg>)(arg);
       }
-      return (_trigger as unknown as TriggerWithOptionsArgs<Data, unknown, string, ExtraArg>)(void 0);
+      return await (_trigger as unknown as TriggerWithOptionsArgs<Data, unknown, string, ExtraArg>)(void 0);
     } catch (error) {
+      if (typeof error === "string") alert(error);
       console.error(error);
     }
   }, []);
