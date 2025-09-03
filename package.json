@@ -11,6 +11,8 @@
     "dz": "drizzle-kit"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.1.0",
+    "antd": "^5.27.2",
     "drizzle-orm": "^0.44.4",
     "next": "15.5.0",
     "next-auth": "^4.24.11",

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "antd";
 import { SessionProvider, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,13 +20,14 @@ export function Navigator() {
       <Link className={pathname === "/admin/bar" ? "active" : ""} href={"/admin/bar"}>
         Bar
       </Link>
-      <button
+      <Button
+        type="primary"
         onClick={() => {
           signOut({ callbackUrl: "/login" });
         }}
       >
         Exit
-      </button>
+      </Button>
     </>
   );
 }

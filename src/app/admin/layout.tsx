@@ -1,5 +1,6 @@
 import { SWRConfig } from "swr";
 import { Navigator } from "./helper";
+import { ConfigProvider } from "antd";
 
 export default function RootLayout({
   children,
@@ -7,7 +8,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#ab06d4ff",
+        },
+      }}
+    >
       admin: <Navigator />
       <hr />
       <SWRConfig
@@ -21,6 +28,6 @@ export default function RootLayout({
       >
         {children}
       </SWRConfig>
-    </>
+    </ConfigProvider>
   );
 }
