@@ -185,7 +185,7 @@ const App = () => {
         </div>
         {/* 传输文件 */}
         <div class="flex-1">
-          <Show when={connected() || master}>
+          <Show when={connected() || master || import.meta.env.DEV}>
             <div>
               {mdDlgBtn}
               <input

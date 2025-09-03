@@ -5,13 +5,18 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
   let dialogRef: HTMLDialogElement | null = null;
   let videoRef: HTMLVideoElement | null = null;
   let peerRef: HTMLVideoElement | null = null;
+  // let desktopDlgRef: HTMLDialogElement | null = null;
+  // let desktopVideoRef: HTMLVideoElement | null = null;
 
   let localStream = new MediaStream();
   let videoTrack: MediaStreamTrack | null = null;
   let audioTrack: MediaStreamTrack | null = null;
+  let desktopStream = new MediaStream();
+  let desktopTracks: MediaStreamTrack[] | null = null;
 
   let videoSender: RTCRtpSender | undefined = undefined;
   let audioSender: RTCRtpSender | undefined = undefined;
+  let desktopSenders: (RTCRtpSender | undefined)[] | undefined = undefined;
 
   let videoConstraint: Video | true = true;
 
@@ -19,6 +24,7 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
 
   const [video, setVideo] = createSignal(false);
   const [audio, setAudio] = createSignal(false);
+  const [desktop, setDesktop] = createSignal(false);
 
   const peerStream = (stream: MediaStream) => {
     if (peerRef === null) return;
@@ -86,7 +92,8 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
             videoTrack.stop();
             videoTrack = null;
             console.log("📹 Video track removed");
-            videoRef.pause();
+            // videoRef.pause();
+            videoRef.srcObject = null;
             setVideo(false);
           }
         }}
@@ -116,12 +123,51 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
             audioTrack.stop();
             audioTrack = null;
             console.log("📹 Audio track removed");
-            videoRef.muted = true;
+            // videoRef.muted = true;
+            videoRef.srcObject = null;
             setAudio(false);
           }
         }}
       >
         Audio: {audio() ? "ON" : "OFF"}
+      </button>
+      <button
+        onClick={async () => {
+          if (videoRef === null) return;
+          if (!desktopTracks) {
+            // 获取视频 track
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+              video: { cursor: "always", displaySurface: "monitor" } as DisplayMediaStreamOptions["video"],
+              audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false,
+              } as DisplayMediaStreamOptions["audio"],
+            });
+            desktopTracks = stream.getTracks();
+            desktopTracks.forEach((track) => desktopStream.addTrack(track)); // 添加到本地显示
+            desktopSenders = desktopTracks.map((track) => webrtc.addTrack(track, desktopStream)); // 添加到本地显示
+            console.log("📹 Desktop tracks added");
+            videoRef.srcObject = desktopStream;
+            setDesktop(true);
+          } else {
+            // 移除视频 track
+            if (desktopSenders) {
+              desktopSenders.forEach((sender) => sender && webrtc.removeTrack(sender));
+              desktopSenders = undefined;
+            }
+            desktopTracks.forEach((track) => {
+              desktopStream.removeTrack(track);
+              track.stop();
+            });
+            desktopTracks = null;
+            videoRef.srcObject = null;
+            console.log("📹 Desktop tracks removed");
+            setDesktop(false);
+          }
+        }}
+      >
+        共享桌面: {desktop() ? "ON" : "OFF"}
       </button>
       <button
         onClick={() => {
@@ -161,8 +207,21 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
         </select>
       </p>
       <hr />
-      <video ref={(el) => (peerRef = el)} autoplay playsinline style="width: 128px; height: 96px;" />
+      <video
+        ref={(el) => (peerRef = el)}
+        autoplay
+        playsinline
+        style="width: 128px; height: 96px;"
+        onClick={async () => {
+          await peerRef?.requestFullscreen();
+          // await peerRef?.play().catch(() => {});
+        }}
+      />
       <video ref={(el) => (videoRef = el)} autoplay playsinline muted style="width: 64px; height: 48px;" />
+
+      {/* <dialog ref={(el) => (desktopDlgRef = el)} style="width:100vw; height:100vh;padding:0px;overflow:hidden;">
+        <video ref={(el) => (desktopVideoRef = el)} onClick={() => desktopDlgRef?.close()} />
+      </dialog> */}
     </dialog>
   );
 
