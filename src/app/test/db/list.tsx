@@ -2,11 +2,13 @@
 
 import { testdb } from "@/lib/db/test";
 import { useUserMut } from "@/lib/service/user";
+import useSWR from "swr";
 
 type PromiseOf<T> = T extends Promise<infer U> ? U : never;
-function FC({ data }: { data: PromiseOf<ReturnType<typeof testdb>> }) {
+function FC({ users }: { users: ReturnType<typeof testdb> }) {
+  const { data, isLoading } = useSWR<PromiseOf<ReturnType<typeof testdb>>>("test/users", () => users);
   const [trigger, isMutating] = useUserMut();
-  if (isMutating) {
+  if (isMutating || isLoading) {
     return <i>Loading....</i>;
   }
   return (
