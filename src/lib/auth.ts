@@ -50,7 +50,7 @@ export const authOptions = {
       id: "gitee",
       name: "Gitee",
       type: "oauth",
-      clientId: process.env.GITEE_CLIENT_ID!,
+      clientId: process.env.GITEE_CLIENT_ID,
       clientSecret: process.env.GITEE_CLIENT_SECRET,
       authorization: {
         url: "https://gitee.com/oauth/authorize",
@@ -68,6 +68,29 @@ export const authOptions = {
           name: profile.name,
           email: profile.email ?? profile.name,
           image: profile.avatar_url,
+        };
+      },
+    },
+    // https://help.aliyun.com/zh/ram/user-guide/access-alibaba-cloud-apis-from-a-web-application
+    // https://help.aliyun.com/zh/ram/user-guide/obtain-user-information-through-oidc
+    {
+      id: "aliyun",
+      name: "Aliyun",
+      type: "oauth",
+      clientId: process.env.ALI_CLIENT_ID,
+      clientSecret: process.env.ALI_CLIENT_SECRET,
+      wellKnown: "https://oauth.aliyun.com/.well-known/openid-configuration",
+      authorization: {
+        params: {
+          scope: "openid profile aliuid",
+        },
+      },
+      profile(profile) {
+        console.log("aliyun", profile);
+        return {
+          id: profile.uid,
+          name: profile.login_name,
+          email: profile.login_name ?? profile.name,
         };
       },
     },

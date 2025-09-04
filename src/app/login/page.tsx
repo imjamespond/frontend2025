@@ -57,6 +57,7 @@ function Login() {
       </button>
       <button onClick={() => signIn("battlenet", { callbackUrl: "/" })}>battlenet</button>
       <button onClick={() => signIn("gitee", { callbackUrl: "/" })}>gitee</button>
+      <button onClick={() => signIn("aliyun", { callbackUrl: "/" })}>aliyun</button>
       <hr />
       <pre>{JSON.stringify({ csrf, providers }, null, 1)}</pre>
       {signUpDlg}
