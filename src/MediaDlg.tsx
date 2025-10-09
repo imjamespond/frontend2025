@@ -1,4 +1,4 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { WebRTCDemo } from "./WebRTC";
 
 export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
@@ -21,6 +21,8 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
   let videoConstraint: Video | true = true;
 
   let facingMode: string | undefined = undefined;
+
+  let maxBitrate: number | undefined = undefined;
 
   const [video, setVideo] = createSignal(false);
   const [audio, setAudio] = createSignal(false);
@@ -147,6 +149,19 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
             desktopTracks = stream.getTracks();
             desktopTracks.forEach((track) => desktopStream.addTrack(track)); // 添加到本地显示
             desktopSenders = desktopTracks.map((track) => webrtc.addTrack(track, desktopStream)); // 添加到本地显示
+            desktopSenders.forEach((sender) => {
+              console.log(sender);
+              if (sender === void 0 || sender.track?.kind !== "video" || maxBitrate === undefined) return;
+              // 获取当前参数
+              const parameters = sender.getParameters();
+              if (!parameters.encodings) {
+                parameters.encodings = [{}];
+              }
+              // 设置最大比特率（单位 bps）
+              parameters.encodings[0].maxBitrate = maxBitrate; // 2.5 Mbps
+              parameters.encodings[0].maxFramerate = 30; // 可选帧率
+              sender.setParameters(parameters);
+            });
             console.log("📹 Desktop tracks added");
             videoRef.srcObject = desktopStream;
             setDesktop(true);
@@ -204,6 +219,19 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
           <option value="">摄像头</option>
           <option value="user">前置摄像头</option>
           <option value="environment">后置摄像头</option>
+        </select>
+        <select
+          onChange={(e) => {
+            maxBitrate = parseInt(e.currentTarget.value);
+          }}
+        >
+          <For each={maxBitrateList} fallback={<div>No items</div>}>
+            {([label, item], index) => (
+              <option value={item}>
+                {index()}: {label}
+              </option>
+            )}
+          </For>
         </select>
       </p>
       <hr />
@@ -278,6 +306,14 @@ const videoConstraints: { [key: string]: Video } = {
     height: 600,
   },
 };
+
+const maxBitrateList = [
+  ["10Mbps", 10_000_000],
+  ["2.5Mbps", 2_500_000],
+  ["1Mbps", 1_000_000],
+  ["500kbps", 500_000],
+  ["100kbps", 100_000],
+] as const;
 
 if (import.meta.env.DEV) {
   if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
