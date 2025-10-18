@@ -1,5 +1,5 @@
 import { mqtts, stuns, topic } from "./config";
-import { debugMqtt, MQTTClient } from "./mqtt";
+import { MQTTClient } from "./mqtt";
 
 if (!window.name) {
   window.name = crypto.randomUUID();
@@ -129,7 +129,7 @@ export class WebRTCDemo {
     const configuration: RTCConfiguration = {
       iceServers: [
         {
-          urls: stuns[0], // "stun:stun.l.google.com:19302", // 使用一个更通用的 STUN 服务器
+          urls: stuns, // "stun:stun.l.google.com:19302", // 使用一个更通用的 STUN 服务器
         },
       ],
     };
