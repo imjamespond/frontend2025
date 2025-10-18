@@ -1,3 +1,4 @@
+import { mqtts, stuns, topic } from "./config";
 import { debugMqtt, MQTTClient } from "./mqtt";
 
 if (!window.name) {
@@ -29,7 +30,7 @@ export class WebRTCDemo {
   private pc: RTCPeerConnection | null = null;
   // private peers: { [_: string]: RTCPeerConnection } = {}; TODO 广播id后 根据id分别创建peer connection
   private dataChannel: RTCDataChannel | null = null;
-  private signal: MQTTClient; // 信令 client
+  signal: MQTTClient; // 信令 client
   id = window.name;
   peerId?: string; // peer id
   onMessage: (message: unknown) => void;
@@ -52,8 +53,8 @@ export class WebRTCDemo {
 
     // 1. 初始化 WebSocket 连接
     // const url = "wss://mqtt-dashboard.com:8884/mqtt";
-    const url = debugMqtt ? "" : "wss://test.mosquitto.org:8081";
-    this.signal = new MQTTClient({ url, topic: "test/webrtc/topic" });
+    const url = mqtts[0];
+    this.signal = new MQTTClient({ url, topic, });
     this.onMessage = onMessage;
     this.onConnState = onConnState;
     this.onPeerID = onPeerID;
@@ -128,7 +129,7 @@ export class WebRTCDemo {
     const configuration: RTCConfiguration = {
       iceServers: [
         {
-          urls: "stun:stun.miwifi.com", // "stun:stun.l.google.com:19302", // 使用一个更通用的 STUN 服务器
+          urls: stuns[0], // "stun:stun.l.google.com:19302", // 使用一个更通用的 STUN 服务器
         },
       ],
     };

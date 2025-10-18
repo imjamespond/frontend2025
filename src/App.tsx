@@ -4,6 +4,7 @@ import { Message, State, WebRTCDemo } from "./WebRTC";
 import { createChunks } from "./utils";
 import { createFileWriter, FileWriter } from "./chrome";
 import { useMediaDlg } from "./MediaDlg";
+import { useSignalDlg } from "./SignalDlg";
 
 const master = new URLSearchParams(window.location.search).has("master");
 
@@ -93,6 +94,7 @@ const App = () => {
   const [signalConnected, setCliConnected] = createSignal(false);
 
   const [mdDlg, mdDlgBtn, peerStream] = useMediaDlg(webrtc);
+  const [sgDlg, sgDlgBtn] = useSignalDlg(webrtc);
 
   return (
     <div>
@@ -187,6 +189,7 @@ const App = () => {
         <div class="flex-1">
           <Show when={connected() || master || import.meta.env.DEV}>
             <div>
+              {sgDlgBtn}
               {mdDlgBtn}
               <input
                 id="file"
@@ -235,6 +238,7 @@ const App = () => {
       <p>Message:</p>
       <div class="break font">{messages().join("\n")}</div>
       {mdDlg}
+      {sgDlg}
     </div>
   );
 };
