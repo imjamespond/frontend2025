@@ -32,10 +32,6 @@ server.registerTool(
   }
 );
 
-
-
-
-
 /**
  * registerResource
  */
@@ -48,92 +44,108 @@ server.registerResource(
     title: "Greeting Resource", // Display name for UI
     description: "Dynamic greeting generator",
   },
-  async (uri, { name }) => ({
+  async (uri, { name }) => {
+    console.log("greeting", name, uri.href);
+    return {
+      contents: [
+        {
+          uri: uri.href,
+          text: `Hello, ${name}!`,
+        },
+      ],
+    };
+  }
+);
+
+// Static resource
+server.registerResource(
+  "config",
+  "config://app",
+  {
+    title: "Application Config",
+    description: "Application configuration data",
+    mimeType: "text/plain",
+  },
+  async (uri) => ({
     contents: [
       {
         uri: uri.href,
-        text: `Hello, ${name}!`,
+        text: "App configuration here",
       },
     ],
   })
 );
 
-// Static resource
-server.registerResource(
-    'config',
-    'config://app',
-    {
-        title: 'Application Config',
-        description: 'Application configuration data',
-        mimeType: 'text/plain'
-    },
-    async uri => ({
-        contents: [
-            {
-                uri: uri.href,
-                text: 'App configuration here'
-            }
-        ]
-    })
-);
-
 // Dynamic resource with parameters
 server.registerResource(
-    'user-profile',
-    new ResourceTemplate('users://{userId}/profile', { list: undefined }),
-    {
-        title: 'User Profile',
-        description: 'User profile information'
-    },
-    async (uri, { userId }) => ({
-        contents: [
-            {
-                uri: uri.href,
-                text: `Profile data for user ${userId}`
-            }
-        ]
-    })
+  "user-profile",
+  new ResourceTemplate("users://{userId}/profile", { list: undefined }),
+  {
+    title: "User Profile",
+    description: "User profile information",
+  },
+  async (uri, { userId }) => ({
+    contents: [
+      {
+        uri: uri.href,
+        text: `Profile data for user ${userId}`,
+      },
+    ],
+  })
 );
 
 // Resource with context-aware completion
 server.registerResource(
-    'repository',
-    new ResourceTemplate('github://repos/{owner}/{repo}', {
-        list: undefined,
-        complete: {
-            // Provide intelligent completions based on previously resolved parameters
-            repo: (value, context) => {
-                if (context?.arguments?.['owner'] === 'org1') {
-                    return ['project1', 'project2', 'project3'].filter(r => r.startsWith(value));
-                }
-                return ['default-repo'].filter(r => r.startsWith(value));
-            }
+  "repository",
+  new ResourceTemplate("github://repos/{owner}/{repo}", {
+    list: undefined,
+    complete: {
+      // Provide intelligent completions based on previously resolved parameters
+      repo: (value, context) => {
+        if (context?.arguments?.["owner"] === "org1") {
+          return ["project1", "project2", "project3"].filter((r) => r.startsWith(value));
         }
-    }),
-    {
-        title: 'GitHub Repository',
-        description: 'Repository information'
+        return ["default-repo"].filter((r) => r.startsWith(value));
+      },
     },
-    async (uri, { owner, repo }) => ({
-        contents: [
-            {
-                uri: uri.href,
-                text: `Repository: ${owner}/${repo}`
-            }
-        ]
-    })
+  }),
+  {
+    title: "GitHub Repository",
+    description: "Repository information",
+  },
+  async (uri, { owner, repo }) => ({
+    contents: [
+      {
+        uri: uri.href,
+        text: `Repository: ${owner}/${repo}`,
+      },
+    ],
+  })
+);
+
+server.registerResource(
+  "test-query",
+  new ResourceTemplate("data://{query}", { list: undefined }),
+  {
+    title: "Test Query",
+    description: "Test Query Parameter",
+  },
+  async (uri, { query }) => {
+    console.log("query", query, uri.href);
+    return {
+      contents: [
+        {
+          uri: uri.href,
+          text: `query length: ${query.length}`,
+        },
+      ],
+    };
+  }
 );
 
 /**
  * registerResource
  */
-
-
-
-
-
-
-
 
 // Set up Express and HTTP transport
 const app = express();

@@ -1,0 +1,7 @@
+name: learn-mcp
+version: 0.0.1
+schema: v1
+mcpServers:
+  - name: learn-mcp
+    type: streamable-http
+    url: http://localhost:3000/mcp
