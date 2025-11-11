@@ -1,7 +1,7 @@
 // App.tsx
 import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { Message, State, WebRTCDemo } from "./WebRTC";
-import { createChunks } from "./utils";
+import { createChunks, sendClick, sendKey } from "./utils";
 import { createFileWriter, FileWriter } from "./chrome";
 import { useMediaDlg } from "./MediaDlg";
 import { useSignalDlg } from "./SignalDlg";
@@ -23,7 +23,11 @@ const App = () => {
     async onMessage(data) {
       if (typeof data === "string") {
         const message = JSON.parse(data) as Message;
-        if (message.file) {
+        if (message.click) {
+          sendClick(message.click);
+        } else if (message.key) {
+          sendKey(message.key);
+        } else if (message.file) {
           if (message.file.type === "showSaveFilePicker") {
             setHasFile(message.file);
           } else if (message.file.type === "beginRecieve") {

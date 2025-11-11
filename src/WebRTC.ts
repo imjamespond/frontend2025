@@ -19,6 +19,8 @@ export interface Message {
     | { type: "showSaveFilePicker"; name: string; chunks: number }
     | { type: "beginRecieve" }
     | { type: "chunk"; chunk: number };
+  key?: { key: string; alt: boolean; shift: boolean; ctrl: boolean };
+  click?: { x: number; y: number };
 }
 
 export type State = RTCPeerConnectionState | "signal_connected" | "signal_disconnected" | void;
@@ -54,7 +56,7 @@ export class WebRTCDemo {
     // 1. 初始化 WebSocket 连接
     // const url = "wss://mqtt-dashboard.com:8884/mqtt";
     const url = mqtts[0];
-    this.signal = new MQTTClient({ url, topic, });
+    this.signal = new MQTTClient({ url, topic });
     this.onMessage = onMessage;
     this.onConnState = onConnState;
     this.onPeerID = onPeerID;
@@ -350,7 +352,7 @@ export class WebRTCDemo {
     }
   }
 
-  get peerConnection () {
+  get peerConnection() {
     return this.pc;
   }
 }

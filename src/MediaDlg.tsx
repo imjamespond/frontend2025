@@ -1,5 +1,5 @@
 import { createSignal, For, Show } from "solid-js";
-import { WebRTCDemo } from "./WebRTC";
+import { Message, WebRTCDemo } from "./WebRTC";
 
 export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
   let dialogRef: HTMLDialogElement | null = null;
@@ -240,12 +240,31 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
         autoplay
         playsinline
         style="width: 128px; height: 96px;"
-        onClick={async () => {
-          await peerRef?.requestFullscreen();
+        onClick={async (e) => {
+          e.preventDefault();
+          const currentFullscreenElement = document.fullscreenElement;
+          if (!currentFullscreenElement || currentFullscreenElement !== peerRef) {
+            try {
+              await peerRef?.requestFullscreen();
+            } catch (err) {
+              console.warn("Fullscreen request failed:", err);
+              return; // 如果失败，不继续坐标计算
+            }
+          }
           // await peerRef?.play().catch(() => {});
+          const rect = e.currentTarget.getBoundingClientRect(); // 绑定事件的元素
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          console.log(`X: ${x.toFixed(2)}, Y: ${y.toFixed()}`);
+          webrtc.sendMessage({ click: { x, y } });
         }}
       />
       <video ref={(el) => (videoRef = el)} autoplay playsinline muted style="width: 64px; height: 48px;" />
+      <KeyInput
+        sendKey={(val) => {
+          webrtc.sendMessage({ key: val });
+        }}
+      />
 
       {/* <dialog ref={(el) => (desktopDlgRef = el)} style="width:100vw; height:100vh;padding:0px;overflow:hidden;">
         <video ref={(el) => (desktopVideoRef = el)} onClick={() => desktopDlgRef?.close()} />
@@ -332,4 +351,21 @@ if (import.meta.env.DEV) {
         console.log(err.name + ": " + err.message);
       });
   }
+}
+
+function KeyInput({ sendKey }: { sendKey: (val: Message["key"]) => void }) {
+  return (
+    <>
+      <hr />
+      keyboard:
+      <input
+        type="text"
+        onKeyDown={(e) => {
+          e.preventDefault(); // 👈 阻止浏览器默认输入行为
+          e.currentTarget.value = e.key;
+          sendKey({ key: e.key, alt: false, ctrl: false, shift: false });
+        }}
+      />
+    </>
+  );
 }
