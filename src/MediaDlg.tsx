@@ -1,4 +1,4 @@
-import { createSignal, For, Show } from "solid-js";
+import { createMemo, createSignal, For, Show } from "solid-js";
 import { Message, WebRTCDemo } from "./WebRTC";
 
 export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
@@ -27,6 +27,8 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
   const [video, setVideo] = createSignal(false);
   const [audio, setAudio] = createSignal(false);
   const [desktop, setDesktop] = createSignal(false);
+
+  const [fullscStyle, fullscBtn] = useFullScreen();
 
   const peerStream = (stream: MediaStream) => {
     if (peerRef === null) return;
@@ -191,6 +193,7 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
       >
         Mute
       </button>
+      {fullscBtn}
       <button
         // disabled={video() || audio()}
         onClick={() => dialogRef?.close()}
@@ -239,18 +242,18 @@ export function useMediaDlg(webrtc: WebRTCDemo /* getPeerID: () => string */) {
         ref={(el) => (peerRef = el)}
         autoplay
         playsinline
-        style="width: 128px; height: 96px;"
+        style={fullscStyle()}
         onClick={async (e) => {
           e.preventDefault();
-          const currentFullscreenElement = document.fullscreenElement;
-          if (!currentFullscreenElement || currentFullscreenElement !== peerRef) {
-            try {
-              await peerRef?.requestFullscreen();
-            } catch (err) {
-              console.warn("Fullscreen request failed:", err);
-              return; // 如果失败，不继续坐标计算
-            }
-          }
+          // const currentFullscreenElement = document.fullscreenElement;
+          // if (!currentFullscreenElement || currentFullscreenElement !== peerRef) {
+          //   try {
+          //     await peerRef?.requestFullscreen();
+          //   } catch (err) {
+          //     console.warn("Fullscreen request failed:", err);
+          //     return; // 如果失败，不继续坐标计算
+          //   }
+          // }
           // await peerRef?.play().catch(() => {});
           const rect = e.currentTarget.getBoundingClientRect(); // 绑定事件的元素
           const x = (e.clientX - rect.left) / rect.width;
@@ -359,6 +362,7 @@ function KeyInput({ sendKey }: { sendKey: (val: Message["key"]) => void }) {
       <hr />
       keyboard:
       <input
+        id="keyinput"
         type="text"
         onKeyDown={(e) => {
           e.preventDefault(); // 👈 阻止浏览器默认输入行为
@@ -368,4 +372,24 @@ function KeyInput({ sendKey }: { sendKey: (val: Message["key"]) => void }) {
       />
     </>
   );
+}
+
+function useFullScreen() {
+  const [full, setFull] = createSignal(false);
+  const style = createMemo(() => {
+    return full()
+      ? "object-fit: fill; position: fixed; inset: 20px; width: calc(100% - 40px); height: calc(100% - 40px);"
+      : "width: 128px; height: 96px;";
+  });
+  const btn = (
+    <button
+      style={full() ? `position: fixed;top: 0px;left: 0px;z-index: 99;margin-left: 0px;` : void 0}
+      onClick={() => {
+        setFull((prev) => !prev);
+      }}
+    >
+      {full() ? "退出" : "全屏"}
+    </button>
+  );
+  return [style, btn] as const;
 }
