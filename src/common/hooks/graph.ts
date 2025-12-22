@@ -4,9 +4,11 @@ import { useEffect, useRef } from "react";
 
 type Params = ConstructorParameters<typeof X6>;
 
+export type Options = Params[0];
+
 export abstract class BaseGraph {
   private x6: X6;
-  constructor(options: Params[0]) {
+  constructor(options: Options) {
     this.x6 = new X6({
       grid: { size: 10, visible: true, type: "dot" },
       panning: true,
