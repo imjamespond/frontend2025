@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
+    // 允许引入
+    "composite": true
+  },
+  "include": ["./webpack.*config.ts", "./types/webpack.d.ts"]
+}

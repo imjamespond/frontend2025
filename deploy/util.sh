@@ -12,7 +12,7 @@ echo "${Host}\n${Dir}\n${Target}"
 Now=$(date +"%F-%H-%M");
 TmpDir=$Dir-$Now
 
-scp -r ./dist ${Host}:/tmp/$TmpDir
+scp -r ./dist/$Dir ${Host}:/tmp/$TmpDir
 ssh -tt $Host << EOF
   cd ${Target};
   if [ $BAK == "bak" ]; then

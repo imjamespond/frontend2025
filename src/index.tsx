@@ -14,7 +14,8 @@ export async function mount(props: { container?: HTMLElement | void } & AppType)
   console.log("[react] props from main framework", props);
 
   const { container, ...restProps } = props;
-  const rootEl = container || document.getElementById("root");
+  // ！！！ 不能直接用container ！！！
+  const rootEl = container ? container.querySelector("#app") : document.getElementById("app");
   useAppStore.getState().mergeValue(restProps);
 
   if (rootEl) {

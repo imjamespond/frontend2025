@@ -19,15 +19,13 @@ const FC = () => {
   const height = useAppHeight();
   return (
     <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
-      <App style={{ height }}>
-        <QueryClientProvider client={queryClient}>
-          <SWRConfig value={swrConfig}>
-            <ConfigProvider locale={zhCN} prefixCls="km" theme={theme}>
-              <View />
-            </ConfigProvider>
-          </SWRConfig>
-        </QueryClientProvider>
-      </App>
+      <ConfigProvider locale={zhCN} prefixCls="km" theme={theme}>
+        <App style={{ height }}>
+          <QueryClientProvider client={queryClient}>
+            <SWRConfig value={swrConfig}><View /></SWRConfig>
+          </QueryClientProvider>
+        </App>
+      </ConfigProvider>
     </StyleProvider>
   );
 };

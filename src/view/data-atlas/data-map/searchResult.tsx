@@ -1,7 +1,6 @@
 import { KmAvatar, KmEmpty, KmList } from "@components";
 import { Typography } from "antd";
 import type { SearchReturnType } from "./searchHelper";
-import type { ResourceType } from "../helper";
 import { OpenAssetBrowse, OpenAssetResBrowse } from "@service";
 import { getTextWithHighlights } from "./helper";
 
@@ -29,7 +28,7 @@ export function SearchResult({
           style={{ cursor: "pointer" }}
           key={i}
           onClick={() => {
-            MatchedDirId.next(item.dirId);
+            // MatchedDirId.next(item.dirId);
             extra.setFocus(false);
           }}
         >
@@ -64,10 +63,10 @@ export function SearchResult({
             dangerouslySetInnerHTML={{ __html: item.path }}
             onClick={() => {
               if (isDir) {
-                ActionSubject.next({
-                  type: ActionType.SearchResult,
-                  payload: { dirId: item.id, resourceType: item.additional?.sourceType as ResourceType },
-                });
+                // ActionSubject.next({
+                //   type: ActionType.SearchResult,
+                //   payload: { dirId: item.id, resourceType: item.additional?.sourceType as ResourceType },
+                // });
               }
               extra.setFocus(false);
             }}
