@@ -1,0 +1,44 @@
+
+@mixin margin-padding($level, $val) {
+  $locations: (
+    "t": "-top",
+    "b": "-bottom",
+    "l": "-left",
+    "r": "-right",
+    "": "",
+  );
+
+  // prefix
+  @each $name, $value in $locations {
+    .km-m#{$name}#{$level} {
+      margin#{$value}: $val !important;
+    }
+    .km-p#{$name}#{$level} {
+      padding#{$value}: $val !important;
+    }
+  }
+  .km-mx#{$level} {
+    margin-left: $val !important;
+    margin-right: $val !important;
+  }
+  .km-px#{$level} {
+    padding-left: $val !important;
+    padding-right: $val !important;
+  }
+  .km-my#{$level} {
+    margin-top: $val !important;
+    margin-bottom: $val !important;
+  }
+  .km-py#{$level} {
+    padding-top: $val !important;
+    padding-bottom: $val !important;
+  }
+}
+
+
+
+@mixin font-size($level, $val) {
+  .font-#{$level} {
+    font-size: $val !important;
+  }
+}

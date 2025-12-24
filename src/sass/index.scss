@@ -1,0 +1,122 @@
+// The underscore lets Sass know that the file is only a partial file and that it should not be generated into a CSS file
+@use "./mixins" as *;
+
+:root {
+  @include margin-padding("7", 50px);
+  @include margin-padding("6", 30px);
+  @include margin-padding("5", 20px);
+  @include margin-padding("4", 15px);
+  @include margin-padding("3", 10px);
+  @include margin-padding("2", 5px);
+  @include margin-padding("1", 3px);
+  @include margin-padding("0", 0);
+
+  @include font-size("1", 10px);
+  @include font-size("2", 12px);
+  @include font-size("3", 15px);
+  @include font-size("4", 16px);
+  @include font-size("5", 18px);
+  @include font-size("6", 24px);
+  @include font-size("7", 36px);
+
+  .bg-light {
+    background-color: #eee;
+  }
+  .bg-red {
+    background-color: red;
+  }
+
+  .text-center {
+    text-align: center !important;
+  }
+  .font-bold {
+    font-weight: 600;
+  }
+  .font-bolder {
+    font-weight: bolder;
+  }
+
+  .inline-block {
+    display: inline-block;
+  }
+
+  .overflow-hidden {
+    overflow: hidden;
+  }
+
+  .border-box {
+    box-sizing: border-box;
+  }
+
+  .hover-underline {
+    // background-image: linear-gradient(to right, red, green);
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    background-size: 0px 2px;
+    transition: background-size 0.3s;
+    &:hover {
+      background-position: left bottom;
+      background-size: 100% 2px;
+    }
+  }
+
+  .km-relative {
+    position: relative;
+  }
+  .km-absolute {
+    position: absolute;
+  }
+  .km-fixed {
+    position: fixed;
+    z-index: 9999;
+  }
+
+  .km-ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .km-rows-ellipsis {
+    display: -webkit-box;
+    /* autoprefixer: ignore next */
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+  }
+
+  .km-pointer {
+    cursor: pointer;
+  }
+
+  .km-scrollbar {
+    &::-webkit-scrollbar {
+      width: 4px;
+      height: 6px;
+      cursor: pointer;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: transparent;
+      cursor: pointer;
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(93, 94, 95, 0.1);
+      }
+    }
+  }
+
+  .km-hover {
+    &:hover {
+      .km-hover-item {
+        visibility: visible;
+      }
+    }
+    .km-hover-item {
+      visibility: hidden;
+    }
+  }
+
+}
