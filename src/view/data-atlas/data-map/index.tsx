@@ -1,11 +1,14 @@
-import React from "react";
-import TheMap from "./map";
+import Diagram from "./diagram";
+import Search from "./search";
+import { useStyles } from "./styles";
 
 function FC() {
+  const { styles } = useStyles();
   return (
-    <React.Fragment>
-      <TheMap />
-    </React.Fragment>
+    <div className={styles.root}>
+      <Search />
+      <Diagram />
+    </div>
   );
 }
 

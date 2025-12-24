@@ -1,9 +1,10 @@
-import React from 'react';
+import { getLazyComponent } from "@components/lazyComponent";
+import React, { useMemo } from "react";
+const DataAtlas = getLazyComponent(() => import("./data-atlas"));
 
 function FC() {
-  return (
-    <React.Fragment>fc</React.Fragment>
-  )
+  const view = useMemo(() => <DataAtlas />, []);
+  return <React.Fragment>{view}</React.Fragment>;
 }
 
-export default FC
+export default FC;

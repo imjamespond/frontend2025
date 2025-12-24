@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Popover, Radio, Space, Typography, type RadioGroupProps } from "antd";
 import {
   CompressOutlined,
@@ -30,7 +30,7 @@ interface Props {
   extra?: React.ReactNode;
 }
 
-const CanvasHandler: React.FC<Props> = (props) => {
+const FC: React.FC<Props> = (props) => {
   const {
     layoutTypeOpt,
     extra,
@@ -46,7 +46,8 @@ const CanvasHandler: React.FC<Props> = (props) => {
   } = props;
 
   return (
-    <Style>
+    <Fragment>
+      <Style />
       <ul className={"__operations"}>
         <Popover content="放大" placement="left">
           <li onClick={onZoomIn} className={"item"}>
@@ -139,11 +140,11 @@ const CanvasHandler: React.FC<Props> = (props) => {
           })()}
         {extra}
       </ul>
-    </Style>
+    </Fragment>
   );
 };
 
-export default CanvasHandler;
+export default FC;
 
 const Style = createGlobalStyle({
   ".__operations": {

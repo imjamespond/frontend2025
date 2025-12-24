@@ -1,3 +1,11 @@
+```bash
+# https://zh-hans.eslint.org/docs/latest/use/getting-started
+npm init @eslint/config@latest
+
+```
+
+
+
 # Rsbuild project
 
 ## Setup

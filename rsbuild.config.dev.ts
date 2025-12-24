@@ -5,7 +5,7 @@ const proxy = "http://192.168.0.179:8089/";
 
 export default mergeRsbuildConfig(config, {
   html: {
-    template: "./public/dev.html",
+    template: "./dev/index.html",
   },
 
   dev: {
@@ -13,10 +13,26 @@ export default mergeRsbuildConfig(config, {
   },
 
   server: {
+    port: 9000,
+    base: "/data-atlas",
+    publicDir: [
+      {
+        name: "dev",
+      },
+    ],
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
     proxy: {
       "/api": {
         target: proxy,
+        changeOrigin: true,
+        secure: false,
       },
     },
+  },
+
+  output: {
+    polyfill: "off",
   },
 });

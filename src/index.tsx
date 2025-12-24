@@ -1,3 +1,4 @@
+import "./publicPath";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
@@ -13,7 +14,8 @@ export async function mount(props: { container?: HTMLElement | void } & AppType)
   console.log("[react] props from main framework", props);
 
   const { container, ...restProps } = props;
-  const rootEl = container || document.getElementById("root");
+  // ！！！ 不能直接用container ！！！
+  const rootEl = container ? container.querySelector("#root") : document.getElementById("root");
   useAppStore.getState().mergeValue(restProps);
 
   if (rootEl) {

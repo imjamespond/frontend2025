@@ -1,12 +1,14 @@
-import React from 'react';
-import DataMap from './data-map';
+import React from "react";
+import DataMap from "./data-map";
+import { useDataMap } from "./service";
 
 function FC() {
+  useDataMap();
   return (
     <React.Fragment>
-      <DataMap/>
+      <DataMap />
     </React.Fragment>
-  )
+  );
 }
 
-export default FC
+export default FC;
