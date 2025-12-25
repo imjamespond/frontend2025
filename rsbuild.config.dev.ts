@@ -1,7 +1,9 @@
 import { mergeRsbuildConfig } from "@rsbuild/core";
 import config from "./rsbuild.config";
 
-const proxy = "http://192.168.0.179:8089/";
+// const proxy = "http://192.168.0.179:8089/";
+const proxy = "http://192.168.0.36:8080/";
+
 
 export default mergeRsbuildConfig(config, {
   html: {

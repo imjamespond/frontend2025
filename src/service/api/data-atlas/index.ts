@@ -28,16 +28,15 @@ export interface Service {
   };
 }
 
-// const showSample = false;
+const showSample = false && process.env.devMode;
 
 export const service: Service = {
   dataassetmanager: {
     queryHomePageMap({ args }) {
-      // if (showSample) return Promise.resolve(sampleData.queryHomePageMap) as Any
       return request("get", `/api/dataassetmanager/countApi/queryHomePageMap`, args);
     },
     getTableModelInfoByDirIdAndBeginIndex({ args }) {
-      // if (showSample || process.env.devMode) return sleep(2000).then(()=> Promise.resolve(sampleData.getTableModelInfoByDirIdAndBeginIndex) as Any)
+      if (showSample) return request("get", "/data-atlas/samples/queryHomePageMap.json");
       return request("get", `/api/dataassetmanager/countApi/getTableModelInfoByDirIdAndBeginIndex`, {
         params: { ...args.params, beginIndex: args.params!.beginIndex + 1, topNum: args.params!.topNum - 1 },
       });
@@ -51,7 +50,7 @@ export const service: Service = {
       return request("get", `/api/dataassetmanager/countApi/queryCrumbData`, args);
     },
     listSupportTemplates() {
-      // if (showSample) return Promise.resolve(listSupportTemplates) as any
+      if (showSample) return request("get", "/data-atlas/samples/listSupportTemplates.json");
       return request("get", `/api/dataassetmanager/elementTemplateApi/listSupportTemplates`);
     },
   },

@@ -1,59 +1,74 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Col, Row, Select, type DropdownProps } from "antd";
 import { KmButton, KmDropdown, KmInput, KmSpin } from "@components";
 import { useSetTemplateType, useTemplateType } from "../context";
-import { useSearch, useTemplates } from "./service";
+import { useFind as useFind, useTemplates } from "./service";
 import { CloseOutlined } from "@ant-design/icons";
 import { useSearchTabsStyles } from "./styles";
-import { GraphType, } from "./helper";
-import { useDebounceFn } from "ahooks";
+import { GraphType } from "./helper";
+import { useDebounceEffect } from "ahooks";
 import { useDataMap } from "../service";
-import { searchAll, type SearchReturnType } from "./searchHelper";
+import { searchData } from "./searchHelper";
+import SearchResult from "./SearchResult";
+import { useSetSearchResult, useSetFindResult, useSetSearchText, useSetOpenHandle } from "./contex";
+import { kmDebug } from "@common/misc";
 
 function FC() {
   const { styles } = useSearchTabsStyles();
 
   const { data } = useDataMap();
-  const [, searching, { reset: resetResult }] = useSearch();
+  const [, finding, { data: findResult, reset: resetFind }] = useFind();
   const { data: listSupportTemplates } = useTemplates();
+
   const templateType = useTemplateType();
   const setTemplateType = useSetTemplateType();
 
   const [type] = useState<GraphType>(GraphType.Summary);
+  // Dropdown tab
   const [activeKey] = useState<"1" | "2" | "3" | "4">("2");
-  const [focus, setFocus] = useState(false);
-  const [value, setValue] = useState<string>();
-  const [, setSearchText] = useState<string>();
-  const [, setMapResult] = useState<SearchReturnType>();
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<string>("");
+  const setSearchText = useSetSearchText();
+  const setSearchResult = useSetSearchResult();
+  const setFindResult = useSetFindResult();
+
+  useSetOpenHandle(setOpen);
 
   useEffect(() => {
     setValue(process.env.devMode ? "市" : "");
-    setFocus(false);
+    setOpen(false);
   }, [type]);
 
+  useEffect(() => {
+    setFindResult(findResult);
+  }, [findResult]);
+
   // 搜索
-  const onSearch = useDebounceFn((searchText: string, activeKey: string) => {
+  const onSearch = useCallback((searchText: string, activeKey: string) => {
+    kmDebug("search", searchText, activeKey);
+    const { data } = stateRef.current;
     setSearchText(searchText);
-    setMapResult(undefined);
-    resetResult();
+    setSearchResult(undefined);
+    resetFind();
     if (data && searchText) {
       // 搜索地图
       if (activeKey === "1" || activeKey === "2") {
-        setMapResult(searchAll(searchText, data));
+        setSearchResult(searchData(searchText, data));
       }
       // searchFn({ keyword: searchText, indexibleTypeNames: [getSearchType(activeKey)] })
     }
-  }).run;
+  }, []);
+
+  useDebounceEffect(() => {
+    onSearch(value, activeKey);
+  }, [value, activeKey]);
 
   // 搜索框变动
-  const onChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    (e) => {
-      resetResult();
-      setMapResult(undefined);
-      setValue(e.target.value);
-    },
-    [activeKey]
-  );
+  const onChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((e) => {
+    stateRef.current.resetSearch();
+    setSearchResult(undefined);
+    setValue(e.target.value);
+  }, []);
 
   // 搜索下拉框
   const dropdownRender = useMemo<DropdownProps["popupRender"]>(
@@ -63,37 +78,41 @@ function FC() {
           onMouseDown={(e) => e.preventDefault()} //防止丢失焦点, mousedown -> focusout
         >
           <div className="__close">
-            <KmButton icon={<CloseOutlined />} type="link" onClick={() => setFocus(false)} />
+            <KmButton icon={<CloseOutlined />} type="link" onClick={() => setOpen(false)} />
           </div>
           <div>
-            {/* <SearchResult
-              searchText={searchText}
-              searchResult={result}
-              activeKey={activeKey}
-              mapResult={mapResult}
-              extra={{
-                setFocus,
-              }}
-            /> */}
+            <SearchResult activeKey={activeKey} />
+            {/* {JSON.stringify({ activeKey })} */}
           </div>
         </div>
       ),
-    []
+    [activeKey]
   );
+
+  const onSelectTpl = (val: string) => {
+    setTemplateType(val);
+    onSearch(val, activeKey);
+  };
+
+  useEffect(() => {
+    if (listSupportTemplates && listSupportTemplates.length > 0) {
+      onSelectTpl(listSupportTemplates[0].type);
+    }
+  }, [listSupportTemplates]);
+
+  const stateRef = useRef({ resetSearch: resetFind, data });
+  stateRef.current.data = data;
 
   return (
     <React.Fragment>
-      <KmSpin spinning={searching}>
+      <KmSpin spinning={finding}>
         <Row className="__search">
           <Col xs={24} md={{ span: 6 }} lg={{ span: 8 }}>
             <Select
               style={{ width: 150, marginLeft: 10 }}
               placeholder="模板选择"
               value={templateType}
-              onChange={(val) => {
-                setTemplateType(val);
-                onSearch(val, activeKey);
-              }}
+              onChange={onSelectTpl}
             >
               {listSupportTemplates?.map((item, i) => {
                 return (
@@ -109,7 +128,7 @@ function FC() {
               overlayClassName={styles.root}
               popupRender={dropdownRender}
               trigger={["click"]}
-              open={focus}
+              open={open}
               destroyOnHidden
             >
               <KmInput.Search
@@ -121,16 +140,16 @@ function FC() {
                 onSearch={(searchText) => onSearch(searchText, activeKey)}
                 onChange={onChange}
                 onClick={() => {
-                  setFocus(true);
+                  setOpen(true);
                 }}
                 onFocus={() => {
-                  setFocus(true);
+                  setOpen(true);
                 }}
                 onBlur={() => {
                   if (process.env.devMode) {
                     return;
                   }
-                  setFocus(false);
+                  setOpen(false);
                 }}
               />
             </KmDropdown>

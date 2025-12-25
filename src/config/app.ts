@@ -28,5 +28,6 @@ export const useAppHeight = () => useAppStore((state) => state)._v?.height;
 
 export function useDomainId() {
   const domainId = useAppStore((state) => state._v)?.env?.domainId;
+  if (process.env.devMode) return 0;
   return domainId === undefined ? undefined : parseInt(domainId);
 }

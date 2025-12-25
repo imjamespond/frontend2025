@@ -2,7 +2,7 @@ import { labels, type ResourceType } from "../helper";
 
 type MatchedItem = DataAtlas.Dir & { matched: boolean; catalog: string; rootDirName?: string };
 
-export function onSearch(
+export function searchCatalog(
   val: string,
   list: DataAtlas.HomePageMapItem["list"] | undefined,
   catalog: string,
@@ -18,14 +18,14 @@ export function onSearch(
   return undefined;
 }
 
-export type SearchReturnType = ReturnType<typeof onSearch>;
+export type SearchReturnType = ReturnType<typeof searchCatalog>;
 
-export function searchAll(val: string, data: DataAtlas.HomePageMap) {
+export function searchData(val: string, data: DataAtlas.HomePageMap) {
   const matched: MatchedItem[] = [];
   Object.entries(data).forEach(([k, v]) => {
     const dirs: DataAtlas.HomePageMapItem[] = v;
     for (const dir of dirs) {
-      const result = onSearch(val, dir.list, dir.dirName, labels[k as ResourceType]);
+      const result = searchCatalog(val, dir.list, dir.dirName, labels[k as ResourceType]);
       if (!!result && result.length > 0) {
         matched.push(...result.filter((item) => item.matched));
         // console.debug(dirs, _)
