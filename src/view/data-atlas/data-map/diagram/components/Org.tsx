@@ -3,10 +3,11 @@ import { Node } from "@antv/x6";
 import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
 
 import { Subject } from "rxjs";
-import type { OrgStyle } from "../graph/fixedNodes";
 import type { ResourceType } from "@/view/data-atlas/helper";
 import { KmFlex } from "@components";
-import { useOrgStyles } from "./orgStyles";
+import classnames from "classnames"
+import Tooltip from "@components/Tooltip";
+import type { OrgStyle } from "../graph/types";
 
 export const SearchSubject = new Subject<string>();
 export const MatchedDirId = new Subject<string>();
@@ -21,6 +22,9 @@ interface State {
   matchedDirId?: string /* rect: DOMRect | undefined */;
 }
 
+/**
+ * 组织机构
+ */
 class OrgComponent<NodeData extends NodeData0 = NodeData0> extends React.PureComponent<Props, State> {
   $search;
   $matchedDirId;
@@ -112,7 +116,7 @@ class OrgComponent<NodeData extends NodeData0 = NodeData0> extends React.PureCom
       node?.resize(style.size.boxWidth, style.size.boxHeight + 20);
     }
 
-    DataMapSubject.next({ type: DataMapActType.Layout, payload: { keepCurPos: true } });
+    // DataMapSubject.next({ type: DataMapActType.Layout, payload: { keepCurPos: true } });
   }
 
   render() {
@@ -209,10 +213,10 @@ class OrgComponent<NodeData extends NodeData0 = NodeData0> extends React.PureCom
             <span
               style={{ cursor: "pointer" }}
               onClick={() => {
-                ActionSubject.next({
-                  type: ActionType.ToGraph,
-                  payload: { label: style.label, dir: dir as unknown as DataAtlas.Dir, resourceType },
-                });
+                // ActionSubject.next({
+                //   type: ActionType.ToGraph,
+                //   payload: { label: style.label, dir: dir as unknown as DataAtlas.Dir, resourceType },
+                // });
               }}
             >
               {dir.dirName}
@@ -245,7 +249,7 @@ function Item({
     <Col cols={cols} className={classnames({ matched: _matched })}>
       <div
         onClick={() => {
-          ActionSubject.next({ type: ActionType.ToGraph, payload: { label: style.label, dir: item, resourceType } });
+          // ActionSubject.next({ type: ActionType.ToGraph, payload: { label: style.label, dir: item, resourceType } });
         }}
       >
         <Tooltip className="org-name" tip={item.dirName} />
@@ -258,8 +262,8 @@ function Item({
 // const Organization = withOrgStyles(OrgComponent)
 
 function Organization<NodeData extends NodeData0 = NodeData0>({ node }: { node: Node }) {
-  const { style } = node.getData<NodeData>();
-  useOrgStyles({ theme: { colorPrimary: style.color } }); // FIXME 每个node生成一个样式？
+  // const { style } = node.getData<NodeData>();
+  // useOrgStyles({ theme: { colorPrimary: style.color } }); // FIXME 每个node生成一个样式？
 
   return (
     <div className="__container __data_map">

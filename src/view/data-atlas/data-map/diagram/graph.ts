@@ -1,7 +1,18 @@
-import type { NodeMetadata, EdgeMetadata } from "@antv/x6";
+import { type NodeMetadata, type EdgeMetadata, Graph as X6 } from "@antv/x6";
 import { BaseGraph, createUseGraph } from "@common/hooks/graph";
+import { register } from "@antv/x6-react-shape";
+import Organization from "./components/org";
+import { createEdge, createNode } from "./graph/utils";
 
-class Graph extends BaseGraph {
+register({
+  shape: "organization",
+  effect: ["data"],
+  component: Organization,
+});
+
+export class Graph extends BaseGraph {
+  createNode = createNode.bind(this);
+  createEdge = createEdge.bind(this);
   layout(_model?: void | { nodes?: NodeMetadata[]; edges?: EdgeMetadata[] } | undefined): void {
     throw new Error("Method not implemented.");
   }

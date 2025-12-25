@@ -1,31 +1,10 @@
-import { Graph, type EdgeMetadata, type NodeMetadata } from "@antv/x6";
+import { Graph } from "@antv/x6";
 import { colorPrimary, colorSecodary } from "@config/style";
 import { labels } from "@/view/data-atlas/helper";
+import type { OrgStyle } from "./types";
 
 type NodeType = "lt" | "lb" | "rt" | "rb";
 
-export interface OrgStyle {
-  label: string;
-  class: string;
-  color: string;
-  size: {
-    width: number;
-    height: number;
-    boxWidth: number;
-    boxHeight: number;
-    boxMaxHeight: number;
-  };
-  marginX: number;
-  marginY: number; // 布局
-  cols: number; // 列数
-  minRows: number;
-  midRows?: number;
-  maxRows: number; //
-  rows?: number; // 行数
-  // body: any, title: any
-  nodeMeta?: NodeMetadata;
-  edgeMeta?: EdgeMetadata;
-}
 
 export const config = {
   x: 600,

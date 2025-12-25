@@ -1,8 +1,24 @@
+import { useEffect } from "react";
 import { useGraph } from "./graph";
 import Operations from "@components/Operations";
+import { useDataMap } from "@/view/data-atlas/service";
 
 function FC() {
   const [containerRef, wrapperRef, graphRef] = useGraph();
+  const { data } = useDataMap();
+
+  useEffect(() => {
+    if (data === undefined) {
+      return;
+    }
+
+    setTimeout(() => {
+      graphRef.current?.dispose(); 
+      // 布局
+      // DataMapSubject.next({ type: DataMapActType.Layout, payload: undefined });
+    });
+
+  }, [data]);
 
   return (
     <div ref={wrapperRef} style={{ width: "100%", position: "relative", flex: "1" }}>
