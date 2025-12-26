@@ -1,10 +1,10 @@
 import type { Cell, NodeMetadata } from "@antv/x6";
-import type { Graph } from "./index";
+import type { Graph } from "./index"; 
 import type { OrgStyle, ResourceType } from "./types";
 
 type NodeData = { dir: DataAtlas.HomePageMapItem; style: OrgStyle; resourceType: ResourceType };
 
-export function createOrgNode( style: OrgStyle, data: NodeData): NodeMetadata {
+export function createOrgNode(style: OrgStyle, data: NodeData): NodeMetadata {
   // const title = getTitleStyle(style, data.category)
   const node = {
     shape: "organization",

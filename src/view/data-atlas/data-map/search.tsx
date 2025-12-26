@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Col, Row, Select, type DropdownProps } from "antd";
 import { KmButton, KmDropdown, KmInput, KmSpin } from "@components";
 import { useSetTemplateType, useTemplateType } from "../context";
-import { useFind as useFind, useTemplates } from "./service";
+import { useFind, useTemplates } from "./service";
 import { CloseOutlined } from "@ant-design/icons";
 import { useSearchTabsStyles } from "./styles";
 import { GraphType } from "./helper";
@@ -40,13 +40,13 @@ function FC() {
   }, [type]);
 
   useEffect(() => {
-    setFindResult(findResult);
+    stateRef.current.setFindResult(findResult);
   }, [findResult]);
 
   // 搜索
   const onSearch = useCallback((searchText: string, activeKey: string) => {
     kmDebug("search", searchText, activeKey);
-    const { data } = stateRef.current;
+    const { data, setSearchText, resetFind, setSearchResult } = stateRef.current;
     setSearchText(searchText);
     setSearchResult(undefined);
     resetFind();
@@ -65,8 +65,8 @@ function FC() {
 
   // 搜索框变动
   const onChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((e) => {
-    stateRef.current.resetSearch();
-    setSearchResult(undefined);
+    stateRef.current.resetFind();
+    stateRef.current.setSearchResult(undefined);
     setValue(e.target.value);
   }, []);
 
@@ -91,16 +91,15 @@ function FC() {
 
   const onSelectTpl = (val: string) => {
     setTemplateType(val);
-    onSearch(val, activeKey);
   };
 
   useEffect(() => {
     if (listSupportTemplates && listSupportTemplates.length > 0) {
-      onSelectTpl(listSupportTemplates[0].type);
+      stateRef.current.onSelectTpl(listSupportTemplates[0].type);
     }
   }, [listSupportTemplates]);
 
-  const stateRef = useRef({ resetSearch: resetFind, data });
+  const stateRef = useRef({ setSearchText, setSearchResult, setFindResult, resetFind, onSelectTpl, data });
   stateRef.current.data = data;
 
   return (

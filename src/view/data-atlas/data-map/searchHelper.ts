@@ -1,4 +1,4 @@
-import { labels, type ResourceType } from "../helper";
+import {  labels, type ResourceType } from "../helper";
 
 type MatchedItem = DataAtlas.Dir & { matched: boolean; catalog: string; rootDirName?: string };
 

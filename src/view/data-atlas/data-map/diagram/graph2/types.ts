@@ -1,6 +1,7 @@
+import type { EdgeMetadata, NodeMetadata } from "@antv/x6";
+
 export interface OrgStyle {
   label: string;
-  type: 0 | 1; // 1为内部或外部
   class: string;
   color: string;
   size: {
@@ -10,20 +11,23 @@ export interface OrgStyle {
     boxHeight: number;
     boxMaxHeight: number;
   };
-  ranksep?: number;
-  nodesep?: number; // 布局
+  marginX: number;
+  marginY: number; // 布局
   cols: number; // 列数
   minRows: number;
   midRows?: number;
   maxRows: number; //
   rows?: number; // 行数
   // body: any, title: any
+  nodeMeta?: NodeMetadata;
+  edgeMeta?: EdgeMetadata;
 }
 
 export const labels = {
-  dataAssets: "数据资产",
-  innerSource: "内部资源",
-  outerSource: "外部资源",
+  functionUnits: "Function Units",
+  digitalConsumer: "Digital Consumer",
+  common: "Common",
+  digitalOperation: "Digital Operation",
 };
 
 export type ResourceType = keyof typeof labels;

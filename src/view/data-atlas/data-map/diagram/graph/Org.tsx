@@ -5,14 +5,14 @@ import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
 import { Subject } from "rxjs";
 import type { ResourceType } from "@/view/data-atlas/helper";
 import { KmFlex } from "@components";
-import classnames from "classnames"
+import classnames from "classnames";
 import Tooltip from "@components/Tooltip";
 import type { OrgStyle } from "../graph/types";
 
 export const SearchSubject = new Subject<string>();
 export const MatchedDirId = new Subject<string>();
 
-export type NodeData0 = { dir: DataAtlas.HomePageMapItem; style: OrgStyle; resourceType: ResourceType };
+export type NodeData = { dir: DataAtlas.HomePageMapItem; style: OrgStyle; resourceType: ResourceType };
 interface Props /* extends WithStylesProps<stylesType> */ {
   node: Node;
 }
@@ -25,11 +25,11 @@ interface State {
 /**
  * 组织机构
  */
-class OrgComponent<NodeData extends NodeData0 = NodeData0> extends React.PureComponent<Props, State> {
+class OrgComponent extends React.PureComponent<Props, State> {
   $search;
   $matchedDirId;
 
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props);
     this.state = { expanded: false, matched: undefined };
     // 此处为x6的子组件, 传入属性非reactive?
@@ -191,7 +191,7 @@ class OrgComponent<NodeData extends NodeData0 = NodeData0> extends React.PureCom
     // 渲染, safari不支持svg中position relative!, 只能用fixed
     return (
       <div
-        className={style.class + "__block__"}
+        className={classnames(style.class, "__block__")}
         onClick={() => {
           node?.toFront();
         }}
@@ -261,7 +261,7 @@ function Item({
 
 // const Organization = withOrgStyles(OrgComponent)
 
-function Organization<NodeData extends NodeData0 = NodeData0>({ node }: { node: Node }) {
+function Organization({ node }: { node: Node }) {
   // const { style } = node.getData<NodeData>();
   // useOrgStyles({ theme: { colorPrimary: style.color } }); // FIXME 每个node生成一个样式？
 
@@ -283,7 +283,7 @@ const Col: React.FC<React.PropsWithChildren<{ className?: string; cols: number }
   const width = `${w}%`;
   const flex = `0 0 ${w}`;
   return (
-    <div className={"col" + className} style={{ width, flex }}>
+    <div className={classnames("col", className)} style={{ width, flex }}>
       {children}
     </div>
   );

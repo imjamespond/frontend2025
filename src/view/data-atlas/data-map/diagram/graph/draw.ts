@@ -1,57 +1,74 @@
 import { Node } from "@antv/x6";
-import { config,  } from "./fixedNodes";
-import { Graph } from "../graph";
-import type { ResourceType } from "@/view/data-atlas/helper";
-import type { OrgStyle } from "./types";
+import { AddNodes, BottomOrg } from "./fixedNodes";
+import { Graph } from "./index";
+import type { OrgStyle, ResourceType } from "./types";
+import { createOrgNode } from "./utils";
 
-// export const createGraph = (container: HTMLElement, { layoutRef, data }: { layoutRef: React.RefObject<Function[]>, data: DataAtlas.HomePageMap }) => {
+/**
+ * 初始化图形
+ */
+export function init(this: Graph, data: DataAtlas.HomePageMap) {
+  const { x6graph: graph, draw } = this;
+  const dirs = data.dataAsset;
+  const { bottom, root } = AddNodes(graph);
+  this.root = root;
 
-//   const { setup, createEdge, createNode } = initGraph({ graph })
+  if (dirs && dirs.length > 0) {
+    const middle = Math.ceil(dirs.length * 0.5);
+    const upperDirs = dirs.slice(0, middle);
+    const lowerDirs = dirs.slice(middle);
+    this.layoutFns = [];
+    draw({
+      parent: bottom,
+      pos: { x: 0, y: 0 },
+      rankdir: "BT",
+      direction: "V",
+      style: BottomOrg,
+      dirs: upperDirs,
+      resourceType: "dataAssets",
+    });
+    draw({
+      parent: bottom,
+      pos: { x: 0, y: 0 },
+      rankdir: "TB",
+      direction: "V",
+      style: BottomOrg,
+      dirs: lowerDirs,
+      resourceType: "dataAssets",
+    });
+  }
+}
 
-//   /* 初始化图形 */
-//   const { root, lt, lb, rt, rb } = AddNodes(graph)
-
-//   const ltDirs = data.digitalConsumer ?? [] /* (data as any).innerSource ?? [] *//* .slice(0,1) */, rtDirs = data.functionUnits ?? []/* .slice(0,4) */, lbDirs = data.common ?? []/* .slice(0) */, rbDirs = data.digitalOperation ?? []
-
-//   let tOffset = clampOffset(ltDirs, rtDirs), bOffset = clampOffset(lbDirs, rbDirs)
-
-//   draw({ parent: lt.node, style: LTOrg, dirs: ltDirs, resourceType: 'digitalConsumer', offset: tOffset, lr: 0, tb: 0 })
-//   draw({ parent: rt.node, style: RTOrg, dirs: rtDirs, resourceType: 'functionUnits', offset: tOffset, lr: 1, tb: 0 })
-//   draw({ parent: lb.node, style: LBOrg, dirs: lbDirs, resourceType: 'common', offset: bOffset, lr: 0, tb: 1 })
-//   draw({ parent: rb.node, style: RBOrg, dirs: rbDirs, resourceType: 'digitalOperation', offset: bOffset, lr: 1, tb: 1 })
-//   /* 初始化图形 */
-//   setup()
-
-//   return graph
-// }
+/**
+ * 上下layout
+ * @param this
+ * @param param1
+ */
 export function draw(
   this: Graph,
   {
     parent,
+    rankdir,
+    direction,
     style,
     dirs,
     resourceType,
-    offset,
-    lr,
-    tb,
   }: {
     parent: Node; // 外部内部资源,数据资产 结点
+    pos: unknown; // 结点位置
+    rankdir: string; // dagre 布局方向
+    direction?: string; // edge ER router 参数
     style: OrgStyle;
     dirs: DataAtlas.HomePageMapItem[];
     resourceType: ResourceType;
-    offset: number;
-    lr: 0 | 1;
-    tb: 0 | 1;
   }
 ) {
   const graph = this.x6graph;
+
   const zoom = graph.zoom();
-
-  const direction = "V";
-
   const nodes = dirs.map((dir) => {
     const newStyle = getSize(style, dir, zoom);
-    const nodeMeta = this.createNode(newStyle, { dir, style: newStyle, resourceType });
+    const nodeMeta = createOrgNode(newStyle, { dir, style: newStyle, resourceType });
     return graph.createNode(nodeMeta);
   });
 
@@ -65,35 +82,17 @@ export function draw(
   graph.addEdges(edges);
 
   const layoutFn = () => {
-    const ppos = parent.getPosition();
-    const psize = parent.getSize();
-    const { marginX, marginY } = style;
-
-    if (nodes.length <= 3) {
-      const offset = Math.floor(nodes.length / 2); //
-      const even = ((nodes.length % 2) - 1) * 0.5; // when len is even
-      const originX =
-        lr === 0 ? -(config.x + config.block.width - config.node.width / 2) : config.x - config.node.width / 2;
-      nodes.forEach((n, i) => {
-        const bbox = n.getBBox();
-        n.setPosition({
-          x: originX + (offset - i + even) * (bbox.width + marginX),
-          y: tb === 0 ? ppos.y - bbox.height - marginY : ppos.y + psize.height + marginY,
-        });
+    const margin = style.nodesep!;
+    const totalWidth = nodes.length * style.size.width + (nodes.length - 1) * margin!;
+    nodes.forEach((n, i) => {
+      const bbox = n.getBBox();
+      n.setPosition({
+        x: i * (bbox.width + margin) - totalWidth * 0.5,
+        y: rankdir === "BT" ? -380 - (bbox.height - style.size.height) : 200,
       });
-    } else {
-      nodes.forEach((n, i) => {
-        const bbox = n.getBBox();
-        const idx = lr === 0 ? -i - 1 : i;
-        const index = idx + offset;
-        n.setPosition({
-          x: index * (bbox.width + marginX) + marginX * 0.5,
-          y: tb === 0 ? ppos.y - bbox.height - marginY : ppos.y + psize.height + marginY,
-        });
-      });
-    }
+    });
   };
-  // layoutRef.current?.push(layoutFn);
+  this.layoutFns.push(layoutFn);
 }
 
 export function getSize(style: OrgStyle, data: DataAtlas.HomePageMapItem, zoom: number) {

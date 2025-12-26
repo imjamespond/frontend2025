@@ -65,18 +65,18 @@ export const useSearchTabsStyles = createStyles((/* { css } */) => {
       },
 
       "& .km-list": {
-        "max-height": "420px",
+        maxHeight: "420px",
         overflow: "auto",
       },
 
       "& .km-list-item": {
         "& .km-list-item-meta": {
-          "padding-left": "10px",
-          "padding-right": "10px",
+          paddingLeft: "10px",
+          paddingRight: "10px",
         },
 
         "&:hover": {
-          "background-color": "#eeeeee",
+          backgroundColor: "#eeeeee",
         },
 
         "& .km-typography.km-typography-secondary > div": {
