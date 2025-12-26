@@ -1,6 +1,7 @@
 import { Graph as X6, type EdgeMetadata, type NodeMetadata } from "@antv/x6";
+import { kmDebug } from "@common/misc";
 import { useDebounceEffect, useSize } from "ahooks";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 
 type Params = ConstructorParameters<typeof X6>;
 
@@ -20,7 +21,7 @@ export abstract class BaseGraph {
   abstract layout(model?: { nodes?: NodeMetadata[]; edges?: EdgeMetadata[] } | void): void;
 
   dispose() {
-    this.x6.dispose();
+    this.x6.dispose(true);
   }
 
   get x6graph() {
@@ -37,34 +38,72 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
   >() {
     const containerRef = useRef<Container>(null);
     const wrapperRef = useRef<Wrapper>(null);
-    const graphRef = useRef<G>();
+    const graphRef = useRef<G | null>(null);
 
-    useEffect(() => {
-      const container = containerRef.current;
-      if (!container) return;
-      const bbox = container.getBoundingClientRect();
-      const graph = (graphRef.current = new GraphClass({
-        container,
-        width: bbox.width,
-        height: bbox.height,
-        ...options,
-      }));
+    const queue = useMemo(simpleQueue, []);
+    const ref = useRef({ queue, mounted: false });
 
-      return () => graph.dispose();
+    useLayoutEffect(() => {
+      kmDebug("mount graph?");
+      ref.current.mounted = true;
+      queue(() => {
+        kmDebug("create graph");
+        const container = containerRef.current;
+        if (!container) return;
+        const bbox = container.getBoundingClientRect();
+        const graph = new GraphClass({
+          container,
+          width: bbox.width,
+          height: bbox.height,
+          ...options,
+        });
+        graphRef.current = graph;
+      });
+
+      return () => {
+        kmDebug("unmount graph");
+        const graph = graphRef.current;
+        graphRef.current = null;
+        ref.current.mounted = false;
+        queue(() => {
+          kmDebug("dispose graph");
+          if (!graph) return;
+          graph.dispose();
+        });
+      };
     }, []);
 
     const size = useSize(wrapperRef);
     useDebounceEffect(
       () => {
-        const graph = graphRef.current;
-        if (!graph) return;
         if (!size) return;
-        graph.x6graph.resize(size.width, size.height);
+        ref.current.queue(() => {
+          const graph = graphRef.current;
+          if (!graph) return;
+          if (!ref.current.mounted) return;
+          graph.x6graph.resize(size.width, size.height);
+        });
       },
       [size],
       { wait: 500 }
     );
 
-    return [containerRef, wrapperRef, graphRef] as const;
+    return [containerRef, wrapperRef, graphRef, queue] as const;
   };
 }
+
+const simpleQueue = () => {
+  let chain = Promise.resolve();
+
+  return (job: () => void) => {
+    chain = chain.then(
+      () =>
+        new Promise<void>((resolve) => {
+          queueMicrotask(() => {
+            job();
+            resolve();
+          });
+        })
+    );
+  };
+};

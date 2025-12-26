@@ -33,10 +33,10 @@ const showSample = false && process.env.devMode;
 export const service: Service = {
   dataassetmanager: {
     queryHomePageMap({ args }) {
+      if (showSample) return request("get", "/data-atlas/samples/queryHomePageMap3.json");
       return request("get", `/api/dataassetmanager/countApi/queryHomePageMap`, args);
     },
     getTableModelInfoByDirIdAndBeginIndex({ args }) {
-      if (showSample) return request("get", "/data-atlas/samples/queryHomePageMap.json");
       return request("get", `/api/dataassetmanager/countApi/getTableModelInfoByDirIdAndBeginIndex`, {
         params: { ...args.params, beginIndex: args.params!.beginIndex + 1, topNum: args.params!.topNum - 1 },
       });

@@ -23,11 +23,11 @@ export const useAppStore = createUseStore<AppType>({
   height: "100vh",
 });
 
-export const useAppTheme = () => useAppStore((state) => state).data?.theme;
-export const useAppHeight = () => useAppStore((state) => state).data?.height;
+export const useAppTheme = () => useAppStore((state) => state)._v?.theme;
+export const useAppHeight = () => useAppStore((state) => state)._v?.height;
 
 export function useDomainId() {
-  const domainId = useAppStore((state) => state.data)?.env?.domainId;
+  const domainId = useAppStore((state) => state._v)?.env?.domainId;
   if (process.env.devMode) return 0;
   return domainId === undefined ? undefined : parseInt(domainId);
 }
