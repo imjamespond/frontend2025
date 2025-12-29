@@ -1,14 +1,14 @@
-import React from "react";
 import DataMap from "./data-map";
 import { useDataMap } from "./service";
+import Relationship from "./relationship";
+import { useView } from "./context";
+import { View } from "./helper";
 
 function FC() {
   useDataMap();
-  return (
-    <React.Fragment>
-      <DataMap />
-    </React.Fragment>
-  );
+  const view = useView();
+  if (view === View.DataMap) return <DataMap />;
+  return <Relationship />;
 }
 
 export default FC;

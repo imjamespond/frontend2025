@@ -27,3 +27,12 @@ export const labels = {
 };
 
 export type ResourceType = keyof typeof labels;
+
+export type NodeData = {
+  dir: DataAtlas.HomePageMapItem;
+  style: OrgStyle;
+  resourceType: ResourceType;
+  // 外部节点控制状态
+  expanded?: boolean;
+  matchedDirId?: string;
+};

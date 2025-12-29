@@ -1,35 +1,17 @@
-import { Fragment, useEffect, useRef, type CSSProperties } from "react";
-import { useGraph } from "./graph";
+import { Fragment, type CSSProperties } from "react";
 import Operations from "@components/Operations";
-import { useDataMap } from "@/view/data-atlas/service";
 import { OrgStyles } from "./graph/OrgStyles";
+import { useInit } from "./helper";
+import Loading from "@components/Loading";
 
 function FC() {
-  const { data } = useDataMap();
-  const [containerRef, wrapperRef, graphRef, graphQueue] = useGraph();
-
-  useEffect(() => {
-    if (data === undefined) {
-      return;
-    }
-
-    ref.current.graphQueue(() => {
-      graphRef.current?.x6graph.resetCells([]);
-      graphRef.current?.init(data);
-      // 布局
-      graphRef.current?.layout();
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-  const ref = useRef({ graphQueue });
+  const [wrapperRef, containerRef, graphRef, isLoading] = useInit();
 
   return (
     <Fragment>
       <OrgStyles />
       <div ref={wrapperRef} style={wrapperStyle}>
-        <div ref={containerRef} style={containerStyle}></div>
+        <div ref={containerRef} style={containerStyle} />
         <Operations
           onZoomIn={() => {
             graphRef.current?.x6graph.zoom(0.1);
@@ -37,14 +19,14 @@ function FC() {
           onZoomOut={() => {
             graphRef.current?.x6graph.zoom(-0.1);
           }}
-          // onRealContent={() => {
-          //   graphRef.current!.scale(1);
-          // }}
-          // onFitContent={() => {
-          //   graphRef.current!.zoomToFit(zoomFit);
-          //   graphRef.current!.centerCell(graphRef.current!.getCellById("root"));
-          // }}
+          onRealContent={() => {
+            graphRef.current!.x6graph.scale(1);
+          }}
+          onFitContent={() => {
+            graphRef.current!.zoomToFit();
+          }}
         />
+        <Loading spinning={isLoading} relative={false} />
       </div>
     </Fragment>
   );

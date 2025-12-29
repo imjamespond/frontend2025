@@ -96,14 +96,16 @@ const simpleQueue = () => {
   let chain = Promise.resolve();
 
   return (job: () => void) => {
-    chain = chain.then(
-      () =>
-        new Promise<void>((resolve) => {
-          queueMicrotask(() => {
+    chain = chain.then(() => {
+      return new Promise<void>((resolve) => {
+        queueMicrotask(() => {
+          try {
             job();
+          } finally {
             resolve();
-          });
-        })
-    );
+          }
+        });
+      });
+    });
   };
 };

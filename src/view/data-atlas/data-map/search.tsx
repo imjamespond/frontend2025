@@ -93,11 +93,12 @@ function FC() {
     setTemplateType(val);
   };
 
+  // 默认选中第一个
   useEffect(() => {
-    if (listSupportTemplates && listSupportTemplates.length > 0) {
+    if (templateType === undefined && listSupportTemplates && listSupportTemplates.length > 0) {
       stateRef.current.onSelectTpl(listSupportTemplates[0].type);
     }
-  }, [listSupportTemplates]);
+  }, [listSupportTemplates, templateType]);
 
   const stateRef = useRef({ setSearchText, setSearchResult, setFindResult, resetFind, onSelectTpl, data });
   stateRef.current.data = data;

@@ -1,4 +1,4 @@
-import { type NodeMetadata, type EdgeMetadata, type Node } from "@antv/x6";
+import { type Node } from "@antv/x6";
 import { BaseGraph, createUseGraph } from "@common/hooks/graph";
 import { register } from "@antv/x6-react-shape";
 import Organization from "./Org";
@@ -17,12 +17,16 @@ export class Graph extends BaseGraph {
   draw = draw.bind(this);
   createNode = createOrgNode.bind(this);
   createEdge = createEdge.bind(this);
-  layoutFns: { (): void }[] = [];
+  protected layoutFns: { (): void }[] = [];
   root: Node | null = null;
-  layout(_model?: void | { nodes?: NodeMetadata[]; edges?: EdgeMetadata[] } | undefined): void {
+  layout() {
     const { root } = this;
     if (root === null) return;
     this.layoutFns.forEach((layout) => layout());
+  }
+  zoomToFit() {
+    const { root } = this;
+    if (root === null) return;
     this.x6graph.zoomToFit(zoomFit);
     this.x6graph.centerCell(root);
   }

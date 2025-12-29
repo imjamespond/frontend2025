@@ -1,10 +1,8 @@
-import type { Cell, NodeMetadata } from "@antv/x6";
+import type { Cell, NodeMetadata, Node } from "@antv/x6";
 import type { Graph } from "./index";
-import type { OrgStyle, ResourceType } from "./types";
+import type { NodeData, OrgStyle } from "./types";
 
-type NodeData = { dir: DataAtlas.HomePageMapItem; style: OrgStyle; resourceType: ResourceType };
-
-export function createOrgNode( style: OrgStyle, data: NodeData): NodeMetadata {
+export function createOrgNode(style: OrgStyle, data: NodeData): NodeMetadata {
   // const title = getTitleStyle(style, data.category)
   const node = {
     shape: "organization",
@@ -21,9 +19,18 @@ export function createOrgNode( style: OrgStyle, data: NodeData): NodeMetadata {
   return node;
 }
 
+export function getOrgNodeData(node: Node, nullable: true): NodeData | void;
+export function getOrgNodeData(node: Node): NodeData;
+export function getOrgNodeData(node: Node) {
+  return node.getData();
+}
+export function setOrgNodeData(node: Node, nodeData: Partial<NodeData>) {
+  node.setData({ ...node.getData<NodeData>(), ...nodeData });
+}
+
 export function createEdge(this: Graph, source: Cell, target: Cell, style: OrgStyle, direction = "H") {
   const graph = this.x6graph;
-  let marker: any = {
+  let marker: object = {
     targetMarker: {
       name: "block",
       width: 8,

@@ -65,7 +65,7 @@ export function draw(
 ) {
   const graph = this.x6graph;
 
-  const zoom = graph.zoom();
+  const zoom = 1; // graph.zoom();
   const nodes = dirs.map((dir) => {
     const newStyle = getSize(style, dir, zoom);
     const nodeMeta = createOrgNode(newStyle, { dir, style: newStyle, resourceType });
@@ -101,8 +101,8 @@ export function getSize(style: OrgStyle, data: DataAtlas.HomePageMapItem, zoom: 
 
   const rows = Math.ceil((list.length + 1) / cols);
 
-  const boxMaxHeight = (rows * 32 + 40) / zoom;
-  const boxHeight = data.unFold ? boxMaxHeight : ((rows < minRows ? minRows : minRows) * 32 + 40) / zoom;
+  const boxMaxHeight = (rows * 32 + 35) / zoom;
+  const boxHeight = data.unFold ? boxMaxHeight : ((rows < minRows ? minRows : minRows) * 32 + 35) / zoom;
 
   return {
     ...style,

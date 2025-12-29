@@ -1,108 +1,99 @@
 import React from "react";
-import { Node } from "@antv/x6";
+import { Graph, Node } from "@antv/x6";
 import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
 
 import { Subject } from "rxjs";
-import type { ResourceType } from "@/view/data-atlas/helper";
+import { type ResourceType } from "@/view/data-atlas/helper";
 import { KmFlex } from "@components";
 import classnames from "classnames";
 import Tooltip from "@components/Tooltip";
 import type { OrgStyle } from "../graph/types";
+import { setRelView } from "@/view/data-atlas/context";
+import type { NodeData } from "./types";
+import { getOrgNodeData } from "./utils";
+import { LayoutSubject } from "../context";
 
 export const SearchSubject = new Subject<string>();
 export const MatchedDirId = new Subject<string>();
 
-export type NodeData = { dir: DataAtlas.HomePageMapItem; style: OrgStyle; resourceType: ResourceType };
-interface Props /* extends WithStylesProps<stylesType> */ {
+interface Props {
   node: Node;
+  graph: Graph;
 }
 interface State {
   expanded: boolean;
-  matched: any[] | undefined;
-  matchedDirId?: string /* rect: DOMRect | undefined */;
 }
 
 /**
  * 组织机构
  */
-class OrgComponent extends React.PureComponent<Props, State> {
-  $search;
-  $matchedDirId;
+export default class OrgComponent extends React.Component<Props, State> {
+  // $search;
+  // $matchedDirId;
+
+  get node() {
+    return this.props.node;
+  }
+  get nodeData() {
+    return getOrgNodeData(this.node);
+  }
 
   constructor(props: Props) {
     super(props);
-    this.state = { expanded: false, matched: undefined };
+    this.state = { expanded: false };
     // 此处为x6的子组件, 传入属性非reactive?
     // 处理搜索事件
-    this.$search = SearchSubject.subscribe((val) => {
-      this.onSearch(val);
-    });
-    this.$matchedDirId = MatchedDirId.subscribe((val) => {
-      this.onMatch(val);
-    });
+    // this.$search = SearchSubject.subscribe((val) => {
+    //   this.onSearch(val);
+    // });
+    // this.$matchedDirId = MatchedDirId.subscribe((val) => {
+    //   this.onMatch(val);
+    // });
   }
 
-  componentWillUnmount() {
-    this.$search.unsubscribe();
-    this.$matchedDirId.unsubscribe();
-  }
-
-  // shouldComponentUpdate(_nextProps: Readonly<any>, nextState: Readonly<State>) { // pure component not allowed
+  // shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>) { // pure component not allowed
+  //   return false;
   // }
 
-  componentDidMount() {
-    const { node } = this.props;
-    const { dir } = node.getData<NodeData>();
-  }
+  // componentDidMount() {
+  //   const { node } = this.props;
+  // }
 
-  componentDidUpdate(_prevProps: Readonly<any>, prevState: Readonly<State>) {
-    const { expanded } = this.state;
-    if (prevState.expanded !== expanded) {
+  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
+    if (prevProps.node.data !== this.node.data) {
+      if (this.state.expanded !== this.nodeData.expanded) {
+        this.setState({ expanded: this.nodeData.expanded === true });
+      }
+    } else if (prevState.expanded !== this.state.expanded) {
       this.resizeNode();
     }
   }
 
-  onSearch(val: string) {
-    const { node } = this.props;
-    const { dir } = node.getData<NodeData>();
-    if (!!val) {
-      // console.debug(this.props.data?.category, val)
-      const matched = dir.list?.filter((item: any) => {
-        return (item.dirName as string)?.includes(val);
-      });
-      // console.debug(matched)
-      this.setState((pre) => {
-        if (!!matched && matched.length > 0) {
-          // 有结果
-          return { ...pre, matched, expanded: true };
-        }
-        return { ...pre, matched: undefined }; // 清空结果
-      });
-    } else {
-      this.setState({ matched: undefined });
-    }
-  }
-
-  onMatch(dirId: string) {
-    const { node } = this.props;
-    const { dir } = node.getData<NodeData>();
-    if (!!dirId) {
-      const matched = dir?.list?.some((item: any) => {
-        return (item.dirId as string) === dirId;
-      });
-      this.setState((pre) => {
-        if (matched) {
-          return { ...pre, matchedDirId: dirId, expanded: true };
-        }
-        return { ...pre, matchedDirId: dirId };
-      });
-    }
-  }
+  // onSearch(val: string) {
+  //   const { node } = this.props;
+  //   const { dir } = node.getData<NodeData>();
+  //   if (!!val) {
+  //     // console.debug(this.props.data?.category, val)
+  //     const matched = dir.list?.filter((item: any) => {
+  //       return (item.dirName as string)?.includes(val);
+  //     });
+  //     // console.debug(matched)
+  //     this.setState((pre) => {
+  //       if (!!matched && matched.length > 0) {
+  //         // 有结果
+  //         return { ...pre, matched, expanded: true };
+  //       }
+  //       return { ...pre, matched: undefined }; // 清空结果
+  //     });
+  //   } else {
+  //     this.setState({ matched: undefined });
+  //   }
+  // }
 
   hasMore = false;
 
   resizeNode() {
-    const { expanded } = this.state;
+    const { expanded } = this.nodeData;
     const { node } = this.props;
     const { dir, style } = node.getData<NodeData>();
     if (dir.unFold === true) {
@@ -116,13 +107,13 @@ class OrgComponent extends React.PureComponent<Props, State> {
       node?.resize(style.size.boxWidth, style.size.boxHeight + 20);
     }
 
-    // DataMapSubject.next({ type: DataMapActType.Layout, payload: { keepCurPos: true } });
+    LayoutSubject.next({ keepCurPos: true });
   }
 
   render() {
-    const { expanded, matched, matchedDirId } = this.state;
+    const { matchedDirId, dir, style, resourceType } = this.nodeData;
     const { node } = this.props;
-    const { dir, style, resourceType } = node.getData<NodeData>();
+    const { expanded } = this.state;
     // const span = 24 / style.cols
 
     let items = undefined;
@@ -131,16 +122,7 @@ class OrgComponent extends React.PureComponent<Props, State> {
     // 是否出现滚动条
     if (expanded) {
       items = list.map((item: any, i: number) => {
-        return (
-          <Item
-            key={i}
-            item={item}
-            resourceType={resourceType}
-            matched={matched}
-            style={style}
-            matchedDirId={matchedDirId}
-          />
-        );
+        return <Item key={i} item={item} resourceType={resourceType} style={style} matchedDirId={matchedDirId} />;
       });
       this.hasMore &&
         items.push(
@@ -190,41 +172,40 @@ class OrgComponent extends React.PureComponent<Props, State> {
 
     // 渲染, safari不支持svg中position relative!, 只能用fixed
     return (
-      <div
-        className={classnames(style.class, "__block__")}
-        onClick={() => {
-          node?.toFront();
-        }}
-      >
-        {/* {boxHeight},{rows} */}
-        <svg viewBox={`0 0 ${style.size.boxWidth} ${boxHeight}`} xmlns="http://www.w3.org/2000/svg" className={"svg"}>
-          <rect
-            width={style.size.boxWidth - 4}
-            height={boxHeight - 4}
-            x={2}
-            y={2}
-            rx={3}
-            ry={3}
-            style={{ fill: "#fff", strokeWidth: 1, stroke: style.color, strokeDasharray: "5, 2" }}
-          />
-        </svg>
-        <div className={"title"}>
-          <div>
-            <span
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                // ActionSubject.next({
-                //   type: ActionType.ToGraph,
-                //   payload: { label: style.label, dir: dir as unknown as DataAtlas.Dir, resourceType },
-                // });
-              }}
-            >
-              {dir.dirName}
-            </span>
+      <div className="__container __data_map">
+        <div
+          className={classnames(style.class, "__block__")}
+          onClick={() => {
+            node?.toFront();
+          }}
+        >
+          {/* {boxHeight},{rows} */}
+          <svg viewBox={`0 0 ${style.size.boxWidth} ${boxHeight}`} xmlns="http://www.w3.org/2000/svg" className={"svg"}>
+            <rect
+              width={style.size.boxWidth - 4}
+              height={boxHeight - 4}
+              x={2}
+              y={2}
+              rx={3}
+              ry={3}
+              style={{ fill: "#fff", strokeWidth: 1, stroke: style.color, strokeDasharray: "5, 2" }}
+            />
+          </svg>
+          <div className={"title"}>
+            <div>
+              <span
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setRelView()({ label: style.label, dir: dir as unknown as DataAtlas.Dir, resourceType });
+                }}
+              >
+                {dir.dirName}
+              </span>
+            </div>
           </div>
-        </div>
-        <div className={"body"}>
-          <Row className={classnames({ ["scoll"]: expanded })}>{items}</Row>
+          <div className={"body"}>
+            <Row className={classnames({ ["scoll"]: expanded })}>{items}</Row>
+          </div>
         </div>
       </div>
     );
@@ -238,7 +219,6 @@ function Item({
   resourceType,
 }: {
   item: DataAtlas.Dir;
-  matched?: any;
   matchedDirId?: string;
   style: OrgStyle;
   resourceType: ResourceType;
@@ -249,7 +229,7 @@ function Item({
     <Col cols={cols} className={classnames({ matched: _matched })}>
       <div
         onClick={() => {
-          // ActionSubject.next({ type: ActionType.ToGraph, payload: { label: style.label, dir: item, resourceType } });
+          setRelView()({ label: style.label, dir: item, resourceType });
         }}
       >
         <Tooltip className="org-name" tip={item.dirName} />
@@ -258,21 +238,6 @@ function Item({
     </Col>
   );
 }
-
-// const Organization = withOrgStyles(OrgComponent)
-
-function Organization({ node }: { node: Node }) {
-  // const { style } = node.getData<NodeData>();
-  // useOrgStyles({ theme: { colorPrimary: style.color } }); // FIXME 每个node生成一个样式？
-
-  return (
-    <div className="__container __data_map">
-      <OrgComponent node={node} />
-    </div>
-  );
-}
-
-export default Organization;
 
 const Col: React.FC<React.PropsWithChildren<{ className?: string; cols: number }>> = ({
   children,

@@ -4,7 +4,7 @@ import { OpenAssetBrowse, OpenAssetResBrowse } from "@service";
 import { getTextWithHighlights } from "./helper";
 import { useFindResult, useSearchResult, useSearchText, useSetOpen } from "./contex";
 import { Fragment } from "react/jsx-runtime";
-import { MatchedDirIdSubject, useSetGraphBySearchResult } from "../context";
+import { useSetMatchedDirId, useSetRelBySearchResult } from "../context";
 import type { ResourceType } from "../helper";
 
 export default function SearchResult({ activeKey }: { activeKey: string }) {
@@ -12,7 +12,8 @@ export default function SearchResult({ activeKey }: { activeKey: string }) {
   const searchResult = useSearchResult();
   const findResult = useFindResult();
   const setOpen = useSetOpen();
-  const setGraph = useSetGraphBySearchResult();
+  const setGraph = useSetRelBySearchResult();
+  const setMatchedDirId = useSetMatchedDirId();
   return (
     <Fragment>
       {/* {JSON.stringify({ searchText })} */}
@@ -24,7 +25,7 @@ export default function SearchResult({ activeKey }: { activeKey: string }) {
             style={{ cursor: "pointer" }}
             key={i}
             onClick={() => {
-              MatchedDirIdSubject.next(item.dirId);
+              setMatchedDirId(item.dirId);
               setOpen(false);
             }}
           >
