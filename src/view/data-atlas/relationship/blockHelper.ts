@@ -9,7 +9,8 @@ import type { KeyOfFetcher } from "@service/api";
 
 type Params = KeyOfFetcher<typeof service.dataassetmanager.getTableModelInfoByDirIdAndBeginIndex>["args"]["params"];
 
-const pageSize = 4;
+export const pageSize = 8;
+export const rowHeight = 165;
 export function useHelper() {
   const env = useDomainId();
 
@@ -18,14 +19,14 @@ export function useHelper() {
 
   const qc = useQueryClient();
 
-  const getTableModelKey = [
-    "getTableModelInfoByDirIdAndBeginIndex",
-    { env, templateType, dirId: rootDir?.dirId },
-  ] as const;
+  const getTableModelKey = useMemo(
+    () => ["getTableModelInfoByDirIdAndBeginIndex", { env, templateType, dirId: rootDir?.dirId }] as const,
+    [env, templateType, rootDir?.dirId]
+  );
 
   useEffect(() => {
     qc.setQueryData(getTableModelKey, { pages: [], pageParams: [] });
-  }, [env, templateType, rootDir?.dirId]); // 清oldPages, 防止重新请求之前[...页码]
+  }, [getTableModelKey]); // 清oldPages, 防止重新请求之前[...页码]
 
   const {
     data: modelsData,
@@ -45,9 +46,9 @@ export function useHelper() {
     },
     initialPageParam: 0, // 初始页码
     getNextPageParam: (lastPage, pages) => {
-      const param = lastPage && lastPage.length < pageSize ? undefined : pages.length + 1;
-      console.debug("getNextPageParam", lastPage?.length, param);
-      return param;
+      const pageNum = lastPage && lastPage.length < pageSize ? undefined : pages.length;
+      console.debug("getNextPageParam", lastPage?.length, pages.length);
+      return pageNum;
     },
 
     enabled: !!rootDir?.dirId && !!templateType,
@@ -65,18 +66,27 @@ export function useHelper() {
 
   const callback = useCallback<IntersectionObserverCallback>((entries) => {
     entries.forEach((entry) => {
-      const { isFetching, fetchNextPage } = ref.current;
+      const { modelsData, isFetching, fetchNextPage } = ref.current;
 
-      kmDebug("useIntersectionObserver", isFetching, entry.isIntersecting);
+      kmDebug("useIntersectionObserver", modelsData?.pages.length, isFetching, entry.isIntersecting);
       // 滚动到底部取消自动滚动
-      if (entry.isIntersecting && !isFetching) {
+      if (entry.isIntersecting && modelsData && modelsData.pages.length > 0) {
         fetchNextPage();
       }
     });
   }, []);
 
-  const ref = useRef({ isFetching, fetchNextPage });
+  const loadMore = useCallback(() => {
+    const { modelsData, isFetching, fetchNextPage } = ref.current;
+
+    if (modelsData && modelsData.pages.length > 0 && !isFetching) {
+      fetchNextPage();
+    }
+  }, []);
+
+  const ref = useRef({ modelsData, isFetching, loadMore, fetchNextPage, height: 0 });
+  ref.current.modelsData = modelsData;
   ref.current.isFetching = isFetching;
 
-  return [modelsData, modelsTotal, callback, ref, hasNextPage, isFetching] as const;
+  return { modelsData, modelsTotal, callback, ref, hasNextPage, isFetching };
 }

@@ -2,7 +2,7 @@ import { KmBreadcrumb, KmCol, KmRadio, KmRow } from "@components";
 import { useStyles } from "./styles";
 import { GraphType, useBreadItems } from "./helper";
 import { useGraphType, useSetGraphType } from "./context";
-import Block from "./block";
+import Block from "./blockVList";
 
 function FC() {
   const { styles } = useStyles();

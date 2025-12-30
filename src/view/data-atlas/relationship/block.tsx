@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getOpenAssetsDetail } from "@service";
-import { KmButton, KmCard, KmDrawer, KmEmpty, KmSpin } from "@components";
+import { KmButton, KmCard, KmDrawer, KmEmpty } from "@components";
 import { Col, ConfigProvider, Row, Tooltip, Typography } from "antd";
 
 import lv1 from "./assets/block/2/1.png";
@@ -22,7 +22,7 @@ import { EllipsisOutlined } from "@ant-design/icons";
 import Loading from "@components/Loading";
 import { HoverEffectStyle, HoverEffectWrapper } from "@components/HoverEffect";
 
-const levels = [lv1, lv2, lv3, lv4, lv5];
+export const levels = [lv1, lv2, lv3, lv4, lv5];
 
 function FC() {
   const { styles } = useStyles();
@@ -30,7 +30,7 @@ function FC() {
   const rootDir = useRootDir();
   const setRelBySearchResult = useSetRelBySearchResult();
 
-  const [modelsData, modelsTotal, callback, ref, hasNextPage, isFetching] = useHelper();
+  const { modelsData, modelsTotal, callback, ref, hasNextPage, isFetching } = useHelper();
 
   const { rootRef, targetRef } = useIntersection({
     callback,
@@ -160,7 +160,7 @@ function FC() {
 
 export default FC;
 
-function getIcon(msg: string, title: string, icon: string) {
+export function getIcon(msg: string, title: string, icon: string) {
   return (
     <Tooltip placement="top" title={`${title}: ${!!msg ? msg : "暂无"}`}>
       <img src={icon} style={!!msg ? undefined : { filter: "grayscale(1)", opacity: 0.7 }} />
@@ -168,7 +168,7 @@ function getIcon(msg: string, title: string, icon: string) {
   );
 }
 
-function Model({ open, url, onClose }: { open: boolean; url?: string; onClose: Function }) {
+export function Model({ open, url, onClose }: { open: boolean; url?: string; onClose: Function }) {
   return (
     <React.Fragment>
       <KmDrawer open={open} width={"90vw"} onClose={() => onClose()}>
