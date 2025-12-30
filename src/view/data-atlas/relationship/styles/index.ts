@@ -4,12 +4,15 @@ export const useStyles = createStyles(() => ({
   root: {
     padding: 10,
     height: "100%",
-    "&> .item + .item": {
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    "&> .__item + .__item": {
       marginTop: 10,
     },
-    "& .content": {
-      height: "calc(100% - 75px)", // backgroundColor: 'red'
-      // overflow: 'auto',
+    "& .__content": {
+      flex: 1,
+      overflow: "hidden",
     },
     "& .km-breadcrumb": {
       height: 22,

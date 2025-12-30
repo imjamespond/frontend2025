@@ -5,10 +5,22 @@ import { useRootDir, useSetView } from "../context";
 import { useCrumb } from "./service";
 import { View } from "../helper";
 
+export const enum GraphType {
+  Block,
+  Tree,
+  Relation,
+  Org,
+}
+
+export const enum dbTypes {
+  table = "Table",
+  dir = "Dir",
+}
+
 export function useBreadItems() {
   const rootDir = useRootDir();
   const resourceType = rootDir?.resourceType;
-  const { data: subDir, isLoading: isLoadingSubDir } = useCrumb();
+  const { data: subDir } = useCrumb();
   const setView = useSetView();
   return useMemo(() => {
     const items: BreadcrumbProps["items"] = [];
