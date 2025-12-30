@@ -5,10 +5,10 @@ declare namespace DataAtlas {
     dirDesc: string;
     tableModelCount: number;
     subDirCount: number;
-    id?: unknown;
+    id?: string;
     dbType: string;
-    cnName?: unknown;
-    enName?: unknown;
+    cnName?: string;
+    enName?: string;
     safetyLevel: number;
     performance: string;
     dataType: string;
