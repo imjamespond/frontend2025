@@ -29,17 +29,14 @@ export const useStyles = createStyles(() => ({
 
 const styles = {
   bg: colorPrimary,
-  bg1: colorPrimary,
-  bg0: colorPrimary,
-  bg2: colorPrimary,
   bg3: "#fff",
   color: "hsl(358, 71%, 25%)",
 };
 export const BlockStyles = createGlobalStyle(() => {
-  const { bg, bg0, bg1, bg2, bg3, color } = styles;
+  const { bg, color } = styles;
   return {
     "& .Dir": {
-      backgroundImage: `linear-gradient(to left top, ${bg0}, ${bg1})`,
+      background: `linear-gradient(to left bottom, ${bg}22 0%, ${bg}05 30%);`,
       color: `${color}`,
       cursor: "pointer",
       borderRadius: "8px",
