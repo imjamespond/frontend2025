@@ -7,7 +7,7 @@ import { service } from "@service/api/data-atlas";
 import type { KeyOfFetcher } from "@service/api";
 import { useRootDir, useTemplateType } from "@view/data-atlas/context";
 import { useDomainId } from "@config/app";
-import type { SubDir } from "./types";
+import type { SubDir } from "./graph/types";
 import Loading from "@components/Loading";
 import { useGraph } from "./graph";
 

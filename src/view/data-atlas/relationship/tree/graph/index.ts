@@ -1,14 +1,14 @@
 import { BaseGraph, createUseGraph } from "@common/hooks/graph";
 // import { Node } from "@antv/x6";
 import { register } from "@antv/x6-react-shape";
-import Organization from "./components/Organization";
+import Organization from "../components/Organization";
 import { zoomFit } from "./config";
 import { draw1, init } from "./init";
-import { Category, DirNode } from "./components";
-import { GraphType } from "../helper";
+import { Category, DirNode } from "../components";
+import { GraphType } from "../../helper";
 import type { Style, SubDir } from "./types";
 import { layout } from "./layout";
-import { createCategoryNode, createEdge, createNode } from "./graphHelper";
+import { createCategoryNode, createEdge, createOrgNode } from "./helper";
 import type { Dir } from "@/view/data-atlas/helper";
 import { AddNodes } from "./fixedNodes";
 
@@ -41,7 +41,7 @@ export class Graph extends BaseGraph {
   rankdir: "TB" | "BT" | "LR" | "RL" | undefined = undefined;
   layout = layout.bind(this);
   createEdge = createEdge.bind(this);
-  createNode = createNode.bind(this);
+  createNode = createOrgNode.bind(this);
   createCategoryNode = createCategoryNode.bind(this);
   AddNodes = AddNodes.bind(this);
   draw1 = draw1.bind(this);

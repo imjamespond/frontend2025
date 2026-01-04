@@ -1,6 +1,7 @@
 import { Node } from "@antv/x6";
 import { DagreLayout } from "@antv/layout";
-import type { Graph } from "./graph";
+import type { Graph } from ".";
+import { getNodeData } from "./helper";
 
 export function layout(this: Graph) {
   const { style, rankdir, graph } = this;
@@ -30,7 +31,12 @@ export function layout(this: Graph) {
   model.nodes?.forEach((_n) => {
     const n = _n as unknown as { x: number; y: number };
     const node = nodesMap[_n.id];
-    node.setPosition(n.x, n.y);
+    const nodeData = getNodeData(node);
+    const bbox = node.getBBox();
+
+    // 层级居中对齐
+    if (rankdir === "LR") node.setPosition(n.x, n.y - bbox.height / 2);
+    else node.setPosition(n.x - bbox.width / 2, nodeData?.lv === 3 ? n.y - 80 : n.y);
   });
 
   // {

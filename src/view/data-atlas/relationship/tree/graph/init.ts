@@ -2,8 +2,9 @@ import { Cell, Edge } from "@antv/x6";
 import { LRStyle, TBStyle } from "./fixedNodes";
 import type { GraphData, Style } from "./types";
 import { getColors, groupDepth } from "./config";
-import { GraphType } from "../helper";
-import type { Graph } from "./graph";
+import { GraphType } from "../../helper";
+import type { Graph } from ".";
+import { getNodeData } from "./helper";
 
 /**
  * 初始化图形
@@ -45,9 +46,9 @@ export function draw1(
     parent: Cell; // 外部内部资源,数据资产 结点
   }
 ) {
-  const { graph, rootDir, createEdge, createCategoryNode } = this;
+  const { graph, rootDir, style, createNode, createEdge, createCategoryNode } = this;
 
-  if (rootDir === undefined) {
+  if (rootDir === undefined || style === null) {
     return;
   }
 
@@ -66,40 +67,32 @@ export function draw1(
   const zoom = graph.zoom();
 
   // 三级带虚线的html结点
-  // const children = nodes.map((spNode, i: number) => {
-  //   const color = getColors(i);
-  //   const { item } = spNode.getData<NodeData>();
+  const children = nodes.map((spNode, i: number) => {
+    const color = getColors(i);
+    const { item } = getNodeData(spNode);
 
-  //   const newStyle = getSize({ ...style, color }, item.children?.length ?? 0, zoom);
+    const newStyle = getSize({ ...style, color }, item.children?.length ?? 0, zoom);
 
-  //   const nodeData = {
-  //     style: newStyle,
-  //     dirId: rootDir.dirId,
-  //     item,
-  //     onSelectDir: selectDir1,
-  //     onLayout: () => {
-  //       layout1Ref.current?.();
-  //     },
-  //   };
-  //   const node = createNode({ nodeData });
+    const nodeData = {
+      style: newStyle,
+      dirId: rootDir.dirId,
+      item,
+      label: "",
+      // onSelectDir: selectDir1,
+    };
+    const node = createNode({ nodeData });
 
-  //   edges.push(createEdge(spNode, node));
+    edges.push(createEdge(spNode, node));
 
-  //   return node;
-  // });
+    return node;
+  });
 
-  const allNodes = nodes; //.concat(children);
+  const allNodes = nodes.concat(children);
 
   for (const node of allNodes) {
     graph.addNode(node);
   }
   graph.addEdges(edges);
-
-  // const _layout = () => {
-  //   layout({ parent, nodes: allNodes, edges, rankdir, ranksep: style.ranksep });
-  // };
-  // _layout();
-  // layout1Ref.current = _layout;
 }
 
 // export function draw2({
@@ -139,7 +132,7 @@ export function draw1(
 //   }
 // }
 export function getSize(style: Style, length: number, zoom: number) {
-  const { cols, size, maxRows, minRows } = style;
+  const { cols, size, minRows } = style;
 
   const rows = Math.ceil((length + 1) / cols);
 

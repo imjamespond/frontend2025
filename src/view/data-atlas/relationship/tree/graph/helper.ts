@@ -1,17 +1,17 @@
 import { Cell, Node } from "@antv/x6";
-import type { Graph } from "./graph";
-import type { NodeData } from "./types";
-import type { OrgNodeData } from "./components/Organization";
+import type { Graph } from ".";
+import { NodeType, type NodeData } from "./types";
+import type { OrgNodeData } from "../components/Organization";
 
 export function getNodeData(node: Cell) {
   return node.getData<NodeData>();
 }
-export function createNode(this: Graph, { nodeData }: { nodeData: OrgNodeData }): Node {
+export function createOrgNode(this: Graph, { nodeData }: { nodeData: OrgNodeData }): Node {
   const { style } = nodeData;
   const node = this.graph.createNode({
     shape: "graph-organization",
     attrs: {},
-    data: { lv: 3, ...nodeData },
+    data: { lv: 3, ...nodeData,  },
     width: style.size.boxWidth,
     height: style.size.boxHeight + 20,
   });

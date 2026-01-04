@@ -6,14 +6,21 @@ import classnames from "classnames";
 
 import Tooltip from "@components/Tooltip";
 import { useStyles } from "./styles";
-import type { Style } from "../types";
-import type { initGraphType } from "../graphInit";
+import type { NodeData, Style } from "../graph/types";
 
 export type OrgNodeData = {
   dirId: string;
   style: Style;
-  onSelectDir: initGraphType["selectDir1"];
-  onLayout: Function;
+  onSelectDir?: ({
+    data /* 当前点击目录 */,
+    node /* 当前点击结点 */,
+    pdata /* 当前层级所有目录 */,
+  }: {
+    data: DataAtlas.JsonNode;
+    node: Node;
+    pdata: DataAtlas.JsonNode;
+  }) => void;
+  onLayout?: Function;
 } & NodeData;
 interface Props {
   node: Node;
@@ -76,7 +83,7 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
       node?.resize(style.size.boxWidth, style.size.boxHeight + 20);
     }
 
-    onLayout();
+    onLayout?.();
   }
 
   render() {
@@ -175,7 +182,7 @@ function Item({
   dirId: string;
   parent: DataAtlas.JsonNode;
   node: Node;
-  onSelectDir: initGraphType["selectDir1"];
+  onSelectDir: OrgNodeData["onSelectDir"];
 }) {
   const { nodeId, text, dataAssetAndSubDirCount } = item;
   const matched = dirId === nodeId;
@@ -184,7 +191,7 @@ function Item({
     <Col span={span} className={classnames({ matched })}>
       <div
         onClick={() => {
-          onSelectDir({ pdata: parent, node, data: item });
+          onSelectDir?.({ pdata: parent, node, data: item });
         }}
       >
         <Tooltip className="org-name" tip={msg} />

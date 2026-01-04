@@ -1,6 +1,6 @@
 import { colorPrimary } from "@config/style";
 import type { Style } from "./types";
-import type { Graph } from "./graph";
+import type { Graph } from ".";
 
 export const TBStyle: Style = {
   type: 0,
@@ -13,7 +13,7 @@ export const TBStyle: Style = {
     boxMaxHeight: 0,
   },
   ranksep: 50,
-  nodesep: 80,
+  nodesep: 130,
   cols: 2,
   maxRows: 6,
   minRows: 6,
@@ -30,7 +30,7 @@ export const LRStyle: Style = {
     boxMaxHeight: 0,
   },
   ranksep: 100,
-  nodesep: 20,
+  nodesep: 50,
   cols: 6,
   maxRows: 2,
   minRows: 2,

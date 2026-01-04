@@ -16,9 +16,16 @@ export interface Style {
   color?: string;
 }
 
+export const enum NodeType {
+  Category = 0,
+  Organization = 1,
+}
+
 export interface NodeData {
   item: DataAtlas.JsonNode;
+  label: string;
   color?: string;
+  lv?: number;
 }
 
 export type GraphData = DataAtlas.JsonNode[];
