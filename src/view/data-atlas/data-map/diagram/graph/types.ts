@@ -34,5 +34,5 @@ export type NodeData = {
   resourceType: ResourceType;
   // 外部节点控制状态
   expanded?: boolean;
-  matchedDirId?: string;
+  matchedDirId: string;
 };

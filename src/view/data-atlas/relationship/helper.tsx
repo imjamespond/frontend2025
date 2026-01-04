@@ -1,7 +1,7 @@
 import { KmTypography } from "@components";
 import type { BreadcrumbProps } from "antd";
 import { useMemo } from "react";
-import { useRootDir, useSetView } from "../context";
+import { useRootDir, useSetSubNode, useSetView } from "../context";
 import { useCrumb } from "./service";
 import { View } from "../helper";
 
@@ -22,6 +22,7 @@ export function useBreadItems() {
   const resourceType = rootDir?.resourceType;
   const { data: subDir } = useCrumb();
   const setView = useSetView();
+  const setSubNode = useSetSubNode();
   return useMemo(() => {
     const items: BreadcrumbProps["items"] = [];
     let curDir = subDir,
@@ -49,7 +50,7 @@ export function useBreadItems() {
             <KmTypography.Link
               className={"link"}
               onClick={() => {
-                // ActionSubject.next({ type: ActionType.SubNode, payload: { dirId } });
+                setSubNode({ dirId });
               }}
             >
               {curDir.dirName}

@@ -10,7 +10,7 @@ import { kmDebug } from "@common/misc";
  * 初始化图形
  */
 export function init(this: Graph, data: DataAtlas.HomePageMap) {
-  const { x6graph: graph, draw } = this;
+  const { graph: graph, draw } = this;
   const { /* root, */ lt, lb, rt, rb } = AddNodes(graph);
 
   const ltDirs = data.digitalConsumer ?? [] /* (data as any).innerSource ?? [] */ /* .slice(0,1) */,
@@ -68,7 +68,7 @@ export function draw(
     tb: 0 | 1;
   }
 ) {
-  const graph = this.x6graph;
+  const graph = this.graph;
 
   const zoom = graph.zoom();
 
@@ -120,8 +120,8 @@ export function draw(
   };
   kmDebug(layoutFn);
   // layoutRef.current?.push(layoutFn);
-  this.x6graph.centerContent();
-  this.x6graph.zoomToFit({ padding: 20 });
+  this.graph.centerContent();
+  this.graph.zoomToFit({ padding: 20 });
 }
 
 export function getSize(style: OrgStyle, data: DataAtlas.HomePageMapItem, zoom: number) {

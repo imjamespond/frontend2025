@@ -28,7 +28,7 @@ export interface Service {
   };
 }
 
-const showSample = false && process.env.devMode;
+const showSample = true && process.env.devMode;
 
 export const service: Service = {
   dataassetmanager: {
@@ -37,12 +37,13 @@ export const service: Service = {
       return request("get", `/api/dataassetmanager/countApi/queryHomePageMap`, args);
     },
     getTableModelInfoByDirIdAndBeginIndex({ args }) {
+      if (showSample) return request("get", "/data-atlas/samples/getTableModelInfoByDirIdAndBeginIndex1.json");
       return request("get", `/api/dataassetmanager/countApi/getTableModelInfoByDirIdAndBeginIndex`, {
         params: { ...args.params, beginIndex: args.params!.beginIndex + 1, topNum: args.params!.topNum - 1 },
       });
     },
     queryRelationChartData({ args }) {
-      // if (showSample) return Promise.resolve(sampleData.queryRelationChartData) as Any
+      if (showSample) return request("get", "/data-atlas/samples/queryRelationChartData1.json");
       return request("get", `/api/dataassetmanager/countApi/queryRelationChartData`, args);
     },
     queryCrumbData({ args }) {

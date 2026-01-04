@@ -20,7 +20,7 @@ export function useInit() {
     const { graphQueue, graphRef } = ref.current;
 
     graphQueue(() => {
-      graphRef.current?.x6graph.resetCells([]);
+      graphRef.current?.graph.resetCells([]);
       graphRef.current?.init(data);
       // 布局
       graphRef.current?.layout();
@@ -28,24 +28,26 @@ export function useInit() {
     });
   }, [data]);
 
+  // 搜索结果匹配
   useEffect(() => {
     const { graphRef } = ref.current;
-    graphRef.current?.x6graph.getNodes().forEach((node) => {
-      if (matchedDirId) {
+    if (matchedDirId) {
+      graphRef.current?.graph.getNodes().forEach((node) => {
         const nodeData = getOrgNodeData(node, true);
         if (nodeData === undefined) return;
         // 清空匹配状态
         if (nodeData.matchedDirId) {
-          setOrgNodeData(node, { matchedDirId: undefined, expanded: false });
+          setOrgNodeData(node, { matchedDirId: "", expanded: false });
         }
         const matched = nodeData.dir?.list?.some((item) => {
           return item.dirId === matchedDirId;
         });
         if (matched) {
           setOrgNodeData(node, { matchedDirId, expanded: true });
+          graphRef.current?.graph.centerCell(node);
         }
-      }
-    });
+      });
+    }
   }, [matchedDirId]);
 
   useEffect(() => {
@@ -55,7 +57,7 @@ export function useInit() {
       }),
       debounceTime(100)
     ).subscribe((/* data */) => {
-      const graph = graphRef.current?.x6graph;
+      const graph = graphRef.current?.graph;
       if (!graph) return;
       const root = graph.getCellById("root");
       if (!root.isNode()) return;

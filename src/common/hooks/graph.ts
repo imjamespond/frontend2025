@@ -9,6 +9,7 @@ export type Options = Params[0];
 
 export abstract class BaseGraph {
   private x6: X6;
+  mounted = true;
   constructor(options: Options) {
     this.x6 = new X6({
       grid: { size: 10, visible: true, type: "dot" },
@@ -24,7 +25,7 @@ export abstract class BaseGraph {
     this.x6.dispose(true);
   }
 
-  get x6graph() {
+  get graph() {
     return this.x6;
   }
 }
@@ -41,11 +42,10 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
     const graphRef = useRef<G | null>(null);
 
     const queue = useMemo(simpleQueue, []);
-    const ref = useRef({ queue, mounted: false });
+    const ref = useRef({ queue });
 
     useLayoutEffect(() => {
       kmDebug("mount graph?");
-      ref.current.mounted = true;
       queue(() => {
         kmDebug("create graph");
         const container = containerRef.current;
@@ -62,12 +62,13 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
 
       return () => {
         kmDebug("unmount graph");
-        const graph = graphRef.current;
-        graphRef.current = null;
-        ref.current.mounted = false;
+
         queue(() => {
           kmDebug("dispose graph");
+          const graph = graphRef.current;
           if (!graph) return;
+          graphRef.current = null;
+          graph.mounted = false;
           graph.dispose();
         });
       };
@@ -79,9 +80,8 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
         if (!size) return;
         ref.current.queue(() => {
           const graph = graphRef.current;
-          if (!graph) return;
-          if (!ref.current.mounted) return;
-          graph.x6graph.resize(size.width, size.height);
+          if (!graph || !graph.mounted) return;
+          graph.graph.resize(size.width, size.height);
         });
       },
       [size],

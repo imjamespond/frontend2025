@@ -10,8 +10,9 @@ interface Window {
   __POWERED_BY_QIANKUN__?: boolean;
 }
 
-declare namespace NodeJS {
-  interface ProcessEnv {
+declare const process: {
+  env: {
+    NODE_ENV: "development" | "production";
     devMode: boolean;
-  }
-}
+  };
+};

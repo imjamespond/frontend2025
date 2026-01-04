@@ -27,8 +27,8 @@ export class Graph extends BaseGraph {
   zoomToFit() {
     const { root } = this;
     if (root === null) return;
-    this.x6graph.zoomToFit(zoomFit);
-    this.x6graph.centerCell(root);
+    this.graph.zoomToFit(zoomFit);
+    this.graph.centerCell(root);
   }
 }
 

@@ -3,7 +3,7 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 import { service } from "@service/api/data-atlas";
 import { useDomainId } from "@config/app";
-import { useRootDir, useTemplateType } from "../context";
+import { useRootDir, useTemplateType } from "../../context";
 import { kmDebug } from "@common/misc";
 import type { KeyOfFetcher } from "@service/api";
 

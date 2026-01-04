@@ -48,10 +48,10 @@ export const BlockStyles = createGlobalStyle(() => {
         right: "0",
         img: { height: "100px", width: "150px" },
       },
-      "&:hover": {
-        // backgroundImage: `linear-gradient(to left top, ${bg2}, ${bg3})`,
-        boxShadow: "3px 3px 5px 0px rgb(0 0 0 / 0.1)",
-      },
+      // "&:hover": {
+      //   // backgroundImage: `linear-gradient(to left top, ${bg2}, ${bg3})`,
+      //   boxShadow: "3px 3px 5px 0px rgb(0 0 0 / 0.1)",
+      // },
       "& .__dirName__": {
         fontSize: "22px",
         fontWeight: 700,

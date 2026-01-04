@@ -22,7 +22,7 @@ export function createOrgNode(style: OrgStyle, data: NodeData): NodeMetadata {
 }
 
 export function createEdge(this: Graph, source: Cell, target: Cell, style: OrgStyle, direction = "H") {
-  const graph = this.x6graph;
+  const graph = this.graph;
   let marker: any = {
     targetMarker: {
       name: "block",

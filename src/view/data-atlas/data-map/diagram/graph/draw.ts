@@ -8,7 +8,7 @@ import { createOrgNode } from "./utils";
  * 初始化图形
  */
 export function init(this: Graph, data: DataAtlas.HomePageMap) {
-  const { x6graph: graph, draw } = this;
+  const { graph: graph, draw } = this;
   const dirs = data.dataAsset;
   const { bottom, root } = AddNodes(graph);
   this.root = root;
@@ -63,12 +63,12 @@ export function draw(
     resourceType: ResourceType;
   }
 ) {
-  const graph = this.x6graph;
+  const graph = this.graph;
 
   const zoom = 1; // graph.zoom();
   const nodes = dirs.map((dir) => {
     const newStyle = getSize(style, dir, zoom);
-    const nodeMeta = createOrgNode(newStyle, { dir, style: newStyle, resourceType });
+    const nodeMeta = createOrgNode(newStyle, { dir, style: newStyle, resourceType, matchedDirId: "" });
     return graph.createNode(nodeMeta);
   });
 

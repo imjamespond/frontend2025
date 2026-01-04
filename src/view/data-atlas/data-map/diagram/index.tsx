@@ -14,13 +14,13 @@ function FC() {
         <div ref={containerRef} style={containerStyle} />
         <Operations
           onZoomIn={() => {
-            graphRef.current?.x6graph.zoom(0.1);
+            graphRef.current?.graph.zoom(0.1);
           }}
           onZoomOut={() => {
-            graphRef.current?.x6graph.zoom(-0.1);
+            graphRef.current?.graph.zoom(-0.1);
           }}
           onRealContent={() => {
-            graphRef.current!.x6graph.scale(1);
+            graphRef.current!.graph.scale(1);
           }}
           onFitContent={() => {
             graphRef.current!.zoomToFit();

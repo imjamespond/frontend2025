@@ -1,9 +1,9 @@
 import React, { useMemo, useRef } from "react";
 import { ConfigProvider } from "antd";
 
-import { BlockStyles } from "./styles/block";
-import { rowHeight, useHelper } from "./blockHelper";
-import { Context, RowComponent } from "./blockRow";
+import { BlockStyles } from "../styles/block";
+import { rowHeight, useHelper } from "./helper";
+import { Context, RowComponent } from "./RowComponent";
 import { HoverEffectStyle } from "@components/HoverEffect";
 import { KmEmpty } from "@components";
 import { useVirtualList } from "ahooks";

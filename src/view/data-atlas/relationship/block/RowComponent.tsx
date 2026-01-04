@@ -2,16 +2,16 @@ import { getOpenAssetsDetail } from "@service";
 import { KmButton, KmCard, KmFlex } from "@components";
 import { Col, Row, Typography } from "antd";
 
-import icon1 from "./assets/block/2/icon/1.png";
-import icon2 from "./assets/block/2/icon/2.png";
-import icon3 from "./assets/block/2/icon/3.png";
-import icon4 from "./assets/block/2/icon/4.png";
+import icon1 from "../assets/block/2/icon/1.png";
+import icon2 from "../assets/block/2/icon/2.png";
+import icon3 from "../assets/block/2/icon/3.png";
+import icon4 from "../assets/block/2/icon/4.png";
 
-import { dbTypes } from "./helper";
+import { dbTypes } from "../helper";
 import { HoverEffectWrapper } from "@components/HoverEffect";
-import { getIcon, levels, Model } from "./block";
+import { getIcon, levels, Model } from ".";
 import React, { Fragment, useEffect, useState } from "react";
-import { useRootDir, useSetRelBySearchResult } from "../context";
+import { useRootDir, useSetRelBySearchResult } from "../../context";
 
 export const Context = React.createContext<{ ref: { loadMore: () => void } } | null>(null);
 
@@ -76,6 +76,7 @@ export function RowComponent({ row, xxl }: { xxl?: boolean; row: DataAtlas.Table
               <HoverEffectWrapper>
                 <KmCard
                   className={item.dbType}
+                  variant="borderless"
                   onClick={() => {
                     if (rootDir) {
                       setRelBySearchResult({ dirId: item.dirId, resourceType: rootDir.resourceType });
