@@ -47,7 +47,7 @@ export const service: Service = {
       return request("get", `/api/dataassetmanager/countApi/queryRelationChartData`, args);
     },
     queryCrumbData({ args }) {
-      // if (showSample) return Promise.resolve(sampleData.queryCrumbData) as Any
+      if (showSample) return request("get", "/data-atlas/samples/queryCrumbData1.json");
       return request("get", `/api/dataassetmanager/countApi/queryCrumbData`, args);
     },
     listSupportTemplates() {

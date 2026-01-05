@@ -2,7 +2,7 @@ import { KmTypography } from "@components";
 import type { BreadcrumbProps } from "antd";
 import { useMemo, useRef } from "react";
 import { useSetSubNode, useSetView } from "../context";
-import { useCrumb } from "./service";
+import { useCrumbData } from "./service";
 import { View } from "../helper";
 
 export const enum GraphType {
@@ -20,7 +20,7 @@ export const enum dbTypes {
 export function useBreadItems() {
   // const rootDir = useRootDir();
   // const resourceType = rootDir?.resourceType;
-  const { data: subDir } = useCrumb();
+  const { data: subDir } = useCrumbData();
   const setView = useSetView();
   const setSubNode = useSetSubNode();
   const ref = useRef({ setView, setSubNode });

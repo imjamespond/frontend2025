@@ -38,4 +38,3 @@ export type DirNodeData = {
 } & NodeData;
 
 export type GraphData = DataAtlas.JsonNode[];
-export type SubDir = DataAtlas.SubDir;

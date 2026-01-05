@@ -1,41 +1,28 @@
 import { Fragment, useEffect, useRef, type CSSProperties } from "react";
 import Operations from "@components/Operations";
-import { useStyles } from "./components/styles";
-import type { GraphType } from "../helper";
-import { useRootDir } from "@view/data-atlas/context";
-import type { SubDir } from "./types";
+import { useStyles } from "../styles/relation";
 import Loading from "@components/Loading";
 import { useGraph } from "./graph";
 import { useRelationChartDData } from "../service";
+import type { SubDir } from "../../helper";
 
-function FC({
-  graphType,
-  subDir,
-  graphData,
-}: {
-  graphData: DataAtlas.JsonNode[];
-  graphType: GraphType;
-  subDir?: SubDir;
-}) {
+function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: SubDir }) {
   const { styles } = useStyles();
-  const rootDir = useRootDir();
   const [containerRef, wrapperRef, graphRef, graphQueue] = useGraph();
 
   useEffect(() => {
     const { graphRef, graphQueue } = ref.current;
     graphQueue(() => {
-      if (rootDir === undefined || graphData.length < 1) return;
+      if (graphData.length < 1) return;
+      if (subDir === undefined) return;
       if (graphRef.current === null) return;
       if (graphRef.current.mounted === false) return;
-      graphRef.current.graphType = graphType;
       graphRef.current.graphData = graphData;
-      graphRef.current.rootDir = rootDir;
       graphRef.current.subDir = subDir;
-      const root = graphData[0];
-      graphRef.current.root = root;
+
       graphRef.current.init();
     });
-  }, [graphType, subDir, rootDir, graphData]);
+  }, [subDir, graphData]);
 
   const ref = useRef({ graphRef, graphQueue });
 
@@ -62,12 +49,12 @@ function FC({
   );
 }
 
-export default function Wrapper({ graphType, subDir }: { graphType: GraphType; subDir?: SubDir }) {
+export default function Wrapper({ subDir }: { subDir?: SubDir }) {
   const { data, isLoading, error } = useRelationChartDData();
 
   return (
     <Fragment>
-      {data && <FC graphType={graphType} graphData={data} subDir={subDir} />}
+      {data && <FC graphData={data} subDir={subDir} />}
       {error && JSON.stringify(error)}
       <Loading spinning={isLoading} />
     </Fragment>

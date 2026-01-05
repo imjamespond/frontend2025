@@ -6,7 +6,7 @@ import { service } from "@service/api/data-atlas";
 
 type queryCrumbDataKey = KeyOfFetcher<typeof service.dataassetmanager.queryCrumbData> | null;
 
-export function useCrumb() {
+export function useCrumbData() {
   const rootDir = useRootDir();
   const templateType = useTemplateType();
   const env = useDomainId();
@@ -19,4 +19,20 @@ export function useCrumb() {
       : null,
     service.dataassetmanager.queryCrumbData
   );
+}
+
+
+
+type QueryRelationChartDataKey = KeyOfFetcher<typeof service.dataassetmanager.queryRelationChartData> | null;
+
+export function useRelationChartDData() {
+  const rootDir = useRootDir();
+  const templateType = useTemplateType();
+  const env = useDomainId();
+  const queryRelationChartDataKey: QueryRelationChartDataKey =
+    env && rootDir?.resourceType
+      ? { args: { params: { resourceType: rootDir.resourceType, env, templateType } } }
+      : null;
+
+  return useSWR(queryRelationChartDataKey, service.dataassetmanager.queryRelationChartData);
 }

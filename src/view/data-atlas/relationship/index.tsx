@@ -5,10 +5,13 @@ import { useGraphType, useSetGraphType } from "./context";
 import Block from "./block/VList";
 import Tree from "./tree-org";
 import { useEffect } from "react";
+import Relation from "./relation";
+import { useCrumbData } from "./service";
 
 function FC() {
   const { styles } = useStyles();
   const [breadItems] = useBreadItems();
+  const { data: subDir } = useCrumbData();
   const graphType = useGraphType();
   const setGraphType = useSetGraphType();
   useEffect(() => {
@@ -34,10 +37,9 @@ function FC() {
 
       <div className="__item __content">
         {graphType === GraphType.Block && <Block />}
-        {graphType === GraphType.Tree && <Tree key="tree" graphType={graphType} />}
-        {graphType === GraphType.Org && <Tree key="org" graphType={graphType} />}
-        {/* 
-        {graphType === GraphType.Relation && <Relation subDir={subDir?.subDir} />} */}
+        {graphType === GraphType.Tree && <Tree key="tree" graphType={graphType} subDir={subDir?.subDir} />}
+        {graphType === GraphType.Org && <Tree key="org" graphType={graphType} subDir={subDir?.subDir} />}
+        {graphType === GraphType.Relation && <Relation subDir={subDir?.subDir} />}
       </div>
 
       {/* {JSON.stringify({rootDir,subDir},)} */}

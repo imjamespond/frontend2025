@@ -6,7 +6,7 @@ import { zoomFit } from "../config";
 import { draw1, draw2, init } from "./init";
 import { Category, DirNode } from "../components";
 import { GraphType } from "../../helper";
-import type { GraphData, Style, SubDir } from "../types";
+import type { GraphData, Style } from "../types";
 import { layout } from "./layout";
 import {
   addNodeTool,
@@ -20,7 +20,7 @@ import {
   selectDir,
   selectL3Dir,
 } from "./helper";
-import type { Dir } from "@/view/data-atlas/helper";
+import type { Dir, SubDir } from "../../../helper";
 import { AddNodes } from "./fixedNodes";
 import { ActType, GraphSubject } from "../context";
 

@@ -44,6 +44,9 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
+      d3-force:
+        specifier: ^3.0.0
+        version: 3.0.0
       dayjs:
         specifier: ^1.11.19
         version: 1.11.19
@@ -84,6 +87,9 @@ importers:
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
+      '@types/d3-force':
+        specifier: ^3.0.10
+        version: 3.0.10
       '@types/node':
         specifier: ^25.0.3
         version: 25.0.3
