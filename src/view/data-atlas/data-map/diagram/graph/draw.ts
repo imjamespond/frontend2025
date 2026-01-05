@@ -8,7 +8,7 @@ import { createOrgNode } from "./utils";
  * 初始化图形
  */
 export function init(this: Graph, data: DataAtlas.HomePageMap) {
-  const { graph: graph, draw } = this;
+  const { graph, draw } = this;
   const dirs = data.dataAsset;
   const { bottom, root } = AddNodes(graph);
   this.root = root;

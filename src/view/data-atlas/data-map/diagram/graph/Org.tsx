@@ -204,7 +204,7 @@ export default class OrgComponent extends React.Component<Props, State> {
             </div>
           </div>
           <div className={"body"}>
-            <Row className={classnames({ ["scoll"]: expanded })}>{items}</Row>
+            <Row className={classnames({ scoll: expanded })}>{items}</Row>
           </div>
         </div>
       </div>

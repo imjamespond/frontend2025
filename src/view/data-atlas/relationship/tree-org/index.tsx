@@ -7,7 +7,7 @@ import { service } from "@service/api/data-atlas";
 import type { KeyOfFetcher } from "@service/api";
 import { useRootDir, useTemplateType } from "@view/data-atlas/context";
 import { useDomainId } from "@config/app";
-import type { SubDir } from "./graph/types";
+import type { SubDir } from "./types";
 import Loading from "@components/Loading";
 import { useGraph } from "./graph";
 
@@ -27,10 +27,11 @@ function FC({
   useEffect(() => {
     const { graphRef, graphQueue } = ref.current;
     graphQueue(() => {
-      if (rootDir === undefined || graphData === undefined || graphData.length < 1) return;
+      if (rootDir === undefined || graphData.length < 1) return;
       if (graphRef.current === null) return;
       if (graphRef.current.mounted === false) return;
       graphRef.current.graphType = graphType;
+      graphRef.current.graphData = graphData;
       graphRef.current.rootDir = rootDir;
       graphRef.current.subDir = subDir;
       const root = graphData[0];

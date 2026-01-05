@@ -51,6 +51,7 @@ export function useInit() {
   }, [matchedDirId]);
 
   useEffect(() => {
+    const { graphRef } = ref.current;
     const sub = LayoutSubject.pipe(
       tap((/* data */) => {
         // setWaiting(true);

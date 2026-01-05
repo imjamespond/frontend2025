@@ -45,6 +45,7 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
     const ref = useRef({ queue });
 
     useLayoutEffect(() => {
+      const { queue } = ref.current;
       kmDebug("mount graph?");
       queue(() => {
         kmDebug("create graph");

@@ -1,5 +1,5 @@
 import { colorPrimary } from "@config/style";
-import type { Style } from "./types";
+import type { Style } from "../types";
 import type { Graph } from ".";
 
 export const TBStyle: Style = {

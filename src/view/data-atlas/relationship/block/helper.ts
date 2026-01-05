@@ -26,7 +26,7 @@ export function useHelper() {
 
   useEffect(() => {
     qc.setQueryData(getTableModelKey, { pages: [], pageParams: [] });
-  }, [getTableModelKey]); // 清oldPages, 防止重新请求之前[...页码]
+  }, [getTableModelKey, qc]); // 清oldPages, 防止重新请求之前[...页码]
 
   const {
     data: modelsData,

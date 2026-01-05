@@ -1,14 +1,14 @@
 import { colorPrimary } from "@config/style";
 import { createGlobalStyle, createStyles } from "antd-style";
 
-export type BlockStyles = {
-  bg: string;
-  bg0: string;
-  bg1: string;
-  bg2: string;
-  bg3: string;
-  color: string;
-};
+// export type BlockStyles = {
+//   bg: string;
+//   bg0: string;
+//   bg1: string;
+//   bg2: string;
+//   bg3: string;
+//   color: string;
+// };
 export const useStyles = createStyles(() => ({
   root: {
     height: "100%",

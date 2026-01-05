@@ -4,8 +4,8 @@ import Tooltip from "@components/Tooltip";
 import classnames from "classnames";
 import { useCategoryStyles, useDirStyles } from "./styles";
 import classNames from "classnames";
-import type { ResourceType } from "@/view/data-atlas/helper";
-import type { NodeData } from "../graph/types";
+
+import type { DirNodeData, NodeData } from "../types";
 import { useSetSubNode } from "@/view/data-atlas/context";
 
 export function Category({ node }: { node: Node }) {
@@ -18,12 +18,7 @@ export function Category({ node }: { node: Node }) {
   );
 }
 
-export type DirNodeData = {
-  direction: string;
-  resourceType: ResourceType;
-  highlight: boolean;
-  color: string;
-} & NodeData;
+
 export const DirNode = ({ node }: { node: Node }) => {
   const { item, direction, highlight, color } = node.getData<DirNodeData>();
   const { styles } = useDirStyles({ theme: { colorPrimary: color } });

@@ -1,3 +1,5 @@
+import type { ResourceType } from "@/view/data-atlas/helper";
+
 export interface Style {
   type: 0 | 1; // 1为内部或外部
   size: {
@@ -27,6 +29,13 @@ export interface NodeData {
   color?: string;
   lv?: number;
 }
+
+export type DirNodeData = {
+  direction: string;
+  resourceType: ResourceType;
+  highlight: boolean;
+  color: string;
+} & NodeData;
 
 export type GraphData = DataAtlas.JsonNode[];
 export type SubDir = DataAtlas.SubDir;

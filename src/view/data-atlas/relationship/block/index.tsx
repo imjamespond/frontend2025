@@ -163,7 +163,7 @@ export default FC;
 export function getIcon(msg: string, title: string, icon: string) {
   return (
     <Tooltip placement="top" title={`${title}: ${!!msg ? msg : "暂无"}`}>
-      <img src={icon} style={!!msg ? undefined : { filter: "grayscale(1)", opacity: 0.7 }} />
+      <img alt="" src={icon} style={!!msg ? undefined : { filter: "grayscale(1)", opacity: 0.7 }} />
     </Tooltip>
   );
 }
@@ -172,7 +172,7 @@ export function Model({ open, url, onClose }: { open: boolean; url?: string; onC
   return (
     <React.Fragment>
       <KmDrawer open={open} width={"90vw"} onClose={() => onClose()}>
-        <iframe src={url} style={{ width: "100%", height: "calc(100vh - 110px)", border: "none" }} />
+        <iframe title="title" src={url} style={{ width: "100%", height: "calc(100vh - 110px)", border: "none" }} />
       </KmDrawer>
     </React.Fragment>
   );

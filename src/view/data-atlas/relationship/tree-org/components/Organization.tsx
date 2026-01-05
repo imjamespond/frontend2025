@@ -6,20 +6,13 @@ import classnames from "classnames";
 
 import Tooltip from "@components/Tooltip";
 import { useStyles } from "./styles";
-import type { NodeData, Style } from "../graph/types";
+import type { NodeData, Style } from "../types";
+import { ActType, GraphSubject } from "../context";
 
 export type OrgNodeData = {
   dirId: string;
   style: Style;
-  onSelectDir?: ({
-    data /* 当前点击目录 */,
-    node /* 当前点击结点 */,
-    pdata /* 当前层级所有目录 */,
-  }: {
-    data: DataAtlas.JsonNode;
-    node: Node;
-    pdata: DataAtlas.JsonNode;
-  }) => void;
+
   onLayout?: Function;
 } & NodeData;
 interface Props {
@@ -89,7 +82,7 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
   render() {
     const { expanded } = this.state;
     const { node, className } = this.props;
-    const { dirId, style, item: data, onSelectDir } = node.getData<OrgNodeData>();
+    const { dirId, style, item: data } = node.getData<OrgNodeData>();
     const span = 24 / style.cols;
 
     let items = undefined;
@@ -98,9 +91,7 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
     // 是否出现滚动条
     if (expanded) {
       items = list.map((item, i: number) => {
-        return (
-          <Item key={i} item={item} span={span} dirId={dirId} parent={data} node={node} onSelectDir={onSelectDir} />
-        );
+        return <Item key={i} item={item} span={span} dirId={dirId} parent={data} node={node} />;
       });
       this.hasMore &&
         items.push(
@@ -118,9 +109,7 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
       let num = list.length > min ? min - 1 : list.length;
       // 判断列表数目
       items = list.slice(0, num).map((item, i: number) => {
-        return (
-          <Item key={i} item={item} span={span} dirId={dirId} parent={data} node={node} onSelectDir={onSelectDir} />
-        );
+        return <Item key={i} item={item} span={span} dirId={dirId} parent={data} node={node} />;
       });
       // 显示更多
       if (list.length > items.length) {
@@ -160,7 +149,7 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
           />
         </svg>
         <div className={"body"}>
-          <Row gutter={[8, 8]} className={classnames({ ["scoll"]: expanded })}>
+          <Row gutter={[8, 8]} className={classnames({ scoll: expanded })}>
             {items}
           </Row>
         </div>
@@ -173,16 +162,14 @@ function Item({
   item,
   span,
   dirId,
-  parent: parent,
+  parent,
   node,
-  onSelectDir,
 }: {
   item: DataAtlas.JsonNode;
   span: any;
   dirId: string;
   parent: DataAtlas.JsonNode;
   node: Node;
-  onSelectDir: OrgNodeData["onSelectDir"];
 }) {
   const { nodeId, text, dataAssetAndSubDirCount } = item;
   const matched = dirId === nodeId;
@@ -191,7 +178,7 @@ function Item({
     <Col span={span} className={classnames({ matched })}>
       <div
         onClick={() => {
-          onSelectDir?.({ pdata: parent, node, data: item });
+          GraphSubject.next({ type: ActType.ClickDir, payload: { pdata: parent, node, data: item } });
         }}
       >
         <Tooltip className="org-name" tip={msg} />
@@ -200,7 +187,7 @@ function Item({
   );
 }
 
-export default function ({ node }: { node: Node }) {
+export default function Wrapper({ node }: { node: Node }) {
   const { styles } = useStyles();
   return <OrgComponent node={node} className={styles.root} />;
 }

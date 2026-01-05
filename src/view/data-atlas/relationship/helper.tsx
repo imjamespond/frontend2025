@@ -1,7 +1,7 @@
 import { KmTypography } from "@components";
 import type { BreadcrumbProps } from "antd";
-import { useMemo } from "react";
-import { useRootDir, useSetSubNode, useSetView } from "../context";
+import { useMemo, useRef } from "react";
+import { useSetSubNode, useSetView } from "../context";
 import { useCrumb } from "./service";
 import { View } from "../helper";
 
@@ -18,11 +18,12 @@ export const enum dbTypes {
 }
 
 export function useBreadItems() {
-  const rootDir = useRootDir();
-  const resourceType = rootDir?.resourceType;
+  // const rootDir = useRootDir();
+  // const resourceType = rootDir?.resourceType;
   const { data: subDir } = useCrumb();
   const setView = useSetView();
   const setSubNode = useSetSubNode();
+  const ref = useRef({ setView, setSubNode });
   return useMemo(() => {
     const items: BreadcrumbProps["items"] = [];
     let curDir = subDir,
@@ -34,7 +35,7 @@ export function useBreadItems() {
             <KmTypography.Link
               className={"link"}
               onClick={() => {
-                setView(View.DataMap);
+                ref.current.setView(View.DataMap);
               }}
             >
               数据地图 &nbsp;{">"}&nbsp; {curDir.dirName}
@@ -50,7 +51,7 @@ export function useBreadItems() {
             <KmTypography.Link
               className={"link"}
               onClick={() => {
-                setSubNode({ dirId });
+                ref.current.setSubNode({ dirId });
               }}
             >
               {curDir.dirName}
@@ -65,5 +66,5 @@ export function useBreadItems() {
       curDir = curDir.subDir;
     }
     return [items, endDir] as const;
-  }, [subDir, resourceType]);
+  }, [subDir]);
 }

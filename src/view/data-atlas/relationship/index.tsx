@@ -3,7 +3,7 @@ import { useStyles } from "./styles";
 import { GraphType, useBreadItems } from "./helper";
 import { useGraphType, useSetGraphType } from "./context";
 import Block from "./block/VList";
-import Tree from "./tree";
+import Tree from "./tree-org";
 import { useEffect } from "react";
 
 function FC() {

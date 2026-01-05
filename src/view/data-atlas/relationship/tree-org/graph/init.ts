@@ -1,7 +1,7 @@
 import { Cell, Edge } from "@antv/x6";
 import { LRStyle, TBStyle } from "./fixedNodes";
-import type { GraphData, Style } from "./types";
-import { getColors, groupDepth } from "./config";
+import type { GraphData, Style } from "../types";
+import { getColors, groupDepth } from "../config";
 import { GraphType } from "../../helper";
 import type { Graph } from ".";
 import { getNodeData } from "./helper";
@@ -26,7 +26,7 @@ export function init(this: Graph) {
 
   const noGroup = groupDepth === 3 ? subDir?.subDir?.subDir : subDir?.subDir;
   if (noGroup) {
-    // root.children && this.draw2({ parent: node, items: root.children, rankdir });
+    root.children && this.draw2({ parent: node, items: root.children, rankdir });
   } else {
     root.children && this.draw1({ parent: node, items: root.children });
   }
@@ -58,7 +58,7 @@ export function draw1(
     const { text } = item;
     const color = getColors(i);
     const label = `${text}(${item.dataAssetAndSubDirCount ?? 0})`;
-    const node = createCategoryNode(this, item, color, label);
+    const node = createCategoryNode(item, color, label);
     edges.push(createEdge(parent, node));
     node.data = { item };
     return node;
@@ -69,7 +69,7 @@ export function draw1(
   // 三级带虚线的html结点
   const children = nodes.map((spNode, i: number) => {
     const color = getColors(i);
-    const { item } = getNodeData(spNode);
+    const item = getNodeData(spNode)!.item;
 
     const newStyle = getSize({ ...style, color }, item.children?.length ?? 0, zoom);
 
@@ -95,42 +95,45 @@ export function draw1(
   graph.addEdges(edges);
 }
 
-// export function draw2({
-//   parent,
-//   items,
-//   rankdir,
-// }: {
-//   items?: GraphData;
-//   parent: any; // 外部内部资源,数据资产 结点
-//   rankdir: string; // dagre 布局方向
-// }) {
-//   let center: Node | null = null;
+export function draw2(
+  this: Graph,
+  {
+    parent,
+    items,
+  }: {
+    items?: GraphData;
+    parent: any; // 外部内部资源,数据资产 结点
+    rankdir: string; // dagre 布局方向
+  }
+) {
+  const { graph, subDir, createCategoryNode, createEdge, addNodeTool, expandLayout, selectL3Dir } = this;
+  let center: Node | null = null;
 
-//   // 二级结点
-//   (items ?? []).forEach((item, i: number) => {
-//     const { text } = item;
-//     const color = getColors(i);
-//     const label = `${text}(${item.dataAssetAndSubDirCount ?? 0})`;
-//     const node = createCategoryNode(item, color, label);
-//     graph.addNode(node);
-//     graph.addEdge(createEdge(parent, node));
-//     node.data = { item, collapsed: false };
+  // 二级结点
+  (items ?? []).forEach((item, i: number) => {
+    const { text } = item;
+    const color = getColors(i);
+    const label = `${text}(${item.dataAssetAndSubDirCount ?? 0})`;
+    const node = createCategoryNode(item, color, label);
+    graph.addNode(node);
+    graph.addEdge(createEdge(parent, node));
+    node.data = { item, collapsed: false };
 
-//     // 3级以下目录结点
-//     const _center = selectDir3({ node, subDir: (groupDepth === 3 ? subDir?.subDir : subDir) as DataAtlas.SubDir });
-//     center = _center ? _center : center;
+    // 3级以下目录结点
+    const _center = selectL3Dir({ node, subDir: (groupDepth === 3 ? subDir?.subDir : subDir) as DataAtlas.SubDir });
+    center = _center ? _center : center;
 
-//     node.data.collapsed = !!_center;
-//     addNodeTool(node);
+    node.data.collapsed = !!_center;
+    addNodeTool(node);
 
-//     return node;
-//   });
+    return node;
+  });
 
-//   if (!!center) {
-//     layout4({ center });
-//     graph.centerCell(center);
-//   }
-// }
+  if (!!center) {
+    expandLayout({ center });
+    graph.centerCell(center);
+  }
+}
 export function getSize(style: Style, length: number, zoom: number) {
   const { cols, size, minRows } = style;
 
