@@ -19,7 +19,7 @@ export function draw1(this: Graph) {
   const root: NodeData = {
     id: rootData.nodeId,
     nodeSize: 120,
-    r: 80,
+    radius: 0,
     fontSize: "16px",
     x: 0,
     y: 0,
@@ -29,23 +29,23 @@ export function draw1(this: Graph) {
     style,
   };
   graph.addNode(getNode(root));
+
   const links: unknown[] = [];
   const nodes: NodeData[] = [root];
   const categories: C[] = [];
 
-  const anglePad = 2;
   rootData.children?.forEach((category, i: number) => {
     const { text, nodeId, children, dataAssetAndSubDirCount } = category;
 
     // 二级结点
-    const angle = (i / rootData?.children!.length) * Math.PI * 2 + anglePad + Math.random() * 0.25 - 0.125;
-    const node = {
+    // const angle = (i / rootData?.children!.length) * Math.PI * 2 + anglePad + Math.random() * 0.25 - 0.125;
+    const node: NodeData = {
       id: nodeId,
       nodeSize: 100,
-      r: 80,
+      radius: 0,
       fontSize: "14px",
-      x: Math.cos(angle) * 500,
-      y: Math.sin(angle) * 500,
+      x: 0,
+      y: 0,
       lineHeight: 20,
       label: `${text}\n${dataAssetAndSubDirCount}`,
       data: category,
@@ -71,8 +71,6 @@ export function draw1(this: Graph) {
     const c: C = { spNode, children: [] };
     categories.push(c);
 
-    const xy = { x: node.x + Math.cos(angle) * 300, y: node.y + Math.sin(angle) * 300 };
-
     // const hasEntry = children?.some(({nodeId})=>entryId === nodeId)
     // const color = '#d4d8d8' //hasEntry ? getColors(1): getColors(0)
     // 三级结点, 只展示有入口结点的
@@ -91,10 +89,10 @@ export function draw1(this: Graph) {
         const _node: NodeData = {
           id: nodeId,
           nodeSize: 50,
-          r: 25,
+          radius: 25,
           fontSize: "10px",
-          x: xy.x - 100 * Math.random(),
-          y: xy.y - 100 * Math.random(),
+          x: 0,
+          y: 0,
           data: child,
           label: `${text}`,
           leaf: true,
@@ -111,39 +109,6 @@ export function draw1(this: Graph) {
       });
     }
   });
-
-  // return new Promise<void>((resv) => {
-  //   let tick = 0;
-  //   d3Layout({
-  //     nodes,
-  //     links,
-  //     rect,
-  //     tick: () => {
-  //       tick++;
-  //       if (tick % 15 === 0 && tick > 20) {
-  //         nodes.forEach((n) => {
-  //           const cell = graph.getCellById(n.id) as Node;
-  //           cell?.setPosition(n.x, n.y);
-  //         });
-  //         console.debug("tick", tick);
-  //       }
-  //       // }
-  //     },
-  //     end: () => {
-  //       nodes.forEach((n) => {
-  //         const cell = graph.getCellById(n.id) as Node;
-  //         const r = n.nodeSize * 0.5;
-  //         cell?.setPosition(n.x - r, n.y - r);
-  //       });
-  //       embed(graph, categories);
-  //       // graph.setAsync(false)
-  //       // graph.unfreeze()
-  //       graph.centerContent();
-
-  //       resv();
-  //     },
-  //   });
-  // });
 }
 
 export function draw2(this: Graph) {
@@ -156,10 +121,10 @@ export function draw2(this: Graph) {
   // graph.freeze()
   // 根结点
   const rootData = graphData[0];
-  const root = {
+  const root: NodeData = {
     id: rootData.nodeId,
     nodeSize: 120,
-    r: 80,
+    radius: 0,
     fontSize: "16px",
     x: 0,
     y: 0,
@@ -169,8 +134,8 @@ export function draw2(this: Graph) {
     style,
   };
   graph.addNode(getNode(root));
-  const links: any[] = [];
-  const nodes: any[] = [root];
+  const links: unknown[] = [];
+  const nodes: NodeData[] = [root];
   // const categories: C[] = [];
 
   const anglePad = 2;
@@ -179,10 +144,10 @@ export function draw2(this: Graph) {
 
     // 二级结点
     const angle = (i / rootData?.children!.length) * Math.PI * 2 + anglePad + Math.random() * 0.25 - 0.125;
-    const node = {
+    const node: NodeData = {
       id: nodeId,
       nodeSize: 100,
-      r: 80,
+      radius: 0,
       fontSize: "14px",
       x: Math.cos(angle) * 500,
       y: Math.sin(angle) * 500,
@@ -223,10 +188,10 @@ export function draw2(this: Graph) {
 
           const isEntry = entryId === nodeId && !dir.subDir;
           const fill = getColor(isEntry, childSize);
-          const _node = {
+          const _node: NodeData = {
             id: nodeId,
             nodeSize: 50,
-            r: 25,
+            radius: 25,
             fontSize: "10px",
             x: xy.x - 100 * Math.random(),
             y: xy.y - 100 * Math.random(),
@@ -252,46 +217,4 @@ export function draw2(this: Graph) {
     if (rootDir === null) return;
     addSubNodes(rootDir, node, children);
   });
-
-  // if (container.current === null) return;
-
-  // const rect = container.current.getBoundingClientRect();
-
-  // return new Promise<void>((resv) => {
-  //   let tick = 0;
-  //   d3Layout({
-  //     nodes,
-  //     links,
-  //     rect,
-  //     tick: () => {
-  //       tick++;
-  //       if (container.current === null) return;
-  //       // if (process.env.devMode) {
-  //       if (tick % 15 === 0 && tick > 20) {
-  //         container.current.style.opacity = ".1";
-  //         // if (performance.now() - time > 200) {
-  //         // time = performance.now()
-  //         nodes.forEach((n) => {
-  //           const cell = graph.getCellById(n.id) as Node;
-  //           cell?.setPosition(n.x, n.y);
-  //         });
-  //         console.debug("tick", tick);
-  //       }
-  //       // }
-  //     },
-  //     end: () => {
-  //       nodes.forEach((n) => {
-  //         const cell = graph.getCellById(n.id) as Node;
-  //         const r = n.nodeSize * 0.5;
-  //         cell?.setPosition(n.x - r, n.y - r);
-  //       });
-  //       // embed(graph, categories)
-  //       // graph.setAsync(false)
-  //       // graph.unfreeze()
-  //       graph.centerContent();
-
-  //       resv();
-  //     },
-  //   });
-  // });
 }

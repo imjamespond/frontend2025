@@ -1,5 +1,9 @@
-import type { Cell, NodeMetadata } from "@antv/x6";
-import type { NodeData } from "./types";
+import type { NodeMetadata } from "@antv/x6";
+import type { NodeData, X6Node } from "./types";
+
+export function getNodeData(node: X6Node) {
+  return node.getData<NodeData>();
+}
 
 export function getLeafNode(item: NodeData) {
   return getNode(item);
@@ -9,6 +13,7 @@ export function getNode(item: NodeData) {
   const style = item.style ?? { fill: "#F79767", stroke: "#f36924", color: "#fff" };
   // const click = item.leaf ? { cursor: 'pointer', event: 'node:open', } : undefined
   const radius = item.nodeSize * 0.5;
+  item.radius = radius;
   const circle = { cx: radius, cy: radius, r: radius };
   const node: NodeMetadata = {
     id: item.id,

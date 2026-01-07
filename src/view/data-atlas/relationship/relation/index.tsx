@@ -5,10 +5,12 @@ import Loading from "@components/Loading";
 import { useGraph } from "./graph";
 import { useRelationChartDData } from "../service";
 import type { SubDir } from "../../helper";
+import { useRootDir } from "../../context";
 
 function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: SubDir }) {
   const { styles } = useStyles();
   const [containerRef, wrapperRef, graphRef, graphQueue] = useGraph();
+  const rootDir = useRootDir();
 
   useEffect(() => {
     const { graphRef, graphQueue } = ref.current;
@@ -18,11 +20,18 @@ function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: S
       if (graphRef.current === null) return;
       if (graphRef.current.mounted === false) return;
       graphRef.current.graphData = graphData;
+      // if (process.env.devMode && graphData[0].children)
+      //   graphRef.current.graphData = [
+      //     {
+      //       ...graphData[0],
+      //       children: graphData[0].children?.slice(0, 2),
+      //     },
+      //   ];
       graphRef.current.subDir = subDir;
-
+      if (rootDir?.dirId) graphRef.current.entryId = rootDir.dirId;
       graphRef.current.init();
     });
-  }, [subDir, graphData]);
+  }, [subDir, graphData, rootDir]);
 
   const ref = useRef({ graphRef, graphQueue });
 
@@ -38,10 +47,11 @@ function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: S
             graphRef.current?.graph.zoom(-0.1);
           }}
           onRealContent={() => {
-            graphRef.current!.graph.scale(1);
+            graphRef.current?.graph.scale(1);
           }}
           onFitContent={() => {
-            graphRef.current!.zoomToFit();
+            // graphRef.current!.zoomToFit();
+            graphRef.current?.test();
           }}
         />
       </div>

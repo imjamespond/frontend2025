@@ -21,14 +21,16 @@
 import type { NodeModel } from "../types";
 
 export default function circularLayout(nodes: NodeModel[], center: { x: number; y: number }, radius: number): void {
-  const unlocatedNodes = nodes; // .filter(node => !node.initialPositionCalculated)
+  const unlocatedNodes = nodes.filter(node => !node.initialPositionCalculated)
 
   unlocatedNodes.forEach((node, i) => {
     const x = center.x + radius * Math.sin((2 * Math.PI * i) / unlocatedNodes.length);
 
     const y = center.y + radius * Math.cos((2 * Math.PI * i) / unlocatedNodes.length);
 
-    node.setPosition(x, y);
-    // node.initialPositionCalculated = true;
+    console.log("circularLayout", x, y);
+    node.x = x;
+    node.y = y;
+    node.initialPositionCalculated = true;
   });
 }

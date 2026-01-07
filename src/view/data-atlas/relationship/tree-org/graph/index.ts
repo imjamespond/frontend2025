@@ -1,4 +1,4 @@
-import { BaseGraph, createUseGraph } from "@common/hooks/graph";
+import { BaseGraph, createUseGraph } from "@common/graph";
 // import { Node } from "@antv/x6";
 import { register } from "@antv/x6-react-shape";
 import Organization from "../components/Organization";

@@ -1,5 +1,5 @@
 import { type Node } from "@antv/x6";
-import { BaseGraph, createUseGraph } from "@common/hooks/graph";
+import { BaseGraph, createUseGraph } from "@common/graph";
 import { register } from "@antv/x6-react-shape";
 import Organization from "./Org";
 import { createEdge, createOrgNode } from "./utils";

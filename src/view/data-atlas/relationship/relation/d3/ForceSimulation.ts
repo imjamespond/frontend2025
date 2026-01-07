@@ -17,15 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import {
-  type Simulation,
-  forceCollide,
-  forceLink,
-  forceManyBody,
-  forceSimulation,
-  forceX,
-  forceY
-} from 'd3-force'
+import { type Simulation, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY } from "d3-force";
 
 import {
   DEFAULT_ALPHA,
@@ -38,82 +30,69 @@ import {
   LINK_DISTANCE,
   MAX_PRECOMPUTED_TICKS,
   EXTRA_TICKS_PER_RENDER,
-  VELOCITY_DECAY
-} from './constants'
-import circularLayout from './circularLayout'
-import type { NodeModel, RelationshipModel } from '../types'
-import type { Graph } from '@antv/x6'
-
-// const oneRelationshipPerPairOfNodes = (graph: GraphModel) =>
-//   Array.from(graph.groupedRelationships()).map(pair => pair.relationships[0])
+  VELOCITY_DECAY,
+} from "./constants";
+import circularLayout from "./circularLayout";
+import type { NodeModel, RelationshipModel } from "../types";
 
 export class ForceSimulation {
-  simulation: Simulation<NodeModel, RelationshipModel>
-  simulationTimeout: null | number = null
-
+  simulation: Simulation<NodeModel, RelationshipModel>;
+  simulationTimeout: null | number = null;
+  tick = 0;
   constructor(render: () => void) {
     this.simulation = forceSimulation<NodeModel, RelationshipModel>()
       .velocityDecay(VELOCITY_DECAY)
-      .force('charge', forceManyBody().strength(FORCE_CHARGE))
-      .force('centerX', forceX(0).strength(FORCE_CENTER_X))
-      .force('centerY', forceY(0).strength(FORCE_CENTER_Y))
+      .force("charge", forceManyBody().strength(FORCE_CHARGE))
+      .force("centerX", forceX(0).strength(FORCE_CENTER_X))
+      .force("centerY", forceY(0).strength(FORCE_CENTER_Y))
       .alphaMin(DEFAULT_ALPHA_MIN)
-      .on('tick', () => {
-        this.simulation.tick(EXTRA_TICKS_PER_RENDER)
-        render()
+      .on("tick", () => {
+        this.simulation.tick(EXTRA_TICKS_PER_RENDER );
+        render();
       })
-      .stop()
+      .stop();
   }
 
-  // updateNodes(graph: Graph): void {
-  //   const nodes = graph.getNodes
+  updateNodes(nodes: NodeModel[]): void {
+    const radius = (nodes.length * LINK_DISTANCE) / (Math.PI * 2);
+    const center = {
+      x: 0,
+      y: 0,
+    };
+    circularLayout(nodes, center, radius);
 
-  //   const radius = (nodes.length * LINK_DISTANCE) / (Math.PI * 2)
-  //   const center = {
-  //     x: 0,
-  //     y: 0
-  //   }
-  //   circularLayout(nodes, center, radius)
+    this.simulation.nodes(nodes).force("collide", forceCollide<NodeModel>().radius(FORCE_COLLIDE_RADIUS));
+  }
 
-  //   this.simulation
-  //     .nodes(nodes)
-  //     .force('collide', forceCollide<NodeModel>().radius(FORCE_COLLIDE_RADIUS))
-  // }
-
-  // updateRelationships(graph: GraphModel): void {
-  //   const relationships = oneRelationshipPerPairOfNodes(graph)
-
-  //   this.simulation.force(
-  //     'link',
-  //     forceLink<NodeModel, RelationshipModel>(relationships)
-  //       .id(node => node.id)
-  //       .distance(FORCE_LINK_DISTANCE)
-  //   )
-  // }
+  updateRelationships(relationships: RelationshipModel[]): void {
+    this.simulation.force(
+      "link",
+      forceLink<NodeModel, RelationshipModel>(relationships)
+        .id((nm) => nm.node.id)
+        .distance(FORCE_LINK_DISTANCE)
+    );
+  }
 
   precomputeAndStart(onEnd: () => void = () => undefined): void {
-    this.simulation.stop()
+    this.simulation.stop();
 
-    let precomputeTicks = 0
-    const start = performance.now()
-    while (
-      performance.now() - start < 250 &&
-      precomputeTicks < MAX_PRECOMPUTED_TICKS
-    ) {
-      this.simulation.tick(1)
-      precomputeTicks += 1
+    let precomputeTicks = 0;
+    const start = performance.now();
+    while (performance.now() - start < 250 && precomputeTicks < MAX_PRECOMPUTED_TICKS) {
+      this.simulation.tick(1);
+      precomputeTicks += 1;
       if (this.simulation.alpha() <= this.simulation.alphaMin()) {
-        break
+        break;
       }
     }
 
-    this.simulation.restart().on('end', () => {
-      onEnd()
-      this.simulation.on('end', null)
-    })
+    this.simulation.restart().on("end", () => {
+      onEnd();
+      this.simulation.on("end", null);
+    });
   }
 
   restart(): void {
-    this.simulation.alpha(DEFAULT_ALPHA).restart()
+    this.simulation.alpha(DEFAULT_ALPHA).restart();
   }
 }

@@ -1,8 +1,9 @@
 import { Cell, CellView, Edge, Node } from "@antv/x6";
 import { tree, hierarchy, type HierarchyPointNode } from "d3";
 import { Graph } from ".";
-import { type DirNodeData, type NodeData, type SubDir } from "../types";
+import { type DirNodeData, type NodeData } from "../types";
 import type { OrgNodeData } from "../components/Organization";
+import type { SubDir } from "@/view/data-atlas/helper";
 
 export function getNodeData(node: Cell) {
   return node.getData<NodeData | void>();
@@ -116,7 +117,7 @@ export function createCategoryNode(this: Graph, item: DataAtlas.JsonNode, color:
   return node;
 }
 
-const dirToolOpt = { r: 6, fontSize: 14, y: 4 };
+const dirToolOpt = { r: 6, fontSize: 14, x: 0, y: 4 };
 
 export function selectDir(
   this: Graph,
@@ -280,9 +281,9 @@ export function selectL3Dir(this: Graph, { node /* 当前点击结点 */, subDir
   return center;
 }
 
-export function addNodeTool(this: Graph, node: Node, options = { r: 10, fontSize: 20, y: 5 }) {
+export function addNodeTool(this: Graph, node: Node, options = { r: 10, fontSize: 18, x: 0, y: 5 }) {
   const { direction, collapse, expandNode, addNodeTool } = this;
-  const { r, fontSize, y } = options;
+  const { r, fontSize, x, y } = options;
   const { color, item, collapsed } = node.data;
   // console.debug(item, collapsed)
   let pos: object = {
@@ -293,7 +294,7 @@ export function addNodeTool(this: Graph, node: Node, options = { r: 10, fontSize
     pos = {
       x: "50%",
       y: "100%",
-      offset: { x: 0, y: 3 },
+      offset: { x: 0, y: 2 },
     };
   }
 
@@ -323,6 +324,7 @@ export function addNodeTool(this: Graph, node: Node, options = { r: 10, fontSize
               fontSize,
               "text-anchor": "middle",
               "pointer-events": "none",
+              x,
               y, // icon 相对位置
             },
           },
