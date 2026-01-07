@@ -1,7 +1,7 @@
 import { Graph as X6, type EdgeMetadata, type NodeMetadata } from "@antv/x6";
 import { kmDebug } from "@common/misc";
 import { useDebounceEffect, useSize } from "ahooks";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useId, useLayoutEffect, useMemo, useRef } from "react";
 
 type Params = ConstructorParameters<typeof X6>;
 
@@ -40,15 +40,16 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
     const containerRef = useRef<Container>(null);
     const wrapperRef = useRef<Wrapper>(null);
     const graphRef = useRef<G | null>(null);
+    const id = useId();
 
     const queue = useMemo(simpleQueue, []);
-    const ref = useRef({ queue });
+    const ref = useRef({ queue, id });
 
     useLayoutEffect(() => {
-      const { queue } = ref.current;
-      kmDebug("mount graph?");
+      const { queue, id } = ref.current;
+      kmDebug("mount graph", id);
       queue(() => {
-        kmDebug("create graph");
+        kmDebug("create graph", id);
         const container = containerRef.current;
         if (!container) return;
         const bbox = container.getBoundingClientRect();
@@ -62,10 +63,10 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
       });
 
       return () => {
-        kmDebug("unmount graph");
+        kmDebug("unmount graph", id);
 
         queue(() => {
-          kmDebug("dispose graph");
+          kmDebug("dispose graph", id);
           const graph = graphRef.current;
           if (!graph) return;
           graphRef.current = null;
