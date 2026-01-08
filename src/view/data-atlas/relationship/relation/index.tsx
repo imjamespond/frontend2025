@@ -6,6 +6,7 @@ import { useGraph } from "./graph";
 import { useRelationChartDData } from "../service";
 import type { SubDir } from "../../helper";
 import { useRootDir } from "../../context";
+import { Style } from "./style";
 
 function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: SubDir }) {
   const { styles } = useStyles();
@@ -37,6 +38,7 @@ function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: S
 
   return (
     <Fragment>
+      <Style />
       <div ref={wrapperRef} style={wrapperStyle} className={styles.root}>
         <div ref={containerRef} style={containerStyle} />
         <Operations

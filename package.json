@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ant-design/cssinjs": "^2.0.1",
+    "@ant-design/fast-color": "^3.0.0",
     "@ant-design/icons": "^6.1.0",
     "@antv/layout": "0.3.25",
     "@antv/x6": "^3.1.3",

@@ -1,11 +1,11 @@
 import { getColor } from "@config/style";
 import type { Graph } from "./graph";
 import { getEdge, getNode } from "./helper";
-import type { GraphData, NodeData } from "./types";
-import { Node } from "@antv/x6";
-import type { SubDir } from "../../helper";
+import type { NodeData } from "./types";
+// import { Node } from "@antv/x6";
+// import type { SubDir } from "../../helper";
 
-export type C = { spNode: Node; children: Node[] };
+// export type C = { spNode: Node; children: Node[] };
 export function draw1(this: Graph) {
   const { graph, graphData, entryId, style } = this;
   if (!graphData || graphData.length < 1) {
@@ -32,7 +32,7 @@ export function draw1(this: Graph) {
 
   const links: unknown[] = [];
   const nodes: NodeData[] = [root];
-  const categories: C[] = [];
+  // const categories: C[] = [];
 
   rootData.children?.forEach((category, i: number) => {
     const { text, nodeId, children, dataAssetAndSubDirCount } = category;
@@ -52,7 +52,8 @@ export function draw1(this: Graph) {
       style,
     };
     nodes.push(node);
-    const spNode = graph.addNode(getNode(node)); // 先让上层结点发散
+    // const spNode = 
+    graph.addNode(getNode(node)); // 先让上层结点发散
     const link = { source: root, target: node };
     links.push(link);
     const _edge = getEdge(root.id, node.id, {
@@ -68,8 +69,8 @@ export function draw1(this: Graph) {
     });
     graph.addEdge(_edge);
 
-    const c: C = { spNode, children: [] };
-    categories.push(c);
+    // const c: C = { spNode, children: [] };
+    // categories.push(c);
 
     // const hasEntry = children?.some(({nodeId})=>entryId === nodeId)
     // const color = '#d4d8d8' //hasEntry ? getColors(1): getColors(0)
@@ -99,20 +100,21 @@ export function draw1(this: Graph) {
           style: { ...fill, color: "#2A2C34" },
         };
         nodes.push(_node);
-        const childNode = graph.addNode(getNode(_node));
+        // const childNode = 
+        graph.addNode(getNode(_node));
         const link = { source: node, target: _node };
         links.push(link);
         const _edge = getEdge(node.id, _node.id);
         graph.addEdge(_edge);
 
-        c.children.push(childNode);
+        // c.children.push(childNode);
       });
     }
   });
 }
 
 export function draw2(this: Graph) {
-  const { graph, graphData, rootDir, style } = this;
+  /* const { graph, graphData, rootDir, style } = this;
   if (!graphData || graphData.length < 1) {
     console.error("invalid graphData...");
     return;
@@ -216,5 +218,5 @@ export function draw2(this: Graph) {
 
     if (rootDir === null) return;
     addSubNodes(rootDir, node, children);
-  });
+  }); */
 }

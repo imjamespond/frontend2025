@@ -24,5 +24,5 @@ export type NodeData = {
   props?: object;
 };
 
-export type NodeModel = SimulationNodeDatum & { initialPositionCalculated: boolean; r: number; node: Node };
+export type NodeModel = SimulationNodeDatum & { initialPositionCalculated: boolean; r: number; selected?: boolean; node: Node };
 export type RelationshipModel = SimulationLinkDatum<NodeModel>;

@@ -24,6 +24,26 @@ Shape.Path.define({
     },
     {
       tagName: 'g', className: 'menu', 
+      children: [
+        {
+          tagName: 'path', className: 'expand-node',
+        },
+        {
+          tagName: 'path', className: 'remove-node',
+        },
+        {
+          tagName: 'path', className: 'unlock-node',
+        },
+        {
+          tagName: 'g', className: 'icon expand-node',
+        },
+        {
+          tagName: 'g', className: 'icon remove-node',
+        },
+        {
+          tagName: 'g', className: 'icon unlock-node',
+        },
+      ]
     }
   ], 
 })

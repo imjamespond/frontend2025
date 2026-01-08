@@ -30,7 +30,7 @@ export function useInit() {
 
   // 搜索结果匹配
   useEffect(() => {
-    const { graphRef } = ref.current;
+    const { graphRef, graphQueue } = ref.current;
     if (matchedDirId) {
       graphRef.current?.graph.getNodes().forEach((node) => {
         const nodeData = getOrgNodeData(node, true);
@@ -44,7 +44,10 @@ export function useInit() {
         });
         if (matched) {
           setOrgNodeData(node, { matchedDirId, expanded: true });
-          graphRef.current?.graph.centerCell(node);
+          graphQueue(() => {
+            graphRef.current?.graph.centerCell(node);
+            graphRef.current?.graph.zoomTo(1);
+          });
         }
       });
     }
