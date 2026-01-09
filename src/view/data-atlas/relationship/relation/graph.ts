@@ -19,9 +19,10 @@ export class Graph extends BaseGraph {
   entryId: string | null = null;
   rootDir: SubDir | null = null;
   style = (() => {
+    // const colorPrimary = 'rgb(201, 144, 192)'
     const color = new FastColor(colorPrimary).toHsl();
     return {
-      fill: new FastColor({ ...color, l: .7 }).toHexString(), stroke: colorPrimary, color: new FastColor({ ...color, l: .35 }).toHexString()
+      fill: colorPrimary, stroke: new FastColor({ ...color,  l: .48 }).toHexString(), color: '#fff'
     }
   })();
   draw1 = draw1.bind(this);

@@ -3,12 +3,18 @@
   border-radius: var(--gradient-spin-border-radius, 24px);
 }
 
-.gradient-spin-expand {
+.gradient-spin-expand,
+.gradient-spin-blur {
   position: absolute;
   contain: paint;
   border-radius: inherit;
   inset: 0;
   pointer-events: none;
+}
+
+.gradient-spin-blur {
+  filter: blur(24px);
+  opacity: 0.6;
 }
 
 .plate-background-blur {
@@ -20,6 +26,7 @@
   pointer-events: none;
 }
 
+.gradient-spin-blur::before,
 .gradient-spin-expand::before {
   content: "";
   position: absolute;
@@ -35,17 +42,22 @@
       rgba(52, 168, 82, 0) 360deg
     )
     border-box;
-  left: 50%;
+  /* left: 50%;
   top: 50%;
   translate: -50% -50%;
   width: 900px;
   height: 900px;
-  scale: 1 0.4;
+  scale: 1 0.4; */
   pointer-events: none;
   /* transition: opacity 0.3s; */
   filter: blur(20px);
 
   transition: opacity 0.3s, filter 0.3s;
+
+  inset: 0px;
+  transform-origin: center center;
+  aspect-ratio: 1 / 1;
+  margin: auto;
 }
 
 .plate-background-blur::before {
@@ -64,7 +76,8 @@
   animation: gradient-border-width var(--gradient-spin-time, 0.9s) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.gradient-spin-anim .gradient-spin-expand::before {
+.gradient-spin-anim .gradient-spin-expand::before,
+.gradient-spin-anim .gradient-spin-blur::before {
   animation: gradient-spin-expand var(--gradient-spin-time, 0.9s) 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
