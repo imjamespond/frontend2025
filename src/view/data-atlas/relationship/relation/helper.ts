@@ -25,14 +25,14 @@ export function getNode(item: NodeData) {
     attrs: {
       body: {
         ...style,
-        "stroke-width": `2px`,
+        "stroke-width": `4px`,
         ...circle,
       },
       ".ring": {
         ...circle,
-        r: circle.r + 3,
+        r: circle.r + 5,
         fill: "transparent",
-        "stroke-width": `4px`,
+        "stroke-width": `6px`,
       },
       text: {
         text: item.label,
@@ -47,7 +47,7 @@ export function getNode(item: NodeData) {
           breakWord: true, // 是否截断单词
         },
       },
-      ".menu": {
+      ".__menu": {
         transform: `translate(${radius},${radius})`,
       },
       // tab1: {

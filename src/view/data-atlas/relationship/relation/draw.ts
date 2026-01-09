@@ -34,7 +34,7 @@ export function draw1(this: Graph) {
   const nodes: NodeData[] = [root];
   // const categories: C[] = [];
 
-  rootData.children?.forEach((category, i: number) => {
+  rootData.children?.forEach((category) => {
     const { text, nodeId, children, dataAssetAndSubDirCount } = category;
 
     // 二级结点

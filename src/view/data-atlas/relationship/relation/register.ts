@@ -23,7 +23,7 @@ Shape.Path.define({
       ]
     },
     {
-      tagName: 'g', className: 'menu', 
+      tagName: 'g', className: '__menu', 
       children: [
         {
           tagName: 'path', className: 'expand-node',

@@ -1,0 +1,114 @@
+.gradient-spin {
+  position: relative;
+  border-radius: var(--gradient-spin-border-radius, 24px);
+}
+
+.gradient-spin-expand {
+  position: absolute;
+  contain: paint;
+  border-radius: inherit;
+  inset: 0;
+  pointer-events: none;
+}
+
+.plate-background-blur {
+  position: absolute;
+  contain: paint;
+  border-radius: inherit;
+  inset: 0;
+  border: 0 solid transparent;
+  pointer-events: none;
+}
+
+.gradient-spin-expand::before {
+  content: "";
+  position: absolute;
+  opacity: 0;
+  background: conic-gradient(
+      rgba(52, 168, 82, 0) 0deg,
+      rgba(52, 168, 82, 1) 38.9738deg,
+      rgba(255, 211, 20, 1) 62.3678deg,
+      rgba(255, 70, 65, 1) 87.0062deg,
+      rgba(49, 134, 255, 1) 107.428deg,
+      rgba(49, 134, 255, 0.5) 204.48deg,
+      rgba(49, 134, 255, 0) 308.88deg,
+      rgba(52, 168, 82, 0) 360deg
+    )
+    border-box;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 900px;
+  height: 900px;
+  scale: 1 0.4;
+  pointer-events: none;
+  /* transition: opacity 0.3s; */
+  filter: blur(20px);
+
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+.plate-background-blur::before {
+  background-color: #f0f2f5;
+
+  content: "";
+  contain: paint;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  filter: blur(0);
+  transition: filter 0.3s;
+}
+
+.gradient-spin-anim .plate-background-blur {
+  animation: gradient-border-width var(--gradient-spin-time, 0.9s) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gradient-spin-anim .gradient-spin-expand::before {
+  animation: gradient-spin-expand var(--gradient-spin-time, 0.9s) 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gradient-spin-anim .plate-background-blur::before {
+  animation: plate-background-blur-on-expand var(--gradient-spin-time, 0.9s) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes gradient-spin-expand {
+  0% {
+    opacity: 0;
+    transform: rotate(90deg);
+  }
+  11% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(250deg);
+  }
+}
+
+@keyframes plate-background-blur-on-expand {
+  0% {
+    filter: blur(0px);
+  }
+  11% {
+    filter: blur(10px);
+  }
+
+  100% {
+    filter: blur(0px);
+  }
+}
+
+@keyframes gradient-border-width {
+  0% {
+    border-width: 0;
+  }
+
+  11% {
+    border-width: 2px;
+  }
+
+  100% {
+    border-width: 0;
+  }
+}

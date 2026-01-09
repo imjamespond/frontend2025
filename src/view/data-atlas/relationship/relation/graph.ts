@@ -18,13 +18,12 @@ export class Graph extends BaseGraph {
   subDir: SubDir | null = null;
   entryId: string | null = null;
   rootDir: SubDir | null = null;
-  style = {
-    fill: (() => {
-      const color = new FastColor(colorPrimary).toHsl();
-      color.l = .7
-      return new FastColor(color).toHexString();
-    })(), stroke: colorPrimary, color: "#fff"
-  };
+  style = (() => {
+    const color = new FastColor(colorPrimary).toHsl();
+    return {
+      fill: new FastColor({ ...color, l: .7 }).toHexString(), stroke: colorPrimary, color: new FastColor({ ...color, l: .35 }).toHexString()
+    }
+  })();
   draw1 = draw1.bind(this);
   draw2 = draw2.bind(this);
 
