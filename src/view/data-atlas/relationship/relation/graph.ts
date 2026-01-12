@@ -2,7 +2,6 @@ import { BaseGraph, createUseGraph } from "@common/graph";
 import { Selection } from "@antv/x6";
 import type { GraphData, NodeModel, RelationshipModel } from "./types";
 import { zoomFit } from "../tree-org/config";
-import { colorPrimary } from "@config/style";
 import { draw1, draw2 } from "./draw";
 import type { SubDir } from "../../helper";
 import "./register";
@@ -17,8 +16,8 @@ import {
   handleNodeMoved,
   handleNodeMoving,
 } from "./event";
-import { FastColor } from "@ant-design/fast-color";
 import { subscribe } from "./subject";
+import { expandNode } from "./expand";
 
 const groupDepth = 3;
 
@@ -27,17 +26,11 @@ export class Graph extends BaseGraph {
   subDir: SubDir | null = null;
   entryId: string | null = null;
   rootDir: SubDir | null = null;
-  style = (() => {
-    // const colorPrimary = 'rgb(201, 144, 192)'
-    const color = new FastColor(colorPrimary).toHsl();
-    return {
-      fill: colorPrimary,
-      stroke: new FastColor({ ...color, l: 0.48 }).toHexString(),
-      color: "#fff",
-    };
-  })();
+
   draw1 = draw1.bind(this);
   draw2 = draw2.bind(this);
+
+  expandNode = expandNode.bind(this);
 
   fsm: ForceSimulation | null = null;
 
@@ -120,13 +113,17 @@ export class Graph extends BaseGraph {
   }
 
   protected _nodeModels: NodeModel[] | null = null;
-  protected _nodeModelMap: Record<string, NodeModel> | null = null;
+  protected _nodeModelMap: Record<string, NodeModel> = {};
   nodes() {
-    const nodeMap: Record<string, NodeModel> = {};
+    const nodeModelMap = this._nodeModelMap;
     const rootId = this.graphData?.[0].nodeId;
     this._nodeModels = this.graph.getNodes().map((node, index) => {
       const nodeData = getNodeData(node);
-      const nm: NodeModel = {
+      let nm = nodeModelMap[node.id];
+      if (nm) {
+        return nm;
+      }
+      nm = {
         index,
         node,
         r: nodeData.nodeSize * 0.5,
@@ -134,10 +131,9 @@ export class Graph extends BaseGraph {
         y: 0,
         initialPositionCalculated: nodeData.data.level === 3 && node.id === rootId, // 根节点的初始位置已经计算过了
       };
-      nodeMap[node.id] = nm;
+      nodeModelMap[node.id] = nm;
       return nm;
     });
-    this._nodeModelMap = nodeMap;
     return this._nodeModels;
   }
 
@@ -157,7 +153,6 @@ export class Graph extends BaseGraph {
     });
     return relationships;
   }
-
 }
 
 export const useGraph = createUseGraph(Graph, {
@@ -166,11 +161,11 @@ export const useGraph = createUseGraph(Graph, {
   panning: {
     enabled: true,
   },
-  interacting: !!process.env.devMode,
+  // interacting: !!process.env.devMode,
   mousewheel: {
     enabled: true,
     minScale: 0.5,
-    maxScale: 1.5,
+    maxScale: 2,
   },
   grid: undefined,
 });

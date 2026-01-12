@@ -1,6 +1,6 @@
-import type { NodeMetadata } from "@antv/x6";
+import type { EdgeMetadata, NodeMetadata } from "@antv/x6";
 import type { NodeData, X6Node } from "./types";
-import type { Graph } from "./graph";
+import type { getStyle } from "@config/style";
 
 export function getNodeData(node: X6Node) {
   return node.getData<NodeData>();
@@ -16,6 +16,7 @@ export function getNode(item: NodeData) {
   const radius = item.nodeSize * 0.5;
   // item.radius = radius;
   const circle = { cx: radius, cy: radius, r: radius };
+  const zero = item.amount === undefined || item.amount === 0;
   const node: NodeMetadata = {
     id: item.id,
     shape: "flowchart_collate",
@@ -42,7 +43,7 @@ export function getNode(item: NodeData) {
         fill: style.color,
         refX: 0.5,
         refY: 0.5,
-        refY2: item.amount === undefined ? 0 : -item.fontSize * 0.4,
+        refY2: zero ? 0 : -item.fontSize * 0.4,
         textAnchor: "middle",
         // https://x6.antv.antgroup.com/api/registry/attr#textwrap
         textWrap: {
@@ -52,24 +53,23 @@ export function getNode(item: NodeData) {
           // breakWord: true, // 是否截断单词
         },
       },
-      amount:
-        item.amount === undefined
-          ? { display: "none" }
-          : {
-              text: `${item.amount}`,
-              fontSize: item.fontSize,
-              fill: style.color,
-              refX: 0.5,
-              refY: 0.5,
-              refY2: item.fontSize * 0.6,
+      amount: zero
+        ? { display: "none" }
+        : {
+            text: `${item.amount}`,
+            fontSize: item.fontSize,
+            fill: style.color,
+            refX: 0.5,
+            refY: 0.5,
+            refY2: item.fontSize * 0.6,
 
-              textAnchor: "middle",
-              textWrap: {
-                width: -20,
-                height: "50%",
-                ellipsis: true,
-              },
+            textAnchor: "middle",
+            textWrap: {
+              width: -20,
+              height: "50%",
+              ellipsis: true,
             },
+          },
       ".__menu": {
         transform: `translate(${radius},${radius})`,
       },
@@ -89,10 +89,10 @@ export function getNode(item: NodeData) {
     data: item,
   };
 
-  return node;
+  return node satisfies NodeMetadata;
 }
 
-export function getL3Node(nodeId: string, text: string, child: NodeData["data"], style: Graph["style"]) {
+export function getL3Node(nodeId: string, text: string, child: NodeData["data"], style: ReturnType<typeof getStyle>) {
   const _node: NodeData = {
     id: nodeId,
     nodeSize: 50,
@@ -153,5 +153,5 @@ export function getEdge(
     },
     shape,
     zIndex: 99,
-  };
+  } satisfies EdgeMetadata;
 }

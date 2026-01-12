@@ -47,7 +47,7 @@ export class ForceSimulation {
       .force("centerY", forceY(0).strength(FORCE_CENTER_Y))
       .alphaMin(DEFAULT_ALPHA_MIN)
       .on("tick", () => {
-        this.simulation.tick(EXTRA_TICKS_PER_RENDER );
+        this.simulation.tick(EXTRA_TICKS_PER_RENDER);
         render();
       })
       .stop();
@@ -92,7 +92,13 @@ export class ForceSimulation {
     });
   }
 
-  restart(): void {
-    this.simulation.alpha(DEFAULT_ALPHA).restart();
+  restart(onEnd: () => void = () => undefined): void {
+    this.simulation
+      .alpha(DEFAULT_ALPHA)
+      .restart()
+      .on("end", () => {
+        onEnd();
+        this.simulation.on("end", null);
+      });
   }
 }

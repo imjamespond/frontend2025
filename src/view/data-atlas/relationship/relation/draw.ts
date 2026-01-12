@@ -1,4 +1,4 @@
-import { getColor } from "@config/style";
+import { getStyle } from "@config/style";
 import type { Graph } from "./graph";
 import { getEdge, getL3Node, getNode } from "./helper";
 import type { NodeData } from "./types";
@@ -7,7 +7,8 @@ import type { NodeData } from "./types";
 
 // export type C = { spNode: Node; children: Node[] };
 export function draw1(this: Graph) {
-  const { graph, graphData, entryId, style } = this;
+  const { graph, graphData, entryId } = this;
+  const style = getStyle(undefined, 0);
   if (!graphData || graphData.length < 1) {
     console.error("invalid graphData...");
     return;
@@ -30,7 +31,6 @@ export function draw1(this: Graph) {
   };
   graph.addNode(getNode(root));
 
-  const links: unknown[] = [];
   const nodes: NodeData[] = [root];
   // const categories: C[] = [];
 
@@ -54,8 +54,6 @@ export function draw1(this: Graph) {
     nodes.push(node);
     // const spNode =
     graph.addNode(getNode(node)); // 先让上层结点发散
-    const link = { source: root, target: node };
-    links.push(link);
     const _edge = getEdge(root.id, node.id, {
       line: {
         strokeWidth: 1.5,
@@ -86,13 +84,11 @@ export function draw1(this: Graph) {
         !nodeId && console.error("nodeId is null!");
 
         const isEntry = entryId === nodeId;
-        const fill = getColor(isEntry, childSize);
-        const _node = getL3Node(nodeId, text, child, { ...fill, color: "#2A2C34" });
+        const fill = getStyle(isEntry, childSize);
+        const _node = getL3Node(nodeId, text, child, fill);
         nodes.push(_node);
         // const childNode =
         graph.addNode(getNode(_node));
-        const link = { source: node, target: _node };
-        links.push(link);
         const _edge = getEdge(node.id, _node.id);
         graph.addEdge(_edge);
 
