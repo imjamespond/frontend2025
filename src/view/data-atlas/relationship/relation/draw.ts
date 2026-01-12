@@ -1,6 +1,6 @@
 import { getColor } from "@config/style";
 import type { Graph } from "./graph";
-import { getEdge, getNode } from "./helper";
+import { getEdge, getL3Node, getNode } from "./helper";
 import type { NodeData } from "./types";
 // import { Node } from "@antv/x6";
 // import type { SubDir } from "../../helper";
@@ -18,13 +18,13 @@ export function draw1(this: Graph) {
   const rootData = graphData[0];
   const root: NodeData = {
     id: rootData.nodeId,
-    nodeSize: 120,
-    radius: 0,
-    fontSize: "16px",
+    nodeSize: 100,
+    fontSize: 16,
     x: 0,
     y: 0,
-    lineHeight: 20,
-    label: `${rootData.text}\n${rootData.dataAssetAndSubDirCount}`,
+    // lineHeight: 20,
+    label: `${rootData.text}`,
+    amount: rootData.dataAssetAndSubDirCount,
     data: rootData,
     style,
   };
@@ -41,24 +41,24 @@ export function draw1(this: Graph) {
     // const angle = (i / rootData?.children!.length) * Math.PI * 2 + anglePad + Math.random() * 0.25 - 0.125;
     const node: NodeData = {
       id: nodeId,
-      nodeSize: 100,
-      radius: 0,
-      fontSize: "14px",
+      nodeSize: 60,
+      fontSize: 10,
       x: 0,
       y: 0,
-      lineHeight: 20,
-      label: `${text}\n${dataAssetAndSubDirCount}`,
+      // lineHeight: 20,
+      label: `${text}`,
+      amount: dataAssetAndSubDirCount,
       data: category,
       style,
     };
     nodes.push(node);
-    // const spNode = 
+    // const spNode =
     graph.addNode(getNode(node)); // 先让上层结点发散
     const link = { source: root, target: node };
     links.push(link);
     const _edge = getEdge(root.id, node.id, {
       line: {
-        strokeWidth: 2,
+        strokeWidth: 1.5,
         stroke: "rgb(165, 171, 182)",
         targetMarker: {
           name: "block",
@@ -87,20 +87,9 @@ export function draw1(this: Graph) {
 
         const isEntry = entryId === nodeId;
         const fill = getColor(isEntry, childSize);
-        const _node: NodeData = {
-          id: nodeId,
-          nodeSize: 50,
-          radius: 25,
-          fontSize: "10px",
-          x: 0,
-          y: 0,
-          data: child,
-          label: `${text}`,
-          leaf: true,
-          style: { ...fill, color: "#2A2C34" },
-        };
+        const _node = getL3Node(nodeId, text, child, { ...fill, color: "#2A2C34" });
         nodes.push(_node);
-        // const childNode = 
+        // const childNode =
         graph.addNode(getNode(_node));
         const link = { source: node, target: _node };
         links.push(link);

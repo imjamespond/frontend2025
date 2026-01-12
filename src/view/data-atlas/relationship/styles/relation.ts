@@ -2,6 +2,7 @@ import { createStyles } from "antd-style";
 
 export const useStyles = createStyles(({ token }) => ({
   root: {
+    backgroundColor: "rgb(249, 252, 255)",
     "& .organization": {
       "& .svg": {
         position: "fixed",

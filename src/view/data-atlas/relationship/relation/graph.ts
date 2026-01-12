@@ -8,8 +8,17 @@ import type { SubDir } from "../../helper";
 import "./register";
 import { ForceSimulation } from "./d3/ForceSimulation";
 import { getNodeData } from "./helper";
-import { handleNodeContextMenu, handleNodeMove, handleNodeMoved, handleNodeMoving } from "./event";
+import {
+  deSelectNode,
+  handleBlankClick,
+  handleNodeClick,
+  handleNodeContextMenu,
+  handleNodeMove,
+  handleNodeMoved,
+  handleNodeMoving,
+} from "./event";
 import { FastColor } from "@ant-design/fast-color";
+import { subscribe } from "./subject";
 
 const groupDepth = 3;
 
@@ -22,13 +31,18 @@ export class Graph extends BaseGraph {
     // const colorPrimary = 'rgb(201, 144, 192)'
     const color = new FastColor(colorPrimary).toHsl();
     return {
-      fill: colorPrimary, stroke: new FastColor({ ...color,  l: .48 }).toHexString(), color: '#fff'
-    }
+      fill: colorPrimary,
+      stroke: new FastColor({ ...color, l: 0.48 }).toHexString(),
+      color: "#fff",
+    };
   })();
   draw1 = draw1.bind(this);
   draw2 = draw2.bind(this);
 
   fsm: ForceSimulation | null = null;
+
+  subscribe = subscribe.bind(this);
+  sub = this.subscribe();
 
   layout() {
     throw new Error("Method not implemented.");
@@ -38,7 +52,7 @@ export class Graph extends BaseGraph {
     if (this.fsm) {
       this.fsm.simulation.stop();
     }
-
+    this.sub.unsubscribe();
     super.dispose();
   }
 
@@ -80,38 +94,42 @@ export class Graph extends BaseGraph {
 
   protected initialDragPosition: readonly [number, number] | null = null;
   protected restartedSimulation = false;
-  handleNodeMoving = handleNodeMoving.bind(this)
-  handleNodeMoved = handleNodeMoved.bind(this)
-  handleNodeMove = handleNodeMove.bind(this)
-  handleNodeContextMenu = handleNodeContextMenu.bind(this)
-
+  handleNodeClick = handleNodeClick.bind(this);
+  handleNodeMoving = handleNodeMoving.bind(this);
+  handleNodeMoved = handleNodeMoved.bind(this);
+  handleNodeMove = handleNodeMove.bind(this);
+  handleNodeContextMenu = handleNodeContextMenu.bind(this);
+  handleBlankClick = handleBlankClick.bind(this);
+  deSelectNode = deSelectNode.bind(this);
   setupEvents() {
+    this.handleNodeClick();
     this.handleNodeMoving();
     this.handleNodeMoved();
     this.handleNodeMove();
     this.handleNodeContextMenu();
+    this.handleBlankClick();
   }
 
   render() {
-    console.log("render", this._nodes);
+    console.log("render", this._nodeModels);
 
-    this._nodes?.forEach((nm) => {
+    this._nodeModels?.forEach((nm) => {
       const node = nm.node;
       if (nm.x !== undefined && nm.y !== undefined) node.setPosition(nm.x - nm.r, nm.y - nm.r);
     });
   }
 
-  protected _nodes: NodeModel[] | null = null;
-  protected _nodeMap: Record<string, NodeModel> | null = null;
+  protected _nodeModels: NodeModel[] | null = null;
+  protected _nodeModelMap: Record<string, NodeModel> | null = null;
   nodes() {
     const nodeMap: Record<string, NodeModel> = {};
     const rootId = this.graphData?.[0].nodeId;
-    this._nodes = this.graph.getNodes().map((node, index) => {
+    this._nodeModels = this.graph.getNodes().map((node, index) => {
       const nodeData = getNodeData(node);
       const nm: NodeModel = {
         index,
         node,
-        r: nodeData.radius,
+        r: nodeData.nodeSize * 0.5,
         x: 0,
         y: 0,
         initialPositionCalculated: nodeData.data.level === 3 && node.id === rootId, // 根节点的初始位置已经计算过了
@@ -119,13 +137,13 @@ export class Graph extends BaseGraph {
       nodeMap[node.id] = nm;
       return nm;
     });
-    this._nodeMap = nodeMap;
-    return this._nodes;
+    this._nodeModelMap = nodeMap;
+    return this._nodeModels;
   }
 
   relationships() {
     const relationships: RelationshipModel[] = [];
-    const nodeMap = this._nodeMap;
+    const nodeMap = this._nodeModelMap;
     if (!nodeMap) return relationships;
     this.graph.getEdges().forEach((edge) => {
       const sn = nodeMap[edge.getSourceCellId()];
@@ -140,11 +158,6 @@ export class Graph extends BaseGraph {
     return relationships;
   }
 
-  test() {
-    // this.fsm?.updateNodes(this);
-    // this.fsm?.updateRelationships(this);
-    this.fsm?.restart();
-  }
 }
 
 export const useGraph = createUseGraph(Graph, {

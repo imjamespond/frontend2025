@@ -1,89 +1,76 @@
 import { Graph, Shape } from "@antv/x6";
 
-
 Shape.Path.define({
-  shape: 'flowchart_collate',
+  shape: "flowchart_collate",
   // overwrite: true,
   width: 100,
   height: 100,
   markup: [
     {
-      tagName: 'g', selector: 'g',
+      tagName: "g",
+      selector: "g",
       children: [
         {
-          tagName: 'circle', selector: 'body'
+          tagName: "circle",
+          selector: "body",
         },
         {
-          tagName: 'circle', attrs: { class: 'ring' }
+          tagName: "circle",
+          selector: "ring",
+          attrs: { class: "ring" },
         },
         {
-          tagName: 'text', selector: 'text',
+          tagName: "text",
+          selector: "text",
         },
-
-      ]
+        {
+          tagName: "text",
+          selector: "amount",
+        },
+      ],
     },
     {
-      tagName: 'g', className: '__menu', 
-      children: [
-        {
-          tagName: 'path', className: 'expand-node',
-        },
-        {
-          tagName: 'path', className: 'remove-node',
-        },
-        {
-          tagName: 'path', className: 'unlock-node',
-        },
-        {
-          tagName: 'g', className: 'icon expand-node',
-        },
-        {
-          tagName: 'g', className: 'icon remove-node',
-        },
-        {
-          tagName: 'g', className: 'icon unlock-node',
-        },
-      ]
-    }
-  ], 
-})
+      tagName: "g",
+      className: "__menu",
+    },
+  ],
+});
 
-
-Graph.registerEdge('shadow-edge', {
-  inherit: 'edge',
+Graph.registerEdge("shadow-edge", {
+  inherit: "edge",
   markup: [
     {
-      tagName: 'path',
-      selector: 'shadow',
+      tagName: "path",
+      selector: "shadow",
       attrs: {
-        fill: 'none',
+        fill: "none",
       },
     },
     {
-      tagName: 'path',
-      selector: 'line',
+      tagName: "path",
+      selector: "line",
       attrs: {
-        fill: 'none',
-        cursor: 'pointer',
+        fill: "none",
+        cursor: "pointer",
       },
     },
   ],
   attrs: {
     line: {
       connection: true,
-      stroke: '#dddddd',
+      stroke: "#dddddd",
       strokeWidth: 20,
-      strokeLinejoin: 'round',
+      strokeLinejoin: "round",
       targetMarker: {
-        name: 'path',
-        stroke: 'none',
-        d: 'M 0 -10 -10 0 0 10 z',
+        name: "path",
+        stroke: "none",
+        d: "M 0 -10 -10 0 0 10 z",
         offsetX: -5,
       },
       sourceMarker: {
-        name: 'path',
-        stroke: 'none',
-        d: 'M -10 -10 0 0 -10 10 0 10 0 -10 z',
+        name: "path",
+        stroke: "none",
+        d: "M -10 -10 0 0 -10 10 0 10 0 -10 z",
         offsetX: -5,
       },
     },
@@ -91,22 +78,22 @@ Graph.registerEdge('shadow-edge', {
       connection: true,
       refX: 3,
       refY: 6,
-      stroke: '#000000',
-      strokeOpacity: 0.2,
+      stroke: "#000000",
+      // strokeOpacity: 0.2,
       strokeWidth: 20,
-      strokeLinejoin: 'round',
+      strokeLinejoin: "round",
       targetMarker: {
-        name: 'path',
-        d: 'M 0 -10 -10 0 0 10 z',
-        stroke: 'none',
+        name: "path",
+        d: "M 0 -10 -10 0 0 10 z",
+        stroke: "none",
         offsetX: -5,
       },
       sourceMarker: {
-        name: 'path',
-        stroke: 'none',
-        d: 'M -10 -10 0 0 -10 10 0 10 0 -10 z',
+        name: "path",
+        stroke: "none",
+        d: "M -10 -10 0 0 -10 10 0 10 0 -10 z",
         offsetX: -5,
       },
     },
   },
-})
+});

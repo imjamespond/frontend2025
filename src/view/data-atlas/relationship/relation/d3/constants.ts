@@ -20,6 +20,7 @@
 // import { NodeModel } from './models/Node'
 // import { RelationshipModel } from './models/Relationship'
 
+import { getNodeData } from "../helper";
 import type { NodeModel, RelationshipModel } from "../types";
 
 export const MAX_PRECOMPUTED_TICKS = 300;
@@ -46,7 +47,9 @@ export const DRAGGING_ALPHA_TARGET = 0.09;
 export const LINK_DISTANCE = 45;
 
 export const FORCE_LINK_DISTANCE = (relationship: RelationshipModel): number =>
-  (relationship.source as NodeModel).r + (relationship.target as NodeModel).r + LINK_DISTANCE * 2;
+  getNodeData((relationship.target as NodeModel).node).lv === 3
+    ? 100
+    : (relationship.source as NodeModel).r + (relationship.target as NodeModel).r + LINK_DISTANCE * 2;
 export const FORCE_COLLIDE_RADIUS = (node: NodeModel): number => node.r + 25;
 export const FORCE_CHARGE = -400;
 export const FORCE_CENTER_X = 0.03;

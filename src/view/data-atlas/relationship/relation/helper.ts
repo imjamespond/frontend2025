@@ -1,5 +1,6 @@
 import type { NodeMetadata } from "@antv/x6";
 import type { NodeData, X6Node } from "./types";
+import type { Graph } from "./graph";
 
 export function getNodeData(node: X6Node) {
   return node.getData<NodeData>();
@@ -13,7 +14,7 @@ export function getNode(item: NodeData) {
   const style = item.style ?? { fill: "#F79767", stroke: "#f36924", color: "#fff" };
   // const click = item.leaf ? { cursor: 'pointer', event: 'node:open', } : undefined
   const radius = item.nodeSize * 0.5;
-  item.radius = radius;
+  // item.radius = radius;
   const circle = { cx: radius, cy: radius, r: radius };
   const node: NodeMetadata = {
     id: item.id,
@@ -25,28 +26,50 @@ export function getNode(item: NodeData) {
     attrs: {
       body: {
         ...style,
-        "stroke-width": `4px`,
+        strokeWidth: 2,
         ...circle,
       },
-      ".ring": {
+      ring: {
         ...circle,
-        r: circle.r + 5,
+        r: circle.r + 4.5,
         fill: "transparent",
-        "stroke-width": `6px`,
+        strokeWidth: 7,
       },
+
       text: {
         text: item.label,
         fontSize: item.fontSize,
         fill: style.color,
-        lineHeight: item.lineHeight ?? 0,
-        // ...click,
+        refX: 0.5,
+        refY: 0.5,
+        refY2: item.amount === undefined ? 0 : -item.fontSize * 0.4,
+        textAnchor: "middle",
+        // https://x6.antv.antgroup.com/api/registry/attr#textwrap
         textWrap: {
           width: -10, // 宽度减少 10px
           height: "50%", // 高度为参照元素高度的一半
           ellipsis: true, // 文本超出显示范围时，自动添加省略号
-          breakWord: true, // 是否截断单词
+          // breakWord: true, // 是否截断单词
         },
       },
+      amount:
+        item.amount === undefined
+          ? { display: "none" }
+          : {
+              text: `${item.amount}`,
+              fontSize: item.fontSize,
+              fill: style.color,
+              refX: 0.5,
+              refY: 0.5,
+              refY2: item.fontSize * 0.6,
+
+              textAnchor: "middle",
+              textWrap: {
+                width: -20,
+                height: "50%",
+                ellipsis: true,
+              },
+            },
       ".__menu": {
         transform: `translate(${radius},${radius})`,
       },
@@ -67,6 +90,22 @@ export function getNode(item: NodeData) {
   };
 
   return node;
+}
+
+export function getL3Node(nodeId: string, text: string, child: NodeData["data"], style: Graph["style"]) {
+  const _node: NodeData = {
+    id: nodeId,
+    nodeSize: 50,
+    fontSize: 10,
+    x: 0,
+    y: 0,
+    data: child,
+    label: `${text}`,
+    leaf: true,
+    style,
+    lv: 3,
+  };
+  return _node;
 }
 
 export function getEdge(

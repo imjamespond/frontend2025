@@ -52,8 +52,7 @@ function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: S
             graphRef.current?.graph.scale(1);
           }}
           onFitContent={() => {
-            // graphRef.current!.zoomToFit();
-            graphRef.current?.test();
+            graphRef.current!.zoomToFit();
           }}
         />
       </div>

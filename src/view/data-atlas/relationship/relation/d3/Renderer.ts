@@ -17,32 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import type { BaseType, Selection } from 'd3'
+import type { BaseType, Selection } from "d3";
 
 // import { Visualization } from './Visualization'
 
-const noOp = () => undefined
+const noOp = () => undefined;
 type RendererEventHandler<Datum> = (
-    selection: Selection<SVGGElement, Datum, BaseType, unknown>,
-    // style: Visualization
-) => void
+  selection: Selection<SVGGElement, Datum, BaseType, unknown>
+  // style: Visualization
+) => void;
 
 export default class Renderer<Datum> {
-    onGraphChange: RendererEventHandler<Datum>
-    onTick: RendererEventHandler<Datum>
-    name: string
+  onGraphChange: RendererEventHandler<Datum>;
+  onTick: RendererEventHandler<Datum>;
+  name: string;
 
-    constructor({
-        onGraphChange = noOp,
-        onTick = noOp,
-        name
-    }: {
-        onGraphChange?: RendererEventHandler<Datum>
-        onTick?: RendererEventHandler<Datum>
-        name: string
-    }) {
-        this.onGraphChange = onGraphChange
-        this.onTick = onTick
-        this.name = name
-    }
+  constructor({
+    onGraphChange = noOp,
+    onTick = noOp,
+    name,
+  }: {
+    onGraphChange?: RendererEventHandler<Datum>;
+    onTick?: RendererEventHandler<Datum>;
+    name: string;
+  }) {
+    this.onGraphChange = onGraphChange;
+    this.onTick = onTick;
+    this.name = name;
+  }
 }
