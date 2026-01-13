@@ -1,0 +1,54 @@
+.blink-caret {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: transparent;
+  pointer-events: none;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+.blink-caret::before {
+  content: attr(data-before);
+}
+.blink-caret::after {
+  --blink-speed: 1.2s;
+  --caret-width: 2px;
+  content: " ";
+  animation: blinkCaret var(--blink-speed) step-end infinite, cycleCaretColor calc(var(--blink-speed) * 4) infinite;
+}
+
+@keyframes blinkCaret {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes cycleCaretColor {
+  0% {
+    box-shadow: inset var(--caret-width) 0 0 0 #4285f4;
+  }
+  24.999% {
+    box-shadow: inset var(--caret-width) 0 0 0 #4285f4;
+  }
+  25% {
+    box-shadow: inset var(--caret-width) 0 0 0 #ea4335;
+  }
+  49.999% {
+    box-shadow: inset var(--caret-width) 0 0 0 #ea4335;
+  }
+  50% {
+    box-shadow: inset var(--caret-width) 0 0 0 #fbbc04;
+  }
+  74.999% {
+    box-shadow: inset var(--caret-width) 0 0 0 #fbbc04;
+  }
+  75% {
+    box-shadow: inset var(--caret-width) 0 0 0 #34a853;
+  }
+  99.999% {
+    box-shadow: inset var(--caret-width) 0 0 0 #34a853;
+  }
+}

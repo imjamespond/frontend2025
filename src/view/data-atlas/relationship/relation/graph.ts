@@ -12,12 +12,15 @@ import {
   handleBlankClick,
   handleNodeClick,
   handleNodeContextMenu,
+  handleNodeHover,
   handleNodeMove,
   handleNodeMoved,
   handleNodeMoving,
 } from "./event";
 import { subscribe } from "./subject";
-import { expandNode } from "./expand";
+import { expandNode, setRoot } from "./action";
+import circularLayout from "./d3/circularLayout";
+import { LINK_DISTANCE } from "./d3/constants";
 
 const groupDepth = 3;
 
@@ -32,14 +35,12 @@ export class Graph extends BaseGraph {
 
   expandNode = expandNode.bind(this);
 
+  setRoot = setRoot.bind(this);
+
   fsm: ForceSimulation | null = null;
 
   subscribe = subscribe.bind(this);
   sub = this.subscribe();
-
-  layout() {
-    throw new Error("Method not implemented.");
-  }
 
   dispose() {
     if (this.fsm) {
@@ -49,6 +50,10 @@ export class Graph extends BaseGraph {
     super.dispose();
   }
 
+  /**
+   * 将图形视图缩放到适合窗口大小的函数
+   * 该方法会自动调整缩放比例，使得整个图形能够完整显示在视图中
+   */
   zoomToFit() {
     this.graph.zoomToFit(zoomFit);
   }
@@ -57,7 +62,12 @@ export class Graph extends BaseGraph {
     if (this.fsm) return;
 
     this.graph.use(new Selection({ enabled: true }));
+    this.setupEvents();
 
+    this.draw();
+  }
+
+  draw() {
     const { draw1, draw2, graph, subDir } = this;
 
     if (subDir === null) return;
@@ -76,13 +86,8 @@ export class Graph extends BaseGraph {
     }
 
     this.fsm = new ForceSimulation(this.render.bind(this));
-    this.fsm.updateNodes(this.nodes());
-    this.fsm.updateRelationships(this.relationships());
-    this.fsm.precomputeAndStart(() => {
-      this.zoomToFit();
-    });
-
-    this.setupEvents();
+    this._nodeModelMap = {};
+    this.layout();
   }
 
   protected initialDragPosition: readonly [number, number] | null = null;
@@ -94,6 +99,7 @@ export class Graph extends BaseGraph {
   handleNodeContextMenu = handleNodeContextMenu.bind(this);
   handleBlankClick = handleBlankClick.bind(this);
   deSelectNode = deSelectNode.bind(this);
+  handleNodeHover = handleNodeHover.bind(this);
   setupEvents() {
     this.handleNodeClick();
     this.handleNodeMoving();
@@ -101,10 +107,11 @@ export class Graph extends BaseGraph {
     this.handleNodeMove();
     this.handleNodeContextMenu();
     this.handleBlankClick();
+    this.handleNodeHover();
   }
 
   render() {
-    console.log("render", this._nodeModels);
+    // console.log("render", this._nodeModels);
 
     this._nodeModels?.forEach((nm) => {
       const node = nm.node;
@@ -112,24 +119,24 @@ export class Graph extends BaseGraph {
     });
   }
 
-  protected _nodeModels: NodeModel[] | null = null;
+  protected _nodeModels: NodeModel[] = [];
   protected _nodeModelMap: Record<string, NodeModel> = {};
-  nodes() {
+  nodeModles() {
     const nodeModelMap = this._nodeModelMap;
-    const rootId = this.graphData?.[0].nodeId;
-    this._nodeModels = this.graph.getNodes().map((node, index) => {
+    // const rootId = this.graphData?.[0].nodeId;
+    this._nodeModels = this.graph.getNodes().map((node) => {
       const nodeData = getNodeData(node);
       let nm = nodeModelMap[node.id];
       if (nm) {
+        nm.node = node; // 更新node
         return nm;
       }
       nm = {
-        index,
         node,
         r: nodeData.nodeSize * 0.5,
         x: 0,
         y: 0,
-        initialPositionCalculated: nodeData.data.level === 3 && node.id === rootId, // 根节点的初始位置已经计算过了
+        // initialPositionCalculated: node.id === rootId, // 根节点的初始位置已经计算过了
       };
       nodeModelMap[node.id] = nm;
       return nm;
@@ -153,11 +160,31 @@ export class Graph extends BaseGraph {
     });
     return relationships;
   }
+
+  layout() {
+    if (!this.fsm) return;
+    const nodeModles = this.nodeModles();
+    const _nodeModles = nodeModles.filter((nm) => nm.node.data.data.level === 2);
+    const radius = (_nodeModles.length * LINK_DISTANCE) / (Math.PI * 2);
+    const center = {
+      x: 0,
+      y: 0,
+    };
+    circularLayout(_nodeModles, center, radius);
+    // _nodeModles.forEach((nm) => {
+    //   nm.node.setPosition(nm.x!, nm.y!);
+    // });
+    this.fsm.updateNodes(nodeModles);
+    this.fsm.updateRelationships(this.relationships());
+    this.fsm.precomputeAndStart(() => {
+      this.zoomToFit();
+    });
+  }
 }
 
 export const useGraph = createUseGraph(Graph, {
-  async: false,
-  virtual: { enabled: true, margin: 200 },
+  async: true,
+  // virtual: { enabled: true, margin: 200 },
   panning: {
     enabled: true,
   },

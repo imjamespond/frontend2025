@@ -19,6 +19,7 @@ export function draw1(this: Graph) {
   const rootData = graphData[0];
   const root: NodeData = {
     id: rootData.nodeId,
+    pid: null,
     nodeSize: 100,
     fontSize: 16,
     x: 0,
@@ -41,6 +42,7 @@ export function draw1(this: Graph) {
     // const angle = (i / rootData?.children!.length) * Math.PI * 2 + anglePad + Math.random() * 0.25 - 0.125;
     const node: NodeData = {
       id: nodeId,
+      pid: rootData.nodeId,
       nodeSize: 60,
       fontSize: 10,
       x: 0,
@@ -85,7 +87,7 @@ export function draw1(this: Graph) {
 
         const isEntry = entryId === nodeId;
         const fill = getStyle(isEntry, childSize);
-        const _node = getL3Node(nodeId, text, child, fill);
+        const _node = getL3Node(category.nodeId, nodeId, text, child, fill);
         nodes.push(_node);
         // const childNode =
         graph.addNode(getNode(_node));

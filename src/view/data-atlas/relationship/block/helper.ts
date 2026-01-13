@@ -9,7 +9,7 @@ import type { KeyOfFetcher } from "@service/api";
 
 type Params = KeyOfFetcher<typeof service.dataassetmanager.getTableModelInfoByDirIdAndBeginIndex>["args"]["params"];
 
-export const pageSize = 8;
+export const pageSize = 24;
 export const rowHeight = 165;
 export function useHelper() {
   const env = useDomainId();

@@ -2,6 +2,8 @@ import { select } from "d3";
 import { DEFAULT_ALPHA_TARGET, DRAGGING_ALPHA, DRAGGING_ALPHA_TARGET } from "./d3/constants";
 import { nodeMenuRenderer } from "./d3/menu";
 import type { Graph } from "./graph";
+import { useTipsStore } from "./subject";
+import { getNodeData } from "./helper";
 
 const tolerance = 25;
 
@@ -101,5 +103,16 @@ export function deSelectNode(this: Graph) {
     nodeMenuRenderer.forEach((renderer) => {
       renderer.onGraphChange(selection);
     });
+  });
+}
+
+export function handleNodeHover(this: Graph) {
+  this.graph.on("node:mouseenter", (e) => {
+    const nodeData = getNodeData(e.node);
+    const { text, dataAssetAndSubDirCount, childSize } = nodeData.data;
+    useTipsStore.getState().setValue({ name: text, count: childSize, amount: dataAssetAndSubDirCount });
+  });
+  this.graph.on("node:mouseleave", () => {
+    useTipsStore.getState().setValue(undefined);
   });
 }

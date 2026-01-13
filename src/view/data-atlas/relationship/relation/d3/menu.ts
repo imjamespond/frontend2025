@@ -22,10 +22,22 @@
 import { arc as d3Arc, type BaseType, type Selection } from "d3";
 
 import Renderer from "./Renderer";
-import icons from "./d3Icons";
+import _icons from "./d3Icons";
 import type { NodeModel } from "../types";
 import { getNodeData } from "../helper";
 import { GraphSubject, type GraphSubjectType } from "../subject";
+// import rootSvg from "../../assets/root.svg?raw";
+import centerSvg from "../../assets/crosshairs-solid.svg?raw";
+// import refreshSvg from "../../assets/arrow-rotate-left-solid.svg?raw";
+import blockSvg from "../../assets/cubes-stacked-solid.svg?raw";
+
+const icons = {
+  ..._icons,
+  Unlock: blockSvg,
+  Remove: centerSvg,
+} satisfies typeof _icons;
+
+console.log(icons);
 
 const noOp = () => undefined;
 
@@ -43,9 +55,15 @@ const drawArc = function (radius: number, itemNumber: number, width = 30) {
     .padAngle(0.03);
 };
 
-const getSelectedNode = (node: NodeModel) => {
-  console.log("getSelectedNode", node);
-  return node.selected ? [node] : [];
+const getSelectedNode = (nm: NodeModel) => {
+  return nm.selected ? [nm] : [];
+};
+const getSelectedNode2 = (eventType: GraphSubjectType["type"], nm: NodeModel) => {
+  if (eventType === "root") {
+    return nm.selected ? [nm] : [];
+  }
+  const nodeData = getNodeData(nm.node);
+  return nm.selected && nodeData.data.level === 3 ? [nm] : [];
 };
 
 const attachContextEvent = (
@@ -58,15 +76,18 @@ const attachContextEvent = (
   // content: string,
   // label: string
 ) => {
+  // 判断icon为空
+  if (elements.some((el) => el.size() === 0)) return;
   elements.forEach((element) => {
+    console.log(element);
     // element.on("mousedown.drag", (event: Event) => {
     //   event.stopPropagation();
     //   return null;
     // });
-    element.on("mouseup", (_event: Event, node: NodeModel) => {
+    element.on("mouseup", (_event: Event, nm: NodeModel) => {
       GraphSubject.next({
         type: eventType,
-        payload: node.node,
+        payload: nm.node,
       });
     });
     // element.on("mouseover", (_event: Event, node: NodeModel) => {
@@ -95,7 +116,7 @@ const createMenuItem = function (
   svgIconKey: "Expand / Collapse" | "Unlock" | "Remove",
   _tooltip: string
 ) {
-  console.log(selection.selectAll(`path.${className}`));
+  // console.log(selection.selectAll(`path.${className}`));
 
   const tab = selection
     .selectAll(`path.${className}`)
@@ -110,25 +131,43 @@ const createMenuItem = function (
 
   const rawSvgIcon = icons[svgIconKey];
   const svgIcon = document.importNode(
-    new DOMParser().parseFromString(rawSvgIcon, "application/xml").documentElement.firstChild as HTMLElement,
+    new DOMParser().parseFromString(rawSvgIcon, "application/xml").documentElement /* .firstChild */ as HTMLElement,
     true
   );
   const icon = selection
     .selectAll(`.icon.${className}`)
-    .data(getSelectedNode)
+    .data((nm: NodeModel) => getSelectedNode2(eventType, nm))
     .join("g")
     .html(svgIcon.innerHTML)
     .classed("icon", true)
     .classed(className, true)
     .classed("context-menu-item", true)
     .attr("transform", (node: NodeModel) => {
+      if (itemIndex === 2) {
+        return `translate(${Math.floor(
+          // @ts-expect-error
+          drawArc(node.r, itemIndex).centroid()[0] + (position[0] * 100) / 100
+        )},${Math.floor(
+          // @ts-expect-error
+          drawArc(node.r, itemIndex).centroid()[1] + (position[1] * 100) / 100
+        )}) scale(0.7)`;
+      }
+      if (itemIndex === 1) {
+        return `translate(${Math.floor(
+          // @ts-expect-error
+          drawArc(node.r, itemIndex).centroid()[0] + (position[0] * 100) / 100 + 4
+        )},${Math.floor(
+          // @ts-expect-error
+          drawArc(node.r, itemIndex).centroid()[1] + (position[1] * 100) / 100 + 4
+        )}) scale(0.03)`;
+      }
       return `translate(${Math.floor(
         // @ts-expect-error
         drawArc(node.r, itemIndex).centroid()[0] + (position[0] * 100) / 100
       )},${Math.floor(
         // @ts-expect-error
-        drawArc(node.r, itemIndex).centroid()[1] + (position[1] * 100) / 100
-      )}) scale(0.7)`;
+        drawArc(node.r, itemIndex).centroid()[1] + (position[1] * 100) / 100 + 8
+      )}) scale(0.03)`;
     })
     .attr("color", (node: NodeModel) => {
       // return viz.style.forNode(node).get('text-color-internal')
@@ -163,7 +202,7 @@ const donutRemoveNode = new Renderer<NodeModel>({
     return createMenuItem(
       selection,
       // viz,
-      "nodeClose",
+      "root",
       1,
       "remove-node",
       [-8, 0],
@@ -199,7 +238,7 @@ const donutUnlockNode = new Renderer<NodeModel>({
     return createMenuItem(
       selection,
       // viz,
-      "nodeUnlock",
+      "block",
       3,
       "unlock-node",
       [-10, -6],

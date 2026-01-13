@@ -39,13 +39,9 @@ path {
 }
 .x6-node.x6-node .context-menu-item {
   cursor: pointer;
+  fill: #fff;
 }
 
-.x6-node .icon.unlock-node.context-menu-item {
-  opacity: 0.2;
-}
-.x6-node .icon.remove-node.context-menu-item {
-  opacity: 0.2;
-}
+
 `
 );

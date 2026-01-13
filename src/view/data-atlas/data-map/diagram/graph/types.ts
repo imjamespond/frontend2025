@@ -21,7 +21,7 @@ export interface OrgStyle {
 }
 
 export const labels = {
-  dataAssets: "数据资产",
+  dataAsset: "数据资产",
   innerSource: "内部资源",
   outerSource: "外部资源",
 };

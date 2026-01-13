@@ -27,49 +27,51 @@ import {
   FORCE_CHARGE,
   FORCE_COLLIDE_RADIUS,
   FORCE_LINK_DISTANCE,
-  LINK_DISTANCE,
   MAX_PRECOMPUTED_TICKS,
   EXTRA_TICKS_PER_RENDER,
   VELOCITY_DECAY,
 } from "./constants";
-import circularLayout from "./circularLayout";
 import type { NodeModel, RelationshipModel } from "../types";
 
 export class ForceSimulation {
   simulation: Simulation<NodeModel, RelationshipModel>;
   simulationTimeout: null | number = null;
   tick = 0;
-  constructor(render: () => void) {
-    this.simulation = forceSimulation<NodeModel, RelationshipModel>()
-      .velocityDecay(VELOCITY_DECAY)
-      .force("charge", forceManyBody().strength(FORCE_CHARGE))
-      .force("centerX", forceX(0).strength(FORCE_CENTER_X))
-      .force("centerY", forceY(0).strength(FORCE_CENTER_Y))
-      .alphaMin(DEFAULT_ALPHA_MIN)
-      .on("tick", () => {
-        this.simulation.tick(EXTRA_TICKS_PER_RENDER);
-        render();
-      })
-      .stop();
+  constructor(render: () => void, simulation?: ForceSimulation["simulation"]) {
+    this.simulation =
+      simulation ??
+      forceSimulation<NodeModel, RelationshipModel>()
+        .velocityDecay(VELOCITY_DECAY)
+        .force("charge", forceManyBody().strength(FORCE_CHARGE))
+        .force("centerX", forceX(0).strength(FORCE_CENTER_X))
+        .force("centerY", forceY(0).strength(FORCE_CENTER_Y))
+        .alphaMin(DEFAULT_ALPHA_MIN)
+        .on("tick", () => {
+          this.simulation.tick(EXTRA_TICKS_PER_RENDER);
+          render();
+        })
+        .stop();
   }
 
   updateNodes(nodes: NodeModel[]): void {
-    const radius = (nodes.length * LINK_DISTANCE) / (Math.PI * 2);
-    const center = {
-      x: 0,
-      y: 0,
-    };
-    circularLayout(nodes, center, radius);
-
+    // const radius = (nodes.length * LINK_DISTANCE) / (Math.PI * 2);
+    // const center = {
+    //   x: 0,
+    //   y: 0,
+    // };
+    // circularLayout(nodes, center, radius);
     this.simulation.nodes(nodes).force("collide", forceCollide<NodeModel>().radius(FORCE_COLLIDE_RADIUS));
   }
 
-  updateRelationships(relationships: RelationshipModel[]): void {
+  updateRelationships(
+    relationships: RelationshipModel[],
+    distance: number | typeof FORCE_LINK_DISTANCE = FORCE_LINK_DISTANCE
+  ): void {
     this.simulation.force(
       "link",
       forceLink<NodeModel, RelationshipModel>(relationships)
         .id((nm) => nm.node.id)
-        .distance(FORCE_LINK_DISTANCE)
+        .distance(distance)
     );
   }
 

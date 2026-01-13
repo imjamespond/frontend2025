@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, type CSSProperties } from "react";
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
 import Operations from "@components/Operations";
 import { useStyles } from "../styles/relation";
 import Loading from "@components/Loading";
@@ -7,6 +7,14 @@ import { useRelationChartDData } from "../service";
 import type { SubDir } from "../../helper";
 import { useRootDir } from "../../context";
 import { Style } from "./style";
+import { Descriptions, Space, Typography } from "antd";
+import React from "react";
+import { ReloadOutlined } from "@ant-design/icons";
+
+import icons from "./d3/d3Icons";
+import centerSvg from "../assets/crosshairs-solid.svg";
+import blockSvg from "../assets/cubes-stacked-solid.svg";
+import { useTips } from "./subject";
 
 function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: SubDir }) {
   const { styles } = useStyles();
@@ -54,7 +62,11 @@ function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: S
           onFitContent={() => {
             graphRef.current!.zoomToFit();
           }}
+          onReload={() => {
+            graphRef.current!.draw();
+          }}
         />
+        <Tips />
       </div>
     </Fragment>
   );
@@ -80,3 +92,72 @@ const wrapperStyle: CSSProperties = {
   overflow: "hidden",
 };
 const containerStyle: CSSProperties = { width: "100%", height: "100%" };
+
+function Tips() {
+  const tips = useTips();
+  const _tips = !!tips ? (
+    <Descriptions title="详细信息" column={1}>
+      <Descriptions.Item label="名称">{tips?.name}</Descriptions.Item>
+      <Descriptions.Item label="子目录">{tips?.count}</Descriptions.Item>
+      <Descriptions.Item label="资产总数">{tips?.amount}</Descriptions.Item>
+    </Descriptions>
+  ) : (
+    <React.Fragment>
+      <Typography.Title level={5}>帮助信息</Typography.Title>
+      <ul>
+        <li>
+          <Typography.Text>点击结点打开或收起结点菜单</Typography.Text>
+        </li>
+        <li>
+          <Typography.Text>
+            点击
+            <div
+              dangerouslySetInnerHTML={{ __html: icons["Expand / Collapse"] }}
+              style={{ width: 20, display: "inline-block" }}
+            />
+            展开或收起下级目录
+          </Typography.Text>
+        </li>
+        <li>
+          <Typography.Text>
+            点击
+            <img style={{ width: 15 }} src={centerSvg} />
+            设置为中心
+          </Typography.Text>
+        </li>
+        <li>
+          <Typography.Text>
+            点击
+            <img style={{ width: 15 }} src={blockSvg} />
+            到对应方块图
+          </Typography.Text>
+        </li>
+        <li>
+          <Typography.Text>
+            点击
+            <ReloadOutlined />
+            回到初始关系图
+          </Typography.Text>
+        </li>
+        {/* <li><Typography.Text>入口结点使用此<span style={{ border: '2px solid #23b3d7', fontSize: '10px', backgroundColor: '#57C7E3', borderRadius: '8px' }}>颜色</span>表示</Typography.Text></li> */}
+        <li>
+          <Typography.Text>子目录数大于零的结点将用较深颜色表示</Typography.Text>
+        </li>
+      </ul>
+    </React.Fragment>
+  );
+  return (
+    <div
+      style={{
+        width: 280,
+        padding: "10px",
+        position: "absolute",
+        top: 0,
+        right: 0,
+        backgroundColor: "rgb(249, 252, 255, .5)",
+      }}
+    >
+      {_tips}
+    </div>
+  );
+}

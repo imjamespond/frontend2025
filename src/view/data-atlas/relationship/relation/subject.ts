@@ -2,8 +2,9 @@ import type { IAct } from "@common/hooks/act";
 import { Subject } from "rxjs";
 import type { X6Node } from "./types";
 import type { Graph } from "./graph";
+import { createUseStore } from "@common/hooks/zustand";
 
-export type GraphSubjectType = IAct<"expandNode" | "nodeUnlock" | "nodeClose", X6Node>;
+export type GraphSubjectType = IAct<"expandNode" | "block" | "root", X6Node>;
 
 export const GraphSubject = new Subject<GraphSubjectType>();
 
@@ -13,5 +14,18 @@ export function subscribe(this: Graph) {
     if (act.type === "expandNode") {
       this.expandNode(act.payload);
     }
+    if (act.type === "block") {
+    }
+    if (act.type === "root") {
+      this.setRoot(act.payload);
+    }
   });
 }
+
+interface TipsType {
+  name?: string;
+  count: number;
+  amount: number;
+}
+export const useTipsStore = createUseStore<TipsType | void>(undefined);
+export const useTips = () => useTipsStore((s) => s._v);

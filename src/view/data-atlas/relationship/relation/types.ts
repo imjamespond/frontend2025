@@ -7,6 +7,8 @@ export type GraphData = DataAtlas.JsonNode[];
 
 export type NodeData = {
   id: string;
+  pid: string | null;
+
   nodeSize: number;
   // radius: number;
   fontSize: number;
@@ -16,7 +18,6 @@ export type NodeData = {
   label: string;
   amount?: number;
   leaf?: boolean;
-  lv?: number;
 
   data: DataAtlas.JsonNode;
 
@@ -27,7 +28,7 @@ export type NodeData = {
 };
 
 export type NodeModel = SimulationNodeDatum & {
-  initialPositionCalculated: boolean;
+  // initialPositionCalculated: boolean;
   r: number;
   selected?: boolean;
   expanded?: boolean;

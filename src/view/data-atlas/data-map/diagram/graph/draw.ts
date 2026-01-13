@@ -25,7 +25,7 @@ export function init(this: Graph, data: DataAtlas.HomePageMap) {
       direction: "V",
       style: BottomOrg,
       dirs: upperDirs,
-      resourceType: "dataAssets",
+      resourceType: "dataAsset",
     });
     draw({
       parent: bottom,
@@ -34,7 +34,7 @@ export function init(this: Graph, data: DataAtlas.HomePageMap) {
       direction: "V",
       style: BottomOrg,
       dirs: lowerDirs,
-      resourceType: "dataAssets",
+      resourceType: "dataAsset",
     });
   }
 }

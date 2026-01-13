@@ -92,18 +92,24 @@ export function getNode(item: NodeData) {
   return node satisfies NodeMetadata;
 }
 
-export function getL3Node(nodeId: string, text: string, child: NodeData["data"], style: ReturnType<typeof getStyle>) {
+export function getL3Node(
+  pid: string,
+  nodeId: string,
+  text: string,
+  child: NodeData["data"],
+  style: ReturnType<typeof getStyle>
+) {
   const _node: NodeData = {
     id: nodeId,
+    pid,
     nodeSize: 50,
     fontSize: 10,
     x: 0,
     y: 0,
     data: child,
-    label: `${text}`,
+    label: text,
     leaf: true,
     style,
-    lv: 3,
   };
   return _node;
 }

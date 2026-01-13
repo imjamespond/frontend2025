@@ -26,7 +26,7 @@ export const getStyle = (isEntry: boolean | undefined, subNodes: number) => {
     };
   }
   if (isEntry) {
-    const fill = "#C990C0";
+    const fill = "rgb(247, 151, 103)";
     return {
       fill,
       stroke: new FastColor({ ...new FastColor(fill).toHsl(), l: 0.5 }).toHexString(),
