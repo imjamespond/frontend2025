@@ -8,7 +8,8 @@ export function expandNode(this: Graph, node: X6Node) {
   const fsm = this.fsm;
   if (!fsm) return;
 
-  const data = getNodeData(node).data;
+  const nodeData = getNodeData(node);
+  const data = nodeData.data;
   const { children: nodeChildren } = data;
   const nm = this._nodeModelMap[node.id];
   // 收起
@@ -61,19 +62,24 @@ export function expandNode(this: Graph, node: X6Node) {
   });
 
   const nodeModels = this.nodeModles();
-  // 固定位置
   nodeModels.forEach((nm) => {
-    const pos = nm.node.getPosition();
-    nm.fx = pos.x + nm.r;
-    nm.fy = pos.y + nm.r;
+    const nd = getNodeData(nm.node);
+    // L3不固定
+    if (nd.data.level === 3 && node !== nm.node) {
+      nm.fx = null;
+      nm.fy = null;
+    } else {
+      // 固定位置
+      const pos = nm.node.getPosition();
+      nm.fx = pos.x + nm.r;
+      nm.fy = pos.y + nm.r;
+    }
   });
   // 非固定位置
   nodeChildren?.forEach((node) => {
     const nm = this._nodeModelMap[node.nodeId];
     nm.x = x + nm.r;
     nm.y = y + nm.r;
-    nm.vx = 0;
-    nm.vy = 0;
     nm.fx = null;
     nm.fy = null;
   });
