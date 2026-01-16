@@ -22,16 +22,20 @@
   padding: var(--glow-container-padding, 2px);
   display: inline-block;
   position: relative;
+  contain: paint;
+  border-radius: calc(var(--glow-container-border-radius, 8px) + var(--glow-container-padding, 2px));
 }
 
 .gradient-and-mask-wrapper {
-  contain: paint;
-  border-radius: calc(var(--glow-container-border-radius, 8px) + var(--glow-container-padding, 2px));
-
   position: absolute;
-  inset: 0px;
+  top: 50%;
+  left: 50%;
+  width: 100%; /* 先占满容器宽度 */
+  height: 0;
+  padding-top: 100%; /* 高度等于宽度，形成正方形 */
+  transform: translate(-50%, -50%) scale(var(--glow-container-wrapper-scale, 1));
   opacity: 0;
-  pointer-events: none;
+  pointer-events: none; /* 不阻挡按钮点击 */
 }
 
 .outer-glow {
@@ -55,11 +59,9 @@
   inset: 0px;
   transform-origin: center center;
 
-  /* transform: scale(var(--glow-container-wrapper-scale, 2)); */
-
-  aspect-ratio: 1 / 1;
-  margin: auto;
-  inset-block: 0;
+  /* aspect-ratio: 1 / 1; */
+  /* margin: auto; */
+  /* inset-block: 0; */
 }
 
 .glow-animation-wrapper:hover .outer-glow {

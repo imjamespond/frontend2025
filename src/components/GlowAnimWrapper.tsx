@@ -1,6 +1,6 @@
-import { type CSSProperties, type PropsWithChildren } from "react";
+import { Fragment, type CSSProperties, type PropsWithChildren } from "react";
 import "./GlowAnimWrapper.css";
-import { KmButton } from "@components";
+import { KmButton, KmCard } from "@components";
 import { ConfigProvider, theme } from "antd";
 
 function FC({ children }: PropsWithChildren) {
@@ -30,21 +30,35 @@ function TestFC() {
   const { token } = theme.useToken();
 
   return (
-    <div
-      className="glow-animation-wrapper"
-      style={
-        {
-          margin: 200,
-          // "--glow-container-wrapper-scale": 12,
-          "--glow-container-border-radius": token.borderRadiusLG + "px",
-        } as CSSProperties
-      }
-    >
-      <FC>
-        <KmButton type="text" style={{ backgroundColor: "#fff" }}>
-          TestTestTest
-        </KmButton>
-      </FC>
+    <div style={{ margin: 100 }}>
+      <div
+        className="glow-animation-wrapper"
+        style={
+          {
+            "--glow-container-wrapper-scale": 2, // 只能实现width>height的情况
+            "--glow-container-border-radius": token.borderRadiusLG + "px",
+          } as CSSProperties
+        }
+      >
+        <FC>
+          <KmCard style={{ height: 200 }}>TestTestTest</KmCard>
+        </FC>
+      </div>
+      <hr />
+      <div
+        className="glow-animation-wrapper"
+        style={
+          {
+            "--glow-container-border-radius": token.borderRadiusLG + "px",
+          } as CSSProperties
+        }
+      >
+        <FC>
+          <KmButton type="text" style={{ backgroundColor: "#fff" }}>
+            TestTestTest
+          </KmButton>
+        </FC>
+      </div>
     </div>
   );
 }
