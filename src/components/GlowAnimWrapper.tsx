@@ -1,4 +1,4 @@
-import { Fragment, type CSSProperties, type PropsWithChildren } from "react";
+import { type CSSProperties, type PropsWithChildren } from "react";
 import "./GlowAnimWrapper.css";
 import { KmButton, KmCard } from "@components";
 import { ConfigProvider, theme } from "antd";

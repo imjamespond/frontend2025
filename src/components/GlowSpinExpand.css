@@ -10,6 +10,20 @@
   border-radius: inherit;
   inset: 0;
   pointer-events: none;
+
+  /* */
+}
+
+.gradient-spin-expand > div,
+.gradient-spin-blur > div {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 0;
+  padding-top: 100%;
+  transform: translate(-50%, -50%) scale(var(--gradient-spin-wrapper-scale, 1));
 }
 
 .gradient-spin-blur {
@@ -26,8 +40,8 @@
   pointer-events: none;
 }
 
-.gradient-spin-blur::before,
-.gradient-spin-expand::before {
+.gradient-spin-blur > div::before,
+.gradient-spin-expand > div::before {
   content: "";
   position: absolute;
   opacity: 0;
@@ -56,8 +70,8 @@
 
   inset: 0px;
   transform-origin: center center;
-  aspect-ratio: 1 / 1;
-  margin: auto;
+  /* aspect-ratio: 1 / 1; */
+  /* margin: auto; */
 }
 
 .plate-background-blur::before {
@@ -76,8 +90,8 @@
   animation: gradient-border-width var(--gradient-spin-time, 0.9s) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.gradient-spin-anim .gradient-spin-expand::before,
-.gradient-spin-anim .gradient-spin-blur::before {
+.gradient-spin-anim .gradient-spin-expand > div::before,
+.gradient-spin-anim .gradient-spin-blur > div::before {
   animation: gradient-spin-expand var(--gradient-spin-time, 0.9s) 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

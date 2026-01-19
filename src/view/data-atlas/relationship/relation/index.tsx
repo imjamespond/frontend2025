@@ -113,12 +113,12 @@ function Tips() {
       </Descriptions.Item>
       <Descriptions.Item>
         点击
-        <img style={{ width: 15 }} src={centerSvg} />
+        <img style={{ width: 15 }} src={centerSvg} alt="centerSvg" />
         设置为中心
       </Descriptions.Item>
       <Descriptions.Item>
         点击
-        <img style={{ width: 15 }} src={blockSvg} />
+        <img style={{ width: 15 }} src={blockSvg} alt="blockSvg" />
         到对应方块图
       </Descriptions.Item>
       <Descriptions.Item>

@@ -6,9 +6,14 @@ import { ConfigProvider, theme } from "antd";
 function FC({ children }: PropsWithChildren) {
   return (
     <div className="gradient-spin">
-      <div className="gradient-spin-blur"></div>
-      <div className="gradient-spin-expand"></div>
+      <div className="gradient-spin-blur">
+        <div></div>
+      </div>
+      <div className="gradient-spin-expand">
+        <div></div>
+      </div>
       <div className="plate-background-blur"></div>
+
       {children}
     </div>
   );
@@ -39,7 +44,7 @@ function TestFC() {
         container.getAnimations({ subtree: true }).forEach((anim) => anim.cancel());
 
         // 2. 针对两个不同的类执行 mouseEnter 动画
-        const targets = container.querySelectorAll(".gradient-spin-blur");
+        const targets = container.querySelectorAll(".gradient-spin-blur > div");
 
         targets.forEach((el) => {
           // 启动线性无限动画
