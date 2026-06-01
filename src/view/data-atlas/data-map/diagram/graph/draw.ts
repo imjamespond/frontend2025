@@ -82,12 +82,29 @@ export function draw(
   graph.addEdges(edges);
 
   const layoutFn = () => {
-    const margin = style.nodesep!;
-    const totalWidth = nodes.length * style.size.width + (nodes.length - 1) * margin!;
+    const margin = style.nodesep;
+    if (margin === undefined) throw new Error("nodesep is undefined");
+
+    // const totalWidth = nodes.length * style.size.width + (nodes.length - 1) * margin;
+    let left = 0;
+    let right = 0;
+
     nodes.forEach((n, i) => {
       const bbox = n.getBBox();
+      const lr = i % 2 === 0;
+      if (i === 0) {
+        left = -bbox.width / 2;
+      } else if (i === 1) {
+        right = bbox.width / 2 + margin;
+      } else {
+        if (lr) {
+          left -= bbox.width + margin;
+        } else {
+          right += bbox.width + margin;
+        }
+      }
       n.setPosition({
-        x: i * (bbox.width + margin) - totalWidth * 0.5,
+        x: lr ? left : right,
         y: rankdir === "BT" ? -380 - (bbox.height - style.size.height) : 200,
       });
     });
