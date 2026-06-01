@@ -56,7 +56,7 @@ export const RightOrg: OrgStyle = {
 };
 
 export const BottomOrg: OrgStyle = {
-  label: labels.dataAssets,
+  label: labels.dataAsset,
   type: 0,
   class: "__bottom__",
   color: colorPrimary,

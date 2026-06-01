@@ -85,7 +85,7 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
         if (!size) return;
         ref.current.queue(() => {
           const graph = graphRef.current;
-          if (!graph || !graph.mounted) return;
+          if (!graph?.mounted) return;
           graph.graph.resize(size.width, size.height);
         });
       },

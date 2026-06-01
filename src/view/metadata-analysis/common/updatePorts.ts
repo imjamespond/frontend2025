@@ -162,7 +162,9 @@ export function update_ports(this: Graph, node?: Node) {
     }
     if (st === 1 || originNode) {
       // node 为target
-      const tnPorts = (ports[tnode.id] ??= { left: [], right: [], top: [], bottom: [] });
+      ports[tnode.id] ??= { left: [], right: [], top: [], bottom: [] };
+      const tnPorts = ports[tnode.id];
+      
       const tb = sbox.y > tbox.y ? 1 : -1;
       tnPorts[tg].push({
         id,

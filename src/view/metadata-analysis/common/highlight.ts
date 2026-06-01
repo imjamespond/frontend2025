@@ -31,7 +31,8 @@ export function highlightNodesAndEdges(this: Graph, originId: string) {
 
     kmDebug("highlightNodesAndEdges depth", depth);
 
-    const node = (nodes[modelId] = this.graph.getCellById(modelId) as unknown as Node);
+    nodes[modelId] = this.graph.getCellById(modelId) as unknown as Node;
+    const node = nodes[modelId];
 
     const edges = forward ? this.graph.getOutgoingEdges(node) : this.graph.getIncomingEdges(node);
     if (edges) {

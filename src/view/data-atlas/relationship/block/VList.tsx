@@ -16,7 +16,7 @@ function FC() {
   const { modelsData, modelsTotal, ref, isFetching, hasNextPage } = useHelper();
   const xxl = useXXL();
   const modelRows = useMemo(() => {
-    const items = modelsData?.pages?.flatMap((page) => page) || [];
+    const items = modelsData?.pages?.flat() || [];
 
     const rows = [];
     const rowSize = xxl ? 6 : 4;

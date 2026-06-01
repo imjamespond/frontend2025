@@ -22,7 +22,9 @@ export class Graph extends BaseGraph {
   layout() {
     const { root } = this;
     if (root === null) return;
-    this.layoutFns.forEach((layout) => layout());
+    this.layoutFns.forEach((layoutFn) => {
+      layoutFn();
+    });
   }
   zoomToFit() {
     const { root } = this;
@@ -44,5 +46,5 @@ export const useGraph = createUseGraph(Graph, {
     minScale: 0.5,
     maxScale: 1.5,
   },
-  grid: undefined,
+  grid: 1,
 });

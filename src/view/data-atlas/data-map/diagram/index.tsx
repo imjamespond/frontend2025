@@ -2,10 +2,10 @@ import Operations from "@components/graph/Operations";
 import Loading from "@components/Loading";
 import { type CSSProperties, Fragment } from "react";
 import { OrgStyles } from "./graph/OrgStyles";
-import { useInit } from "./helper";
+import { useHelper } from "./helper";
 
 function FC() {
-  const [wrapperRef, containerRef, graphRef, isLoading] = useInit();
+  const [wrapperRef, containerRef, graphRef, isLoading] = useHelper();
 
   return (
     <Fragment>
@@ -20,10 +20,10 @@ function FC() {
             graphRef.current?.graph.zoom(-0.1);
           }}
           onRealContent={() => {
-            graphRef.current!.graph.scale(1);
+            graphRef.current?.graph.scale(1);
           }}
           onFitContent={() => {
-            graphRef.current!.zoomToFit();
+            graphRef.current?.zoomToFit();
           }}
         />
         <Loading spinning={isLoading} relative={false} />

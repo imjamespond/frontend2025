@@ -1,5 +1,6 @@
 import { getLazyComponent } from "@components/lazyComponent";
 import { showcolumn } from "@config/app";
+import Login from "@config/login";
 import React, { useMemo } from "react";
 
 const DataAtlas = getLazyComponent(() => import("./data-atlas"));
@@ -17,7 +18,12 @@ function FC() {
 
     return <DataAtlas />;
   }, []);
-  return <React.Fragment>{view}</React.Fragment>;
+  return (
+    <React.Fragment>
+      {view}
+      {process.env.devMode && <Login />}
+    </React.Fragment>
+  );
 }
 
 export default FC;

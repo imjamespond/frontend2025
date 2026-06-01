@@ -38,8 +38,9 @@ export const service: Service = {
     },
     getTableModelInfoByDirIdAndBeginIndex({ args }) {
       if (showSample) return request("get", "/data-atlas/samples/getTableModelInfoByDirIdAndBeginIndex1.json");
+      if (!args.params) throw new Error("params is required");
       return request("get", `/api/dataassetmanager/countApi/getTableModelInfoByDirIdAndBeginIndex`, {
-        params: { ...args.params, beginIndex: args.params!.beginIndex + 1, topNum: args.params!.topNum - 1 },
+        params: { ...args.params, beginIndex: args.params?.beginIndex + 1, topNum: args.params?.topNum - 1 },
       });
     },
     queryRelationChartData({ args }) {

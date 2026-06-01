@@ -66,20 +66,18 @@ export function getFieldTips(payload: Field) {
 export function getFieldEdgeTips(payload: EntEdgeData) {
   const labels = payload.data.jobName?.split(",");
   return (
-    <React.Fragment>
-      <div style={{ overflow: "auto", maxHeight: 450 }}>
-        {"SQL: "}
-        {labels?.map((label, i) => {
-          return (
-            <div key={i}>
-              <Typography.Text italic underline>
-                {label}
-              </Typography.Text>
-            </div>
-          );
-        })}
-      </div>
-    </React.Fragment>
+    <div style={{ overflow: "auto", maxHeight: 450 }}>
+      {"SQL: "}
+      {labels?.map((label, i) => {
+        return (
+          <div key={i}>
+            <Typography.Text italic underline>
+              {label}
+            </Typography.Text>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

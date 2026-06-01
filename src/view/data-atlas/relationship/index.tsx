@@ -16,8 +16,7 @@ function FC() {
   const setGraphType = useSetGraphType();
   useEffect(() => {
     setGraphType(GraphType.Block);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setGraphType]);
   return (
     <div className={styles.root}>
       <KmRow className="__item">

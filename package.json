@@ -7,7 +7,10 @@
     "build": "rsbuild build -c ./rsbuild.config.prod.ts",
     "dev": "rsbuild dev -c ./rsbuild.config.dev.ts  --open",
     "preview": "rsbuild preview",
-    "lint": "eslint \"src/**/*.{ts,tsx}\""
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "bformat": "biome format --write .",
+    "blint": "biome check .",
+    "blint:fix": "biome check --write --unsafe ."
   },
   "dependencies": {
     "@ant-design/cssinjs": "^2.0.1",

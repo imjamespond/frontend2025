@@ -6,7 +6,7 @@ import { LayoutSubject } from "./context";
 import { useGraph } from "./graph";
 import { getOrgNodeData, setOrgNodeData } from "./graph/utils";
 
-export function useInit() {
+export function useHelper() {
   const { data, isLoading } = useDataMap();
 
   const matchedDirId = useMatchedDirId();

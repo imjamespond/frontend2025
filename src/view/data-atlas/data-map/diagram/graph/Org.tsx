@@ -120,8 +120,10 @@ export default class OrgComponent extends React.Component<Props, State> {
 
     // 是否出现滚动条
     if (expanded) {
-      items = list.map((item: any, i: number) => {
-        return <Item key={i} item={item} resourceType={resourceType} style={style} matchedDirId={matchedDirId} />;
+      items = list.map((item, i: number) => {
+        return (
+          <Item key={i.toString()} item={item} resourceType={resourceType} style={style} matchedDirId={matchedDirId} />
+        );
       });
       this.hasMore &&
         items.push(
@@ -180,6 +182,7 @@ export default class OrgComponent extends React.Component<Props, State> {
         >
           {/* {boxHeight},{rows} */}
           <svg viewBox={`0 0 ${style.size.boxWidth} ${boxHeight}`} xmlns="http://www.w3.org/2000/svg" className={"svg"}>
+            <title> </title>
             <rect
               width={style.size.boxWidth - 4}
               height={boxHeight - 4}

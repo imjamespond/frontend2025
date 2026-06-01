@@ -19,7 +19,7 @@ export function createOrgNode(style: OrgStyle, data: NodeData): NodeMetadata {
   return node;
 }
 
-export function getOrgNodeData(node: Node, nullable: true): NodeData | void;
+export function getOrgNodeData(node: Node, nullable: true): NodeData | undefined;
 export function getOrgNodeData(node: Node): NodeData;
 export function getOrgNodeData(node: Node) {
   return node.getData();

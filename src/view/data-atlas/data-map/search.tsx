@@ -3,11 +3,11 @@ import { kmDebug } from "@common/misc";
 import { KmButton, KmDropdown, KmInput, KmSpin } from "@components";
 import { useDebounceEffect } from "ahooks";
 import { Col, type DropdownProps, Row, Select } from "antd";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSetTemplateType, useTemplateType } from "../context";
 import { useDataMap } from "../service";
 import { useSetFindResult, useSetOpenHandle, useSetSearchResult, useSetSearchText } from "./contex";
-import { GraphType } from "./helper";
 import SearchResult from "./SearchResult";
 import { searchData } from "./searchHelper";
 import { useFind, useTemplates } from "./service";
@@ -23,11 +23,11 @@ function FC() {
   const templateType = useTemplateType();
   const setTemplateType = useSetTemplateType();
 
-  const [type] = useState<GraphType>(GraphType.Summary);
+  // const [type] = useState<GraphType>(GraphType.Summary);
   // Dropdown tab
   const [activeKey] = useState<"1" | "2" | "3" | "4">("2");
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState(process.env.devMode ? "市" : "");
   const setSearchText = useSetSearchText();
   const setSearchResult = useSetSearchResult();
   const setFindResult = useSetFindResult();
@@ -35,18 +35,13 @@ function FC() {
   useSetOpenHandle(setOpen);
 
   useEffect(() => {
-    setValue(process.env.devMode ? "市" : "");
-    setOpen(false);
-  }, [type]);
-
-  useEffect(() => {
-    stateRef.current.setFindResult(findResult);
+    ref.current.setFindResult(findResult);
   }, [findResult]);
 
   // 搜索
   const onSearch = useCallback((searchText: string, activeKey: string) => {
     kmDebug("search", searchText, activeKey);
-    const { data, setSearchText, resetFind, setSearchResult } = stateRef.current;
+    const { data, setSearchText, resetFind, setSearchResult } = ref.current;
     setSearchText(searchText);
     setSearchResult(undefined);
     resetFind();
@@ -65,8 +60,8 @@ function FC() {
 
   // 搜索框变动
   const onChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((e) => {
-    stateRef.current.resetFind();
-    stateRef.current.setSearchResult(undefined);
+    ref.current.resetFind();
+    ref.current.setSearchResult(undefined);
     setValue(e.target.value);
   }, []);
 
@@ -95,67 +90,60 @@ function FC() {
   // 默认选中第一个
   useEffect(() => {
     if (templateType === undefined && listSupportTemplates && listSupportTemplates.length > 0) {
-      stateRef.current.onSelectTpl(listSupportTemplates[0].type);
+      ref.current.onSelectTpl(listSupportTemplates[0].type);
     }
   }, [listSupportTemplates, templateType]);
 
-  const stateRef = useRef({ setSearchText, setSearchResult, setFindResult, resetFind, onSelectTpl, data });
-  stateRef.current.data = data;
+  const ref = useRef({ setSearchText, setSearchResult, setFindResult, resetFind, onSelectTpl, data });
+  ref.current.data = data;
 
   return (
-    <React.Fragment>
-      <KmSpin spinning={finding}>
-        <Row className="__search">
-          <Col xs={24} md={{ span: 6 }} lg={{ span: 8 }}>
-            <Select
-              style={{ width: 150, marginLeft: 10 }}
-              placeholder="模板选择"
-              value={templateType}
-              onChange={onSelectTpl}
-            >
-              {listSupportTemplates?.map((item, i) => {
-                return (
-                  <Select.Option key={i} value={item.type}>
-                    {item.name}
-                  </Select.Option>
-                );
-              })}
-            </Select>
-          </Col>
-          <Col xs={24} md={{ span: 12 }} lg={{ span: 8 }}>
-            <KmDropdown
-              overlayClassName={styles.root}
-              popupRender={dropdownRender}
-              trigger={["click"]}
-              open={open}
-              destroyOnHidden
-            >
-              <KmInput.Search
-                placeholder="搜索数据地图"
-                allowClear
-                enterButton
-                size="large"
-                value={value}
-                onSearch={(searchText) => onSearch(searchText, activeKey)}
-                onChange={onChange}
-                onClick={() => {
-                  setOpen(true);
-                }}
-                onFocus={() => {
-                  setOpen(true);
-                }}
-                onBlur={() => {
-                  if (process.env.devMode) {
-                    return;
-                  }
-                  setOpen(false);
-                }}
-              />
-            </KmDropdown>
-          </Col>
-        </Row>
-      </KmSpin>
-    </React.Fragment>
+    <KmSpin spinning={finding}>
+      <Row className="__search">
+        <Col xs={24} md={{ span: 6 }} lg={{ span: 8 }}>
+          <Select
+            style={{ width: 150, marginLeft: 10 }}
+            placeholder="模板选择"
+            value={templateType}
+            onChange={onSelectTpl}
+            options={listSupportTemplates?.map((item) => {
+              return { label: item.name, value: item.type };
+            })}
+          />
+        </Col>
+        <Col xs={24} md={{ span: 12 }} lg={{ span: 8 }}>
+          <KmDropdown
+            overlayClassName={styles.root}
+            popupRender={dropdownRender}
+            trigger={["click"]}
+            open={open}
+            destroyOnHidden
+          >
+            <KmInput.Search
+              placeholder="搜索数据地图"
+              allowClear
+              enterButton
+              size="large"
+              value={value}
+              onSearch={(searchText) => onSearch(searchText, activeKey)}
+              onChange={onChange}
+              onClick={() => {
+                setOpen(true);
+              }}
+              onFocus={() => {
+                setOpen(true);
+              }}
+              onBlur={() => {
+                if (process.env.devMode) {
+                  return;
+                }
+                setOpen(false);
+              }}
+            />
+          </KmDropdown>
+        </Col>
+      </Row>
+    </KmSpin>
   );
 }
 
