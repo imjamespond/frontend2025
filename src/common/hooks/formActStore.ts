@@ -1,9 +1,9 @@
-import { type IAct } from "./act";
 import { useMemo } from "react";
+import type { IAct } from "./act";
 import { createUseStore } from "./zustand";
 
 type Ext = 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
-export const enum FormActType {
+export enum FormActType {
   Add,
   Edit,
   View,

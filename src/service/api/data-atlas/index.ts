@@ -1,8 +1,8 @@
-import type { Fetcher } from "swr";
-import type { SWRKeyType } from "..";
-import type { MutationFetcher } from "swr/mutation";
 import request, { type OptionsType } from "@common/api";
+import type { Fetcher } from "swr";
+import type { MutationFetcher } from "swr/mutation";
 import type { ResourceType } from "@/view/data-atlas/helper";
+import type { SWRKeyType } from "..";
 
 export interface Service {
   dataassetmanager: {

@@ -1,15 +1,15 @@
-import { Cell, Edge } from "@antv/x6";
-import { LRStyle, TBStyle } from "./fixedNodes";
-import type { GraphData, Style } from "../types";
-import { getColors, groupDepth } from "../config";
+import type { Cell, Edge } from "@antv/x6";
 import { GraphType } from "../../helper";
+import { getColors, groupDepth } from "../config";
+import type { GraphData, Style } from "../types";
 import type { Graph } from ".";
+import { LRStyle, TBStyle } from "./fixedNodes";
 import { getNodeData } from "./helper";
 
 /**
  * 初始化图形
  */
-export function init(this: Graph) {
+export function render(this: Graph) {
   const { graph, graphType, subDir, root, AddNodes } = this;
   if (root === null) return;
 
@@ -44,7 +44,7 @@ export function draw1(
   }: {
     items?: GraphData;
     parent: Cell; // 外部内部资源,数据资产 结点
-  }
+  },
 ) {
   const { graph, rootDir, style, createNode, createEdge, createCategoryNode } = this;
 
@@ -104,7 +104,7 @@ export function draw2(
     items?: GraphData;
     parent: any; // 外部内部资源,数据资产 结点
     rankdir: string; // dagre 布局方向
-  }
+  },
 ) {
   const { graph, subDir, createCategoryNode, createEdge, addNodeTool, expandLayout, selectL3Dir } = this;
   let center: Node | null = null;
@@ -129,7 +129,7 @@ export function draw2(
     return node;
   });
 
-  if (!!center) {
+  if (center) {
     expandLayout({ center });
     graph.centerCell(center);
   }

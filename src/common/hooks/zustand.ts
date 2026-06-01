@@ -49,7 +49,6 @@ export type UseStore<T> = ReturnType<typeof createUseStore<T>>;
 // const stFoo = useFoo();
 // stFoo.mergeValue({ foo: 2 });
 
-
 export function createUseListStore<T, Extra = void>(items?: T[], extra?: Extra) {
   type State = {
     items: T[] | undefined;

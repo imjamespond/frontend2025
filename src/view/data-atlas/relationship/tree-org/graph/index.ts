@@ -1,13 +1,14 @@
-import { BaseGraph, createUseGraph } from "@common/graph";
 // import { Node } from "@antv/x6";
 import { register } from "@antv/x6-react-shape";
+import { BaseGraph, createUseGraph } from "@components/graph";
+import type { Dir, SubDir } from "../../../helper";
+import { GraphType } from "../../helper";
+import { Category, DirNode } from "../components";
 import Organization from "../components/Organization";
 import { zoomFit } from "../config";
-import { draw1, draw2, init } from "./init";
-import { Category, DirNode } from "../components";
-import { GraphType } from "../../helper";
+import { ActType, GraphSubject } from "../context";
 import type { GraphData, Style } from "../types";
-import { layout } from "./layout";
+import { AddNodes } from "./fixedNodes";
 import {
   addNodeTool,
   collapse,
@@ -20,9 +21,8 @@ import {
   selectDir,
   selectL3Dir,
 } from "./helper";
-import type { Dir, SubDir } from "../../../helper";
-import { AddNodes } from "./fixedNodes";
-import { ActType, GraphSubject } from "../context";
+import { draw1, draw2, render } from "./init";
+import { layout } from "./layout";
 
 register({
   shape: "graph-organization",
@@ -43,7 +43,7 @@ register({
 });
 
 export class Graph extends BaseGraph {
-  init = init.bind(this);
+  render = render.bind(this);
   style: Style | null = null;
   root: DataAtlas.JsonNode | null = null;
   graphType: GraphType = GraphType.Tree;

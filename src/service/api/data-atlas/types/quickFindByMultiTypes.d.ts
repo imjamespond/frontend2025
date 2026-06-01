@@ -21,10 +21,8 @@ declare namespace DataAtlas {
     type?: unknown;
     path: string;
   }
-
 }
 
-  
 interface Additional {
   sourceType: string;
   displayOnMap: string;

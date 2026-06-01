@@ -23,7 +23,7 @@ import type { BaseType, Selection } from "d3";
 
 const noOp = () => undefined;
 type RendererEventHandler<Datum> = (
-  selection: Selection<SVGGElement, Datum, BaseType, unknown>
+  selection: Selection<SVGGElement, Datum, BaseType, unknown>,
   // style: Visualization
 ) => void;
 

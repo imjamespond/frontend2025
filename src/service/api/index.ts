@@ -24,9 +24,9 @@ export type DataOfFetcher<T> = T extends Fetcher<infer U, object> ? U : never;
 
 export type ExtraArgOfMutation<T> = T extends MutationFetcher<unknown, Key, infer U> ? U : never;
 
-export type Request<Params = unknown, Body = unknown, Result = unknown> = {
-  (args?: OptionsType<Params, Body>): Promise<AxiosResponse<Result>>;
-};
+export type Request<Params = unknown, Body = unknown, Result = unknown> = (
+  args?: OptionsType<Params, Body>,
+) => Promise<AxiosResponse<Result>>;
 // eslint-disable-next-line
 export type BodyOfRequest<T> = T extends Request<infer _, infer U> ? U : never;
 // eslint-disable-next-line

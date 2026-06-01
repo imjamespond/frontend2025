@@ -67,7 +67,8 @@
   inset: 0;
   background: #fff;
   --shadow-inset: 100px;
-  mask-image: radial-gradient(ellipse at top center, transparent 0, black 100%),
+  mask-image:
+    radial-gradient(ellipse at top center, transparent 0, black 100%),
     linear-gradient(
       to right,
       black 0,

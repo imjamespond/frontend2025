@@ -1,8 +1,8 @@
-import { Fragment, type CSSProperties } from "react";
-import Operations from "@components/Operations";
+import Operations from "@components/graph/Operations";
+import Loading from "@components/Loading";
+import { type CSSProperties, Fragment } from "react";
 import { OrgStyles } from "./graph/OrgStyles";
 import { useInit } from "./helper";
-import Loading from "@components/Loading";
 
 function FC() {
   const [wrapperRef, containerRef, graphRef, isLoading] = useInit();

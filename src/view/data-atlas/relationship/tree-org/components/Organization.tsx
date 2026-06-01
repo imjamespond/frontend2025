@@ -1,13 +1,12 @@
-import React from "react";
-import { Node } from "@antv/x6";
-import { Row, Col } from "antd";
 import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
-import classnames from "classnames";
-
+import type { Node } from "@antv/x6";
 import Tooltip from "@components/Tooltip";
-import { useStyles } from "./styles";
-import type { NodeData, Style } from "../types";
+import { Col, Row } from "antd";
+import classnames from "classnames";
+import React from "react";
 import { ActType, GraphSubject } from "../context";
+import type { NodeData, Style } from "../types";
+import { useStyles } from "./styles";
 
 export type OrgNodeData = {
   dirId: string;
@@ -45,7 +44,7 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
     // 判断matched是否处于收起(不可见)位置
     const { node } = this.props;
     const { dirId, style, item: data } = node.getData<OrgNodeData>();
-    let list: any[] = data?.children ?? [];
+    const list: any[] = data?.children ?? [];
     let matched = 0;
     // 判断数量是否要显示收起
     const max = style.maxRows * style.cols;
@@ -85,8 +84,8 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
     const { dirId, style, item: data } = node.getData<OrgNodeData>();
     const span = 24 / style.cols;
 
-    let items = undefined;
-    let list = data?.children ?? [];
+    let items;
+    const list = data?.children ?? [];
 
     // 是否出现滚动条
     if (expanded) {
@@ -102,11 +101,11 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
                 <CaretUpFilled />
               </div>
             </div>
-          </Col>
+          </Col>,
         );
     } else {
       const min = style.minRows * style.cols;
-      let num = list.length > min ? min - 1 : list.length;
+      const num = list.length > min ? min - 1 : list.length;
       // 判断列表数目
       items = list.slice(0, num).map((item, i: number) => {
         return <Item key={i} item={item} span={span} dirId={dirId} parent={data} node={node} />;
@@ -123,7 +122,7 @@ export class OrgComponent extends React.PureComponent<Props, State /* & any */> 
               </div>
               {/* <div className="amount">({list.length - items.length})</div> */}
             </div>
-          </Col>
+          </Col>,
         );
       }
     }

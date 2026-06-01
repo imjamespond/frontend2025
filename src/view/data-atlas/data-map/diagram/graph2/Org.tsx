@@ -1,12 +1,11 @@
-import React from "react";
-import { Node } from "@antv/x6";
 import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
-
+import type { Node } from "@antv/x6";
+import { KmFlex } from "@components";
+import Tooltip from "@components/Tooltip";
+import classnames from "classnames";
+import React from "react";
 import { Subject } from "rxjs";
 import type { ResourceType } from "@/view/data-atlas/helper";
-import { KmFlex } from "@components";
-import classnames from "classnames";
-import Tooltip from "@components/Tooltip";
 import type { OrgStyle } from "../graph/types";
 
 export const SearchSubject = new Subject<string>();
@@ -65,14 +64,14 @@ class OrgComponent extends React.PureComponent<Props, State> {
   onSearch(val: string) {
     const { node } = this.props;
     const { dir } = node.getData<NodeData>();
-    if (!!val) {
+    if (val) {
       // console.debug(this.props.data?.category, val)
       const matched = dir.list?.filter((item: any) => {
         return (item.dirName as string)?.includes(val);
       });
       // console.debug(matched)
       this.setState((pre) => {
-        if (!!matched && matched.length > 0) {
+        if (matched && matched.length > 0) {
           // 有结果
           return { ...pre, matched, expanded: true };
         }
@@ -86,7 +85,7 @@ class OrgComponent extends React.PureComponent<Props, State> {
   onMatch(dirId: string) {
     const { node } = this.props;
     const { dir } = node.getData<NodeData>();
-    if (!!dirId) {
+    if (dirId) {
       const matched = dir?.list?.some((item: any) => {
         return (item.dirId as string) === dirId;
       });
@@ -125,8 +124,8 @@ class OrgComponent extends React.PureComponent<Props, State> {
     const { dir, style, resourceType } = node.getData<NodeData>();
     // const span = 24 / style.cols
 
-    let items = undefined;
-    let list = dir?.list ?? [];
+    let items;
+    const list = dir?.list ?? [];
 
     // 是否出现滚动条
     if (expanded) {
@@ -151,7 +150,7 @@ class OrgComponent extends React.PureComponent<Props, State> {
                 <CaretUpFilled />
               </div>
             </div>
-          </Col>
+          </Col>,
         );
     } else {
       const { unFold } = dir;
@@ -177,7 +176,7 @@ class OrgComponent extends React.PureComponent<Props, State> {
                 <CaretDownFilled />
               </div>
             </div>
-          </Col>
+          </Col>,
         );
       }
     }

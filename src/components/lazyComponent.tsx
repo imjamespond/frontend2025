@@ -1,5 +1,6 @@
 import { KmFlex, KmSpin } from "@components";
-import React, { Suspense, lazy } from "react";
+import type React from "react";
+import { lazy, Suspense } from "react";
 
 type Lazy<T> = typeof lazy<React.FunctionComponent<T>>;
 type LazyParams<T> = Parameters<Lazy<T>>;

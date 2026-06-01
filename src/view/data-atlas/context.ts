@@ -1,7 +1,7 @@
+import { getData, setData } from "@common/data";
 import { createUseStore, initUseStore } from "@common/hooks/zustand";
 import { Subject } from "rxjs";
-import { View, type Dir, type ResourceType } from "./helper";
-import { getData, setData } from "@common/data";
+import { type Dir, type ResourceType, View } from "./helper";
 
 type ViewState = { view: View; dir?: Dir; tpl?: string };
 

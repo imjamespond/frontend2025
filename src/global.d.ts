@@ -6,12 +6,12 @@ declare module "*.jpg";
 declare module "*.jpeg";
 declare module "*.svg";
 
-declare module '*.svg?raw' {
+declare module "*.svg?raw" {
   const content: string;
   export default content;
 }
 
-interface Window {
+declare interface Window {
   __POWERED_BY_QIANKUN__?: boolean;
 }
 

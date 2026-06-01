@@ -1,7 +1,6 @@
-import qs from "qs";
+import axios, { type AxiosRequestConfig, type Method } from "axios";
 import type QueryString from "qs";
-import axios from "axios";
-import { type AxiosRequestConfig, type Method } from "axios";
+import qs from "qs";
 import download from "./download";
 
 export const ContentTypes = {
@@ -18,18 +17,14 @@ const config: AxiosRequestConfig = {
 
 // Add a response interceptor
 axios.interceptors.response.use(
-  function (response) {
-    return response;
-  },
-  function (error) {
-    return Promise.reject(error.response.data || "未知错误");
-  }
+  (response) => response,
+  (error) => Promise.reject(error.response.data || "未知错误"),
 );
 
 export interface OptionsType<
   Params = unknown,
   Body = unknown,
-  ParamsOfPath extends Record<string, string> | void = Record<string, string> | void
+  ParamsOfPath extends Record<string, string> | void = Record<string, string> | void,
 > extends AxiosRequestConfig {
   params?: Params; // override any
   body?: Body;

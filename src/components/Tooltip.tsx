@@ -1,6 +1,6 @@
-import React, { type CSSProperties, Fragment, type HTMLAttributes, useEffect, useRef, useState } from "react";
 import { Tooltip as AntTooltip, type TooltipProps } from "antd";
 import type { TooltipPlacement } from "antd/es/tooltip";
+import React, { type CSSProperties, Fragment, type HTMLAttributes, useEffect, useRef, useState } from "react";
 
 const wrapperStyle: CSSProperties = {
   overflow: "hidden",

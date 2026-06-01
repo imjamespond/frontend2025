@@ -1,6 +1,6 @@
 import { labels } from "./data-map/diagram/graph/types";
 
-export const enum View {
+export enum View {
   None,
   DataMap,
   Relationship,

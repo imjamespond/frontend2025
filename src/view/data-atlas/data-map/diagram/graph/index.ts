@@ -1,10 +1,10 @@
-import { type Node } from "@antv/x6";
-import { BaseGraph, createUseGraph } from "@common/graph";
+import type { Node } from "@antv/x6";
 import { register } from "@antv/x6-react-shape";
+import { BaseGraph, createUseGraph } from "@components/graph";
+import { zoomFit } from "./config";
+import { draw, render } from "./draw";
 import Organization from "./Org";
 import { createEdge, createOrgNode } from "./utils";
-import { draw, init } from "./draw";
-import { zoomFit } from "./config";
 
 register({
   shape: "organization",
@@ -13,11 +13,11 @@ register({
 });
 
 export class Graph extends BaseGraph {
-  init = init.bind(this);
+  render = render.bind(this);
   draw = draw.bind(this);
   createNode = createOrgNode.bind(this);
   createEdge = createEdge.bind(this);
-  protected layoutFns: { (): void }[] = [];
+  protected layoutFns: (() => void)[] = [];
   root: Node | null = null;
   layout() {
     const { root } = this;

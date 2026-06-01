@@ -1,12 +1,12 @@
-import useSWRMutation, { type MutationFetcher } from "swr/mutation";
-import { useCallback, useRef } from "react";
 import type { OptionsType } from "@common/api";
+import { useCallback, useRef } from "react";
+import useSWRMutation, { type MutationFetcher } from "swr/mutation";
 import { useMsg } from ".";
 
 export function useMut<Data, Params = unknown, Body = unknown>(
   key: string,
   fetcher: MutationFetcher<Data, string, OptionsType<Params, Body>>,
-  successTip?: boolean | string
+  successTip?: boolean | string,
 ) {
   const msg = useMsg();
   const mut = useSWRMutation(key, fetcher);
@@ -33,7 +33,6 @@ export function useMut<Data, Params = unknown, Body = unknown>(
 
   return [caller, mut.isMutating, mut] as const;
 }
-
 
 export function handleError(error: unknown) {
   if (error) {

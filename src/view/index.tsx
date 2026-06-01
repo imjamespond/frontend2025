@@ -1,14 +1,18 @@
 import { getLazyComponent } from "@components/lazyComponent";
+import { showcolumn } from "@config/app";
 import React, { useMemo } from "react";
-const DataAtlas = getLazyComponent(() => import("./data-atlas"));
-const MetadataAnaylsis = getLazyComponent(() => import("./metadata-analysis"));
 
+const DataAtlas = getLazyComponent(() => import("./data-atlas"));
+const MetadataAnalysis = getLazyComponent(() => import("./metadata-analysis"));
 function FC() {
   const view = useMemo(() => {
     // 根据地址结尾
     const pathname = window.location.pathname;
     if (pathname.endsWith("/metadata-analysis")) {
-      return <MetadataAnaylsis />;
+      if (showcolumn() || process.env.devMode) {
+        return <MetadataAnalysis />;
+      }
+      // return <MetadataAnalysisEntity />;
     }
 
     return <DataAtlas />;

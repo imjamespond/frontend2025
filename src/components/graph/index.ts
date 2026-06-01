@@ -1,4 +1,4 @@
-import { Graph as X6, type EdgeMetadata, type NodeMetadata } from "@antv/x6";
+import { Graph as X6 } from "@antv/x6";
 import { kmDebug } from "@common/misc";
 import { useDebounceEffect, useSize } from "ahooks";
 import { useId, useLayoutEffect, useMemo, useRef } from "react";
@@ -19,7 +19,9 @@ export abstract class BaseGraph {
     });
   }
 
-  abstract layout(model?: { nodes?: NodeMetadata[]; edges?: EdgeMetadata[] } | void): void;
+  // abstract layout(model?: { nodes?: Node.Metadata[]; edges?: Edge.Metadata[] } | void): void;
+
+  init() {}
 
   dispose() {
     this.x6.dispose(true);
@@ -35,7 +37,7 @@ type GraphConstructor<G extends BaseGraph> = new (..._: Params) => G;
 export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor<G>, options?: Params[0]) {
   return function useGraph<
     Container extends HTMLElement = HTMLDivElement,
-    Wrapper extends HTMLElement = HTMLDivElement
+    Wrapper extends HTMLElement = HTMLDivElement,
   >() {
     const containerRef = useRef<Container>(null);
     const wrapperRef = useRef<Wrapper>(null);
@@ -59,6 +61,7 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
           height: bbox.height,
           ...options,
         });
+        graph.init();
         graphRef.current = graph;
       });
 
@@ -87,7 +90,7 @@ export function createUseGraph<G extends BaseGraph>(GraphClass: GraphConstructor
         });
       },
       [size],
-      { wait: 500 }
+      { wait: 500 },
     );
 
     return [containerRef, wrapperRef, graphRef, queue] as const;

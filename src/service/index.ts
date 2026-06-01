@@ -7,7 +7,7 @@ export function OpenAssetsDetail(id: string, dirId: string) {
   const url = getOpenAssetsDetail(id, dirId);
   window.open(
     url,
-    id
+    id,
     // "left=100,top=100,width=1400,height=800,resizable,scrollbars"
   );
 }

@@ -2,8 +2,8 @@ import { select } from "d3";
 import { DEFAULT_ALPHA_TARGET, DRAGGING_ALPHA, DRAGGING_ALPHA_TARGET } from "./d3/constants";
 import { nodeMenuRenderer } from "./d3/menu";
 import type { Graph } from "./graph";
-import { useTipsStore } from "./subject";
 import { getNodeData } from "./helper";
+import { useTipsStore } from "./subject";
 
 const tolerance = 25;
 
@@ -40,7 +40,7 @@ export function handleNodeMoving(this: Graph) {
     const node = nodeMap[event.node.id];
     // Math.sqrt was removed to avoid unnecessary computation, since this
     // function is called very often when dragging.
-    const dist = Math.pow(initialDragPosition[0] - event.x, 2) + Math.pow(initialDragPosition[1] - event.y, 2);
+    const dist = (initialDragPosition[0] - event.x) ** 2 + (initialDragPosition[1] - event.y) ** 2;
 
     // This is to prevent clicks/double clicks from restarting the simulation
     if (dist > tolerance && !restartedSimulation) {

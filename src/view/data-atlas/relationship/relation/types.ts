@@ -1,7 +1,8 @@
-export type { Node as X6Node, Edge as X6Edge } from "@antv/x6";
+export type { Edge as X6Edge, Node as X6Node } from "@antv/x6";
+
 import type { Node } from "@antv/x6";
-import type { SimulationLinkDatum, SimulationNodeDatum } from "d3-force";
 import type { getStyle } from "@config/style";
+import type { SimulationLinkDatum, SimulationNodeDatum } from "d3-force";
 
 export type GraphData = DataAtlas.JsonNode[];
 

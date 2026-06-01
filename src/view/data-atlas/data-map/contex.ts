@@ -1,6 +1,6 @@
+import { createImperativeFunction } from "@common/hooks/context";
 import { initUseStore } from "@common/hooks/zustand";
 import type { SearchReturnType } from "./searchHelper";
-import { createImperativeFunction } from "@common/hooks/context";
 
 export const [useSearchText, useSetSearchText] = initUseStore<string>("");
 

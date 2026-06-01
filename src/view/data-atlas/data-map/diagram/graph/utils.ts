@@ -1,4 +1,4 @@
-import type { Cell, NodeMetadata, Node } from "@antv/x6";
+import type { Cell, Node, NodeMetadata } from "@antv/x6";
 import type { Graph } from "./index";
 import type { NodeData, OrgStyle } from "./types";
 

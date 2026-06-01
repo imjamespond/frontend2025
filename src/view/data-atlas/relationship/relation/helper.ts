@@ -1,6 +1,6 @@
 import type { EdgeMetadata, NodeMetadata } from "@antv/x6";
-import type { NodeData, X6Node } from "./types";
 import type { getStyle } from "@config/style";
+import type { NodeData, X6Node } from "./types";
 
 export function getNodeData(node: X6Node) {
   return node.getData<NodeData>();
@@ -97,7 +97,7 @@ export function getL3Node(
   nodeId: string,
   text: string,
   child: NodeData["data"],
-  style: ReturnType<typeof getStyle>
+  style: ReturnType<typeof getStyle>,
 ) {
   const _node: NodeData = {
     id: nodeId,
@@ -127,7 +127,7 @@ export function getEdge(
         height: 5,
       },
     },
-  }
+  },
 ) {
   const color = "rgb(106, 198, 255)";
   const shape = "shadow-edge";

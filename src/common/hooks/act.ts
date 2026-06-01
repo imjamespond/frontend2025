@@ -5,7 +5,6 @@ type IAct1<T, P> = { type: T; payload: P };
 
 export type IAct<T, P = undefined> = [P] extends [undefined] ? IAct0<T> : IAct1<T, P>;
 
-
 export function useAct<Act extends IAct<number | string>>() {
   return useState<Act>();
 }

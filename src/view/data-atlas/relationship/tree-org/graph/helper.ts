@@ -1,9 +1,9 @@
-import { Cell, CellView, Edge, Node } from "@antv/x6";
-import { tree, hierarchy, type HierarchyPointNode } from "d3";
-import { Graph } from ".";
-import { type DirNodeData, type NodeData } from "../types";
-import type { OrgNodeData } from "../components/Organization";
+import type { Cell, CellView, Edge, Node } from "@antv/x6";
+import { type HierarchyPointNode, hierarchy, tree } from "d3";
 import type { SubDir } from "@/view/data-atlas/helper";
+import type { OrgNodeData } from "../components/Organization";
+import type { DirNodeData, NodeData } from "../types";
+import type { Graph } from ".";
 
 export function getNodeData(node: Cell) {
   return node.getData<NodeData | void>();
@@ -46,7 +46,7 @@ export function createEdge(
   this: Graph,
   source: Cell,
   target: Cell,
-  options = { marker: { width: 8, height: 16 }, strokeWidth: 2.2 }
+  options = { marker: { width: 8, height: 16 }, strokeWidth: 2.2 },
 ) {
   const { style, direction } = this;
   const nodeData = getNodeData(source);
@@ -129,7 +129,7 @@ export function selectDir(
     data: DataAtlas.JsonNode;
     node: Node;
     pdata: DataAtlas.JsonNode;
-  }
+  },
 ) {
   const { graph, direction, rootDir, createEdge, createDirNode, addNodeTool, expandLayout } = this;
   const resourceType = rootDir?.resourceType;
@@ -266,7 +266,7 @@ export function selectL3Dir(this: Graph, { node /* 当前点击结点 */, subDir
         nodes.push(subNode);
         edges.push(edge);
 
-        if (!!dir.subDir && item.nodeId === dir.dirId) {
+        if (dir.subDir && item.nodeId === dir.dirId) {
           center = subNode;
           addNodes(subNode, dir.subDir);
         }
@@ -383,7 +383,7 @@ export function expandLayout(this: Graph, { center }: { center: Node }) {
     if (center.id === treeNode.data.id!) {
       return direction === "V" ? [x, y] : [y, x];
     }
-    let pos = undefined;
+    let pos;
     for (const child of treeNode.children ?? []) {
       pos = getPos(child);
       if (pos !== undefined) break;
@@ -425,7 +425,7 @@ function getRootData(graph: Graph["graph"], rootData: DataAtlas.JsonNode) {
   const getData = (nodeData: DataAtlas.JsonNode): TreeData | undefined => {
     const rootData: TreeData = { children: [] };
     const cell = graph.getCellById(nodeData.nodeId);
-    if (!!cell) {
+    if (cell) {
       rootData.id = nodeData.nodeId;
       nodeData.children?.forEach((child) => {
         const childData = getData(child);

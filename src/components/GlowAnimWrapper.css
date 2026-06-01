@@ -74,12 +74,14 @@
 }
 
 .glow-animation-wrapper:hover .gradient::before {
-  animation: rotate-glif-anim-infinite var(--anim-duration) linear infinite,
+  animation:
+    rotate-glif-anim-infinite var(--anim-duration) linear infinite,
     fade-in-out-infinite var(--anim-duration) linear forwards;
 }
 
 .glow-animation-wrapper:hover .mask::before {
-  animation: rotate-mask-anim-infinite var(--anim-duration) linear infinite,
+  animation:
+    rotate-mask-anim-infinite var(--anim-duration) linear infinite,
     fade-in-out-infinite var(--anim-duration) linear forwards;
 }
 

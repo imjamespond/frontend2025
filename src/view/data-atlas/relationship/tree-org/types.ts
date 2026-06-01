@@ -18,7 +18,7 @@ export interface Style {
   color?: string;
 }
 
-export const enum NodeType {
+export enum NodeType {
   Category = 0,
   Organization = 1,
 }

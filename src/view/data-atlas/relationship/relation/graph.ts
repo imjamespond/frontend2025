@@ -1,12 +1,14 @@
-import { BaseGraph, createUseGraph } from "@common/graph";
 import { Selection } from "@antv/x6";
-import type { GraphData, NodeModel, RelationshipModel } from "./types";
+import { BaseGraph, createUseGraph } from "@components/graph";
+import type { SubDir } from "../../helper";
 import { zoomFit } from "../tree-org/config";
 import { draw1, draw2 } from "./draw";
-import type { SubDir } from "../../helper";
+import type { GraphData, NodeModel, RelationshipModel } from "./types";
 import "./register";
+import { expandNode, setRoot } from "./action";
+import circularLayout from "./d3/circularLayout";
+import { LINK_DISTANCE } from "./d3/constants";
 import { ForceSimulation } from "./d3/ForceSimulation";
-import { getNodeData } from "./helper";
 import {
   deSelectNode,
   handleBlankClick,
@@ -17,10 +19,8 @@ import {
   handleNodeMoved,
   handleNodeMoving,
 } from "./event";
+import { getNodeData } from "./helper";
 import { subscribe } from "./subject";
-import { expandNode, setRoot } from "./action";
-import circularLayout from "./d3/circularLayout";
-import { LINK_DISTANCE } from "./d3/constants";
 
 const groupDepth = 3;
 
@@ -63,8 +63,6 @@ export class Graph extends BaseGraph {
 
     this.graph.use(new Selection({ enabled: true }));
     this.setupEvents();
-
-    this.draw();
   }
 
   draw() {
@@ -85,7 +83,7 @@ export class Graph extends BaseGraph {
       draw1();
     }
 
-    this.fsm = new ForceSimulation(this.render.bind(this));
+    this.fsm = new ForceSimulation(this.update.bind(this));
     this._nodeModelMap = {};
     this.layout();
   }
@@ -110,7 +108,7 @@ export class Graph extends BaseGraph {
     this.handleNodeHover();
   }
 
-  render() {
+  update() {
     // console.log("render", this._nodeModels);
 
     this._nodeModels?.forEach((nm) => {

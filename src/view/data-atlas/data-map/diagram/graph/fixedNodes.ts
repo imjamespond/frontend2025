@@ -1,6 +1,6 @@
-import { Graph } from "@antv/x6";
-import { labels, type OrgStyle } from "./types";
+import type { Graph } from "@antv/x6";
 import { colorPrimary } from "@config/style";
+import { labels, type OrgStyle } from "./types";
 
 export const config = {
   x: 600,

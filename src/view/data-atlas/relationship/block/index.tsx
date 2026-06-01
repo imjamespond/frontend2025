@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import { getOpenAssetsDetail } from "@service";
+import { EllipsisOutlined } from "@ant-design/icons";
+import { useIntersection } from "@common/hooks/intersection";
 import { KmButton, KmCard, KmDrawer, KmEmpty } from "@components";
+import { HoverEffectStyle, HoverEffectWrapper } from "@components/HoverEffect";
+import Loading from "@components/Loading";
+import { getOpenAssetsDetail } from "@service";
 import { Col, ConfigProvider, Row, Tooltip, Typography } from "antd";
-
+import React, { useState } from "react";
+import { useRootDir, useSetRelBySearchResult } from "../../context";
 import lv1 from "../assets/block/2/1.png";
 import lv2 from "../assets/block/2/2.png";
 import lv3 from "../assets/block/2/3.png";
@@ -12,15 +16,9 @@ import icon1 from "../assets/block/2/icon/1.png";
 import icon2 from "../assets/block/2/icon/2.png";
 import icon3 from "../assets/block/2/icon/3.png";
 import icon4 from "../assets/block/2/icon/4.png";
-
-import { useRootDir, useSetRelBySearchResult } from "../../context";
-import { useStyles, BlockStyles } from "../styles/block";
 import { dbTypes } from "../helper";
-import { useIntersection } from "@common/hooks/intersection";
+import { BlockStyles, useStyles } from "../styles/block";
 import { useHelper } from "./helper";
-import { EllipsisOutlined } from "@ant-design/icons";
-import Loading from "@components/Loading";
-import { HoverEffectStyle, HoverEffectWrapper } from "@components/HoverEffect";
 
 export const levels = [lv1, lv2, lv3, lv4, lv5];
 
@@ -162,8 +160,8 @@ export default FC;
 
 export function getIcon(msg: string, title: string, icon: string) {
   return (
-    <Tooltip placement="top" title={`${title}: ${!!msg ? msg : "暂无"}`}>
-      <img alt="" src={icon} style={!!msg ? undefined : { filter: "grayscale(1)", opacity: 0.7 }} />
+    <Tooltip placement="top" title={`${title}: ${msg ? msg : "暂无"}`}>
+      <img alt="" src={icon} style={msg ? undefined : { filter: "grayscale(1)", opacity: 0.7 }} />
     </Tooltip>
   );
 }

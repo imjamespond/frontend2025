@@ -1,8 +1,8 @@
 import type { IAct } from "@common/hooks/act";
-import { Subject } from "rxjs";
-import type { X6Node } from "./types";
-import type { Graph } from "./graph";
 import { createUseStore } from "@common/hooks/zustand";
+import { Subject } from "rxjs";
+import type { Graph } from "./graph";
+import type { X6Node } from "./types";
 
 export type GraphSubjectType = IAct<"expandNode" | "block" | "root", X6Node>;
 

@@ -1,12 +1,12 @@
-import { Fragment, useEffect, useRef, type CSSProperties } from "react";
-import Operations from "@components/Operations";
-import { useStyles } from "./components/styles";
-import type { GraphType } from "../helper";
-import { useRootDir } from "@view/data-atlas/context";
-import type { SubDir } from "./types";
+import Operations from "@components/graph/Operations";
 import Loading from "@components/Loading";
-import { useGraph } from "./graph";
+import { useRootDir } from "@view/data-atlas/context";
+import { type CSSProperties, Fragment, useEffect, useRef } from "react";
+import type { SubDir } from "../../helper";
+import type { GraphType } from "../helper";
 import { useRelationChartDData } from "../service";
+import { useStyles } from "./components/styles";
+import { useGraph } from "./graph";
 
 function FC({
   graphType,
@@ -33,7 +33,7 @@ function FC({
       graphRef.current.subDir = subDir;
       const root = graphData[0];
       graphRef.current.root = root;
-      graphRef.current.init();
+      graphRef.current.render();
     });
   }, [graphType, subDir, rootDir, graphData]);
 

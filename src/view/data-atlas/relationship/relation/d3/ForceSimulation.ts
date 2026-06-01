@@ -17,21 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { type Simulation, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY } from "d3-force";
-
+import { forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY, type Simulation } from "d3-force";
+import type { NodeModel, RelationshipModel } from "../types";
 import {
   DEFAULT_ALPHA,
   DEFAULT_ALPHA_MIN,
+  EXTRA_TICKS_PER_RENDER,
   FORCE_CENTER_X,
   FORCE_CENTER_Y,
   FORCE_CHARGE,
   FORCE_COLLIDE_RADIUS,
   FORCE_LINK_DISTANCE,
   MAX_PRECOMPUTED_TICKS,
-  EXTRA_TICKS_PER_RENDER,
   VELOCITY_DECAY,
 } from "./constants";
-import type { NodeModel, RelationshipModel } from "../types";
 
 export class ForceSimulation {
   simulation: Simulation<NodeModel, RelationshipModel>;
@@ -65,13 +64,13 @@ export class ForceSimulation {
 
   updateRelationships(
     relationships: RelationshipModel[],
-    distance: number | typeof FORCE_LINK_DISTANCE = FORCE_LINK_DISTANCE
+    distance: number | typeof FORCE_LINK_DISTANCE = FORCE_LINK_DISTANCE,
   ): void {
     this.simulation.force(
       "link",
       forceLink<NodeModel, RelationshipModel>(relationships)
         .id((nm) => nm.node.id)
-        .distance(distance)
+        .distance(distance),
     );
   }
 

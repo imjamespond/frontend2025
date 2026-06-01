@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-
-import { service } from "@service/api/data-atlas";
-import { useDomainId } from "@config/app";
-import { useRootDir, useTemplateType } from "../../context";
 import { kmDebug } from "@common/misc";
+import { useDomainId } from "@config/app";
 import type { KeyOfFetcher } from "@service/api";
+import { service } from "@service/api/data-atlas";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useRootDir, useTemplateType } from "../../context";
 
 type Params = KeyOfFetcher<typeof service.dataassetmanager.getTableModelInfoByDirIdAndBeginIndex>["args"]["params"];
 
@@ -21,7 +20,7 @@ export function useHelper() {
 
   const getTableModelKey = useMemo(
     () => ["getTableModelInfoByDirIdAndBeginIndex", { env, templateType, dirId: rootDir?.dirId }] as const,
-    [env, templateType, rootDir?.dirId]
+    [env, templateType, rootDir?.dirId],
   );
 
   useEffect(() => {

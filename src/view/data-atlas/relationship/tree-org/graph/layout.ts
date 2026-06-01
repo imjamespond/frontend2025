@@ -1,5 +1,5 @@
-import { Node } from "@antv/x6";
 import { DagreLayout } from "@antv/layout";
+import type { Node } from "@antv/x6";
 import type { Graph } from ".";
 import { getNodeData } from "./helper";
 

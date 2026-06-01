@@ -10,6 +10,6 @@ export function useDataMap() {
     typeof env === "number" && tpl
       ? { url: "dataassetmanager.queryHomePageMap", args: { params: { env, templateType: tpl } } }
       : null,
-    service.dataassetmanager.queryHomePageMap
+    service.dataassetmanager.queryHomePageMap,
   );
 }

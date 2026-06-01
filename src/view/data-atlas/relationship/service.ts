@@ -1,8 +1,8 @@
-import useSWR from "swr";
-import { useRootDir, useTemplateType } from "../context";
 import { useDomainId } from "@config/app";
 import type { KeyOfFetcher } from "@service/api";
 import { service } from "@service/api/data-atlas";
+import useSWR from "swr";
+import { useRootDir, useTemplateType } from "../context";
 
 type queryCrumbDataKey = KeyOfFetcher<typeof service.dataassetmanager.queryCrumbData> | null;
 
@@ -17,11 +17,9 @@ export function useCrumbData() {
           args: { params: { env, templateType, dirId: rootDir.dirId } },
         }
       : null,
-    service.dataassetmanager.queryCrumbData
+    service.dataassetmanager.queryCrumbData,
   );
 }
-
-
 
 type QueryRelationChartDataKey = KeyOfFetcher<typeof service.dataassetmanager.queryRelationChartData> | null;
 

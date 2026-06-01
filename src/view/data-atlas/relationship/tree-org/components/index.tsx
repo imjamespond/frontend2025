@@ -1,12 +1,12 @@
-import { Node } from "@antv/x6";
+import type { Node } from "@antv/x6";
 import Tooltip from "@components/Tooltip";
 
 import classnames from "classnames";
-import { useCategoryStyles, useDirStyles } from "./styles";
 import classNames from "classnames";
+import { useSetSubNode } from "@/view/data-atlas/context";
 
 import type { DirNodeData, NodeData } from "../types";
-import { useSetSubNode } from "@/view/data-atlas/context";
+import { useCategoryStyles, useDirStyles } from "./styles";
 
 export function Category({ node }: { node: Node }) {
   const { label, color } = node.getData<NodeData>();
@@ -17,7 +17,6 @@ export function Category({ node }: { node: Node }) {
     </div>
   );
 }
-
 
 export const DirNode = ({ node }: { node: Node }) => {
   const { item, direction, highlight, color } = node.getData<DirNodeData>();

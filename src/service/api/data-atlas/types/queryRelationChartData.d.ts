@@ -12,5 +12,4 @@ declare namespace DataAtlas {
     text: string;
     type: string;
   }
-  
-} 
+}

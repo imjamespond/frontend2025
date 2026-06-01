@@ -1,4 +1,4 @@
-export const enum GraphType {
+export enum GraphType {
   Summary /* 摘要 */,
   Visual /* 图形 */,
 }

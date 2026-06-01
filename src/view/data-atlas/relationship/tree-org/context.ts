@@ -1,8 +1,8 @@
+import type { Node } from "@antv/x6";
 import type { IAct } from "@common/hooks/act";
 import { Subject } from "rxjs";
-import type { Node } from "@antv/x6";
 
-export const enum ActType {
+export enum ActType {
   ClickDir,
 }
 type Act = IAct<

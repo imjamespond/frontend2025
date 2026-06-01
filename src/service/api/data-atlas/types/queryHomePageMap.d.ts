@@ -25,5 +25,4 @@ declare namespace DataAtlas {
     subDirCount: number;
     unFold: boolean;
   }
-  
 }

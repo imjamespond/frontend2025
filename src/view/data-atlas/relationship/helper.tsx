@@ -2,17 +2,17 @@ import { KmTypography } from "@components";
 import type { BreadcrumbProps } from "antd";
 import { useMemo, useRef } from "react";
 import { useSetSubNode, useSetView } from "../context";
-import { useCrumbData } from "./service";
 import { View } from "../helper";
+import { useCrumbData } from "./service";
 
-export const enum GraphType {
+export enum GraphType {
   Block,
   Tree,
   Relation,
   Org,
 }
 
-export const enum dbTypes {
+export enum dbTypes {
   table = "Table",
   dir = "Dir",
 }
@@ -28,7 +28,7 @@ export function useBreadItems() {
     const items: BreadcrumbProps["items"] = [];
     let curDir = subDir,
       endDir = "";
-    while (!!curDir) {
+    while (curDir) {
       if (curDir === subDir) {
         items.push({
           title: (

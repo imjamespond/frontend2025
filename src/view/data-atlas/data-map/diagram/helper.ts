@@ -1,10 +1,10 @@
-import { LayoutSubject } from "./context";
-import { debounceTime, tap } from "rxjs";
-import { useGraph } from "./graph";
 import { useEffect, useRef } from "react";
+import { debounceTime, tap } from "rxjs";
 import { useMatchedDirId } from "@/view/data-atlas/context";
-import { getOrgNodeData, setOrgNodeData } from "./graph/utils";
 import { useDataMap } from "@/view/data-atlas/service";
+import { LayoutSubject } from "./context";
+import { useGraph } from "./graph";
+import { getOrgNodeData, setOrgNodeData } from "./graph/utils";
 
 export function useInit() {
   const { data, isLoading } = useDataMap();
@@ -20,11 +20,12 @@ export function useInit() {
     const { graphQueue, graphRef } = ref.current;
 
     graphQueue(() => {
-      graphRef.current?.graph.resetCells([]);
-      graphRef.current?.init(data);
+      if (graphRef.current === null) return;
+      graphRef.current.graph.resetCells([]);
+      graphRef.current.render(data);
       // 布局
-      graphRef.current?.layout();
-      graphRef.current?.zoomToFit();
+      graphRef.current.layout();
+      graphRef.current.zoomToFit();
     });
   }, [data]);
 
@@ -59,7 +60,7 @@ export function useInit() {
       tap((/* data */) => {
         // setWaiting(true);
       }),
-      debounceTime(100)
+      debounceTime(100),
     ).subscribe((/* data */) => {
       const graph = graphRef.current?.graph;
       if (!graph) return;

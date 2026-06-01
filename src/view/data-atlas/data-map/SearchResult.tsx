@@ -1,11 +1,11 @@
 import { KmAvatar, KmEmpty, KmList } from "@components";
-import { Typography } from "antd";
 import { OpenAssetBrowse, OpenAssetResBrowse } from "@service";
-import { getTextWithHighlights } from "./helper";
-import { useFindResult, useSearchResult, useSearchText, useSetOpen } from "./contex";
+import { Typography } from "antd";
 import { Fragment } from "react/jsx-runtime";
 import { useSetMatchedDirId, useSetRelBySearchResult } from "../context";
 import type { ResourceType } from "../helper";
+import { useFindResult, useSearchResult, useSearchText, useSetOpen } from "./contex";
+import { getTextWithHighlights } from "./helper";
 
 export default function SearchResult({ activeKey }: { activeKey: string }) {
   const searchText = useSearchText();

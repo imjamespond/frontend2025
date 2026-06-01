@@ -1,8 +1,8 @@
+import type { EdgeMetadata } from "@antv/x6";
 import { getStyle } from "@config/style";
 import type { Graph } from "./graph";
 import { getEdge, getL3Node, getNode, getNodeData } from "./helper";
 import type { NodeData, X6Node } from "./types";
-import type { EdgeMetadata } from "@antv/x6";
 
 export function expandNode(this: Graph, node: X6Node) {
   const fsm = this.fsm;

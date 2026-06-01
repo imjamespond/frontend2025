@@ -1,0 +1,251 @@
+.__entity.__entmodel {
+  --primary-color: rgba(161, 182, 238, 1);
+  --entry: #0269ac;
+  --highlight: #ffa500;
+  --bg: var(--primary-color);
+
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  font-size: 13px;
+}
+
+.__entity.__entmodel .__head {
+  flex: 0;
+  font-weight: bold;
+  padding: 5px 0px;
+}
+
+.__entity.__entmodel .__content {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--primary-color);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, var(--bg) 300%);
+
+  flex: 1;
+}
+
+.__entity.__entmodel .__content .__title {
+  display: flex;
+  align-items: center;
+  padding: 5px 5px;
+}
+
+.__entity.__entmodel .__content .__title .__text {
+  font-weight: bold;
+  color: var(--color, #333);
+  cursor: pointer;
+  flex: 1;
+}
+
+.__entity.__entmodel .__content .__border {
+  height: 1px;
+  background-color: var(--primary-color);
+}
+
+.__entity.__entmodel.__entry .__content .__title {
+  --color: var(--entry);
+}
+
+.__entity.__entmodel .__content .__props {
+  display: flex;
+  padding: 5px 5px 0px;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* prevent overscrolling */
+}
+
+.__entity.__entmodel .__content .__props ::-webkit-scrollbar {
+  width: 3px;
+}
+
+.__entity.__entmodel .__content .__props ::-webkit-scrollbar-thumb {
+  background: var(--bg);
+}
+
+.__entity.__entmodel .__content .__props .__prop {
+  display: flex;
+  line-height: 20px;
+  /* border-bottom: 1px solid transparent; */
+}
+
+.__entity.__entmodel .__content .__props .__prop .__name {
+  flex: 1;
+  /* width: 160px; */
+}
+
+.__entity.__entmodel .__content .__props .__prop .__info {
+  font-weight: bold;
+  /* padding-left: 10px; */
+}
+
+.__entity.__entmodel .__content .__props .__prop .__info .__pk {
+  color: var(--highlight);
+}
+
+.__entity.__entmodel .__content .__props > .__list {
+  /* background-color: red; */
+  /* width: 185px; */
+  flex: 1;
+}
+
+.__entity.__entmodel .__content .__props > .__scrollbar {
+  overflow: hidden;
+  width: 15px;
+}
+
+.__entity.__entmodel .__content:hover .__props > .__scrollbar {
+  overflow-y: auto;
+}
+
+/* 
+::-webkit-scrollbar    //滚动条整体部分
+::-webkit-scrollbar-button   //滚动条两端的按钮
+::-webkit-scrollbar-track   // 外层轨道
+::-webkit-scrollbar-track-piece    //内层轨道，滚动条中间部分（除去）
+::-webkit-scrollbar-thumb //滚动条里面可以拖动的那个
+::-webkit-scrollbar-corner   //边角
+::-webkit-resizer   ///定义右下角拖动块的样式 
+*/
+
+.__km-fields-hide .__entity.__entmodel .__content .__props {
+  display: none;
+}
+
+.__entity.__entmodel.__highlight .__content .__title {
+  --color: var(--highlight);
+  /* border-bottom-color: var(--highlight); */
+}
+.__entity.__entmodel.__highlight.__highlight_entry .__content .__title {
+  background-color: var(--highlight);
+  --color: #fff;
+}
+.__entity.__entmodel.__highlight {
+  --bg: var(--highlight);
+  --primary-color: var(--highlight);
+}
+
+/* https://x6.antv.antgroup.com/examples/showcase/practices/#er */
+
+.er-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: 2px solid #1890ff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: all 0.3s ease;
+}
+
+.er-table:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.er-table-header {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  color: white;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 13px;
+  text-align: center;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.er-table-fields {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 0 0 6px 6px;
+}
+.er-table-empty {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+.er-table-field {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-bottom: 1px solid #e8e8e8;
+  transition: background-color 0.2s ease;
+}
+
+.er-table-field:hover {
+  background-color: #f5f5f5;
+}
+.er-table-field.even {
+  background-color: #fafafa;
+}
+.er-table-field:last-child {
+  border-bottom: none;
+  border-radius: 0 0 6px 6px;
+}
+.er-table-field.primary {
+  background-color: #e6f7ff;
+}
+.er-table-field.foreign {
+  background-color: #fff7e6;
+}
+.er-table-field.unique {
+  background-color: #f6ffed;
+}
+
+.er-field-icon {
+  margin-right: 4px;
+  font-size: 10px;
+}
+.er-field-name {
+  flex: 1;
+  font-weight: 500;
+  color: #262626;
+}
+.er-field-type {
+  color: #666;
+  font-family: "Monaco", "Menlo", monospace;
+  font-size: 10px;
+}
+.er-field-not-null {
+  color: #ff4d4f;
+  font-size: 9px;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.x6-port-body {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.x6-node:hover .x6-port-body {
+  opacity: 1;
+}
+.x6-port-body circle {
+  fill: #fff;
+  stroke: #1890ff;
+  stroke-width: 2;
+  cursor: crosshair;
+  r: 8;
+}
+.x6-port:hover .x6-port-body circle {
+  fill: #e6f7ff;
+  stroke: #40a9ff;
+  stroke-width: 3;
+  r: 10;
+}
+.x6-port-available .x6-port-body circle {
+  fill: #f6ffed;
+  stroke: #52c41a;
+  stroke-width: 3;
+  r: 10;
+}
+.x6-edge:hover path:nth-child(2) {
+  stroke: #1890ff;
+}

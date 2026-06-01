@@ -14,7 +14,9 @@
   --blink-speed: 1.2s;
   --caret-width: 2px;
   content: " ";
-  animation: blinkCaret var(--blink-speed) step-end infinite, cycleCaretColor calc(var(--blink-speed) * 4) infinite;
+  animation:
+    blinkCaret var(--blink-speed) step-end infinite,
+    cycleCaretColor calc(var(--blink-speed) * 4) infinite;
 }
 
 @keyframes blinkCaret {

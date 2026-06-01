@@ -1,9 +1,9 @@
-import { type NodeMetadata, type EdgeMetadata } from "@antv/x6";
-import { BaseGraph, createUseGraph } from "@common/graph";
+import type { EdgeMetadata, NodeMetadata } from "@antv/x6";
 import { register } from "@antv/x6-react-shape";
+import { BaseGraph, createUseGraph } from "@components/graph";
+import { draw, render } from "./draw";
 import Organization from "./Org";
 import { createEdge, createOrgNode } from "./utils";
-import { draw, init } from "./draw";
 
 register({
   shape: "organization",
@@ -12,7 +12,7 @@ register({
 });
 
 export class Graph extends BaseGraph {
-  init = init.bind(this);
+  render = render.bind(this);
   draw = draw.bind(this);
   createNode = createOrgNode.bind(this);
   createEdge = createEdge.bind(this);

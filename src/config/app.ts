@@ -1,7 +1,7 @@
-import { createUseStore } from "../common/hooks/zustand";
 import type { ThemeConfig } from "antd";
-import { colorPrimary } from "./style";
 import type { CSSProperties } from "react";
+import { createUseStore } from "../common/hooks/zustand";
+import { colorPrimary } from "./style";
 
 export type AppType =
   | (Record<string, unknown> & {
@@ -25,6 +25,7 @@ export const useAppStore = createUseStore<AppType>({
 
 export const useAppTheme = () => useAppStore((state) => state)._v?.theme;
 export const useAppHeight = () => useAppStore((state) => state)._v?.height;
+export const showcolumn = () => useAppStore.getState()._v?.showcolumn;
 
 export function useDomainId() {
   const domainId = useAppStore((state) => state._v)?.env?.domainId;

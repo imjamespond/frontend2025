@@ -13,9 +13,9 @@ export default function dl(res: AxiosResponse, _filename?: string) {
    * // https://developer.mozilla.org/zh-CN/docs/web/http/headers/content-disposition
    * attachment; filename="filename.jpg"
    */
-  let filename = _filename; 
+  let filename = _filename;
   const disposition = headers["content-disposition"];
-  if (disposition && disposition.indexOf("attachment") !== -1) { 
+  if (disposition && disposition.indexOf("attachment") !== -1) {
     const filenameRegex = /filename\*?=(?:UTF-8''|)["']?([^;"']+)["']?/i;
     const matches = filenameRegex.exec(disposition);
     if (matches != null && matches[1]) {

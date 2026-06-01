@@ -1,18 +1,19 @@
-import React, { Fragment } from "react";
-import { Popover, Radio, Space, Typography, type RadioGroupProps } from "antd";
 import {
+  ApartmentOutlined,
+  BlockOutlined,
   CompressOutlined,
+  DownloadOutlined,
+  FileExcelOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
   OneToOneOutlined,
+  ReloadOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
-  ApartmentOutlined,
-  ReloadOutlined,
-  FullscreenOutlined,
-  FullscreenExitOutlined,
-  DownloadOutlined,
-  BlockOutlined,
 } from "@ant-design/icons";
+import { Popover, Radio, type RadioGroupProps, Space, Typography } from "antd";
 import { createGlobalStyle } from "antd-style";
+import React, { Fragment } from "react";
 
 interface Props {
   className?: string;
@@ -26,6 +27,8 @@ interface Props {
   onFullScreen?: () => void;
   onFullScreenExit?: () => void;
   onExportImage?: () => void;
+  onSelectLevel?: (lv: number) => void;
+  onExportExcel?: () => void;
   layoutTypeOpt?: RadioGroupProps & { title: string };
   extra?: React.ReactNode;
 }
@@ -43,6 +46,8 @@ const FC: React.FC<Props> = (props) => {
     onFullScreen,
     onFullScreenExit,
     onExportImage,
+    onSelectLevel,
+    onExportExcel,
   } = props;
 
   return (
@@ -105,6 +110,45 @@ const FC: React.FC<Props> = (props) => {
             </li>
           </Popover>
         )}
+
+        {!!onExportExcel && (
+          <Popover content="导出Excel" placement="left">
+            <li onClick={onExportExcel} className={"item"}>
+              <FileExcelOutlined />
+            </li>
+          </Popover>
+        )}
+        {!!onSelectLevel && (
+          <Popover
+            content={
+              <Space direction="vertical">
+                <Typography.Text>显示层级:</Typography.Text>
+                <Radio.Group
+                  defaultValue={2}
+                  onChange={(e) => {
+                    onSelectLevel(e.target.value);
+                  }}
+                >
+                  <Space direction="vertical">
+                    {[30, 2, 3, 4, 5].map((opt, i) => {
+                      return (
+                        <Radio key={i} value={opt}>
+                          {opt === 30 ? "全部" : opt}
+                        </Radio>
+                      );
+                    })}
+                  </Space>
+                </Radio.Group>
+              </Space>
+            }
+            placement="leftBottom"
+          >
+            <li className={"item"}>
+              <BlockOutlined />
+            </li>
+          </Popover>
+        )}
+
         {!!layoutTypeOpt &&
           (() => {
             const { title, options, ...props } = layoutTypeOpt;

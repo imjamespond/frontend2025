@@ -1,6 +1,6 @@
 import { KmFlex, KmSpin } from "@components";
 import type { FlexProps } from "antd";
-import { useEffect, useState, type CSSProperties } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 
 const relStyle: CSSProperties = { position: "relative", zIndex: 999 };
 const absStyle: CSSProperties = { position: "absolute", inset: 0, minHeight: 50, background: "rgba(255,255,255,.7)" };

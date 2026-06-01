@@ -1,6 +1,6 @@
-import {  useState, type Dispatch, type SetStateAction } from "react";
+import type { Dispatch, SetStateAction, useState } from "react";
 
-export const kmDebug = process.env.devMode ? console.debug.bind(window.console) : function () {};
+export const kmDebug = process.env.devMode ? console.debug.bind(window.console) : () => {};
 
 export function isType<T>(_val: unknown, isT: boolean): _val is T {
   return isT;

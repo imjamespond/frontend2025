@@ -1,18 +1,18 @@
-import { Fragment, useEffect, useRef, type CSSProperties } from "react";
-import Operations from "@components/Operations";
-import { useStyles } from "../styles/relation";
-import Loading from "@components/Loading";
-import { useGraph } from "./graph";
-import { useRelationChartDData } from "../service";
-import type { SubDir } from "../../helper";
-import { useRootDir } from "../../context";
-import { Style } from "./style";
-import { Descriptions } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
-
-import icons from "./d3/d3Icons";
+import Operations from "@components/graph/Operations";
+import Loading from "@components/Loading";
+import { Descriptions } from "antd";
+import { type CSSProperties, Fragment, useEffect, useRef } from "react";
+import { useRootDir } from "../../context";
+import type { SubDir } from "../../helper";
 import centerSvg from "../assets/crosshairs-solid.svg";
 import blockSvg from "../assets/cubes-stacked-solid.svg";
+import { useRelationChartDData } from "../service";
+import { useStyles } from "../styles/relation";
+
+import icons from "./d3/d3Icons";
+import { useGraph } from "./graph";
+import { Style } from "./style";
 import { useTips } from "./subject";
 
 function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: SubDir }) {
@@ -37,7 +37,7 @@ function FC({ subDir, graphData }: { graphData: DataAtlas.JsonNode[]; subDir?: S
       //   ];
       graphRef.current.subDir = subDir;
       if (rootDir?.dirId) graphRef.current.entryId = rootDir.dirId;
-      graphRef.current.init();
+      graphRef.current.draw();
     });
   }, [subDir, graphData, rootDir]);
 
@@ -94,7 +94,7 @@ const containerStyle: CSSProperties = { width: "100%", height: "100%" };
 
 function Tips() {
   const tips = useTips();
-  const _tips = !!tips ? (
+  const _tips = tips ? (
     <Descriptions title="详细信息" column={1} size="small">
       <Descriptions.Item label="名称">{tips?.name}</Descriptions.Item>
       <Descriptions.Item label="子目录">{tips?.count}</Descriptions.Item>

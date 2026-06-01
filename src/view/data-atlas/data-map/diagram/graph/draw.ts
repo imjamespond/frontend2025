@@ -1,13 +1,13 @@
-import { Node } from "@antv/x6";
+import type { Node } from "@antv/x6";
 import { AddNodes, BottomOrg } from "./fixedNodes";
-import { Graph } from "./index";
+import type { Graph } from "./index";
 import type { OrgStyle, ResourceType } from "./types";
 import { createOrgNode } from "./utils";
 
 /**
  * 初始化图形
  */
-export function init(this: Graph, data: DataAtlas.HomePageMap) {
+export function render(this: Graph, data: DataAtlas.HomePageMap) {
   const { graph, draw } = this;
   const dirs = data.dataAsset;
   const { bottom, root } = AddNodes(graph);
@@ -61,7 +61,7 @@ export function draw(
     style: OrgStyle;
     dirs: DataAtlas.HomePageMapItem[];
     resourceType: ResourceType;
-  }
+  },
 ) {
   const graph = this.graph;
 

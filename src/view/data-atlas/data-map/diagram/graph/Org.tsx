@@ -1,17 +1,16 @@
-import React from "react";
-import { Graph, Node } from "@antv/x6";
 import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
-
-import { Subject } from "rxjs";
-import { type ResourceType } from "@/view/data-atlas/helper";
+import type { Graph, Node } from "@antv/x6";
 import { KmFlex } from "@components";
-import classnames from "classnames";
 import Tooltip from "@components/Tooltip";
-import type { OrgStyle } from "../graph/types";
+import classnames from "classnames";
+import React from "react";
+import { Subject } from "rxjs";
 import { setRelView } from "@/view/data-atlas/context";
+import type { ResourceType } from "@/view/data-atlas/helper";
+import { LayoutSubject } from "../context";
+import type { OrgStyle } from "../graph/types";
 import type { NodeData } from "./types";
 import { getOrgNodeData } from "./utils";
-import { LayoutSubject } from "../context";
 
 export const SearchSubject = new Subject<string>();
 export const MatchedDirId = new Subject<string>();
@@ -116,8 +115,8 @@ export default class OrgComponent extends React.Component<Props, State> {
     const { expanded } = this.state;
     // const span = 24 / style.cols
 
-    let items = undefined;
-    let list = dir?.list ?? [];
+    let items;
+    const list = dir?.list ?? [];
 
     // 是否出现滚动条
     if (expanded) {
@@ -133,7 +132,7 @@ export default class OrgComponent extends React.Component<Props, State> {
                 <CaretUpFilled />
               </div>
             </div>
-          </Col>
+          </Col>,
         );
     } else {
       const { unFold } = dir;
@@ -159,7 +158,7 @@ export default class OrgComponent extends React.Component<Props, State> {
                 <CaretDownFilled />
               </div>
             </div>
-          </Col>
+          </Col>,
         );
       }
     }

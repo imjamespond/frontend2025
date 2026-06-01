@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Col, Row, Select, type DropdownProps } from "antd";
-import { KmButton, KmDropdown, KmInput, KmSpin } from "@components";
-import { useSetTemplateType, useTemplateType } from "../context";
-import { useFind, useTemplates } from "./service";
 import { CloseOutlined } from "@ant-design/icons";
-import { useSearchTabsStyles } from "./styles";
-import { GraphType } from "./helper";
-import { useDebounceEffect } from "ahooks";
-import { useDataMap } from "../service";
-import { searchData } from "./searchHelper";
-import SearchResult from "./SearchResult";
-import { useSetSearchResult, useSetFindResult, useSetSearchText, useSetOpenHandle } from "./contex";
 import { kmDebug } from "@common/misc";
+import { KmButton, KmDropdown, KmInput, KmSpin } from "@components";
+import { useDebounceEffect } from "ahooks";
+import { Col, type DropdownProps, Row, Select } from "antd";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSetTemplateType, useTemplateType } from "../context";
+import { useDataMap } from "../service";
+import { useSetFindResult, useSetOpenHandle, useSetSearchResult, useSetSearchText } from "./contex";
+import { GraphType } from "./helper";
+import SearchResult from "./SearchResult";
+import { searchData } from "./searchHelper";
+import { useFind, useTemplates } from "./service";
+import { useSearchTabsStyles } from "./styles";
 
 function FC() {
   const { styles } = useSearchTabsStyles();
@@ -72,21 +72,20 @@ function FC() {
 
   // 搜索下拉框
   const dropdownRender = useMemo<DropdownProps["popupRender"]>(
-    () => (_menu) =>
-      (
-        <div
-          onMouseDown={(e) => e.preventDefault()} //防止丢失焦点, mousedown -> focusout
-        >
-          <div className="__close">
-            <KmButton icon={<CloseOutlined />} type="link" onClick={() => setOpen(false)} />
-          </div>
-          <div>
-            <SearchResult activeKey={activeKey} />
-            {/* {JSON.stringify({ activeKey })} */}
-          </div>
+    () => (_menu) => (
+      <div
+        onMouseDown={(e) => e.preventDefault()} //防止丢失焦点, mousedown -> focusout
+      >
+        <div className="__close">
+          <KmButton icon={<CloseOutlined />} type="link" onClick={() => setOpen(false)} />
         </div>
-      ),
-    [activeKey]
+        <div>
+          <SearchResult activeKey={activeKey} />
+          {/* {JSON.stringify({ activeKey })} */}
+        </div>
+      </div>
+    ),
+    [activeKey],
   );
 
   const onSelectTpl = (val: string) => {

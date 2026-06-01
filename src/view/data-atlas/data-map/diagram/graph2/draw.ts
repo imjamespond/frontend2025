@@ -1,16 +1,16 @@
-import { Node } from "@antv/x6";
+import type { Node } from "@antv/x6";
+import { kmDebug } from "@common/misc";
+import { AddNodes, config, LBOrg, LTOrg, RBOrg, RTOrg } from "./fixedNodes";
 // import { config } from "./fixedNodes";
-import { Graph } from "./index"; 
+import type { Graph } from "./index";
 import type { OrgStyle, ResourceType } from "./types";
 import { clampOffset } from "./utils";
-import { AddNodes, config, LBOrg, LTOrg, RBOrg, RTOrg } from "./fixedNodes";
-import { kmDebug } from "@common/misc";
 
 /**
  * 初始化图形
  */
-export function init(this: Graph, data: DataAtlas.HomePageMap) {
-  const { graph: graph, draw } = this;
+export function render(this: Graph, data: DataAtlas.HomePageMap) {
+  const { graph, draw } = this;
   const { /* root, */ lt, lb, rt, rb } = AddNodes(graph);
 
   const ltDirs = data.digitalConsumer ?? [] /* (data as any).innerSource ?? [] */ /* .slice(0,1) */,
@@ -18,7 +18,7 @@ export function init(this: Graph, data: DataAtlas.HomePageMap) {
     lbDirs = data.common ?? [] /* .slice(0) */,
     rbDirs = data.digitalOperation ?? [];
 
-  let tOffset = clampOffset(ltDirs, rtDirs),
+  const tOffset = clampOffset(ltDirs, rtDirs),
     bOffset = clampOffset(lbDirs, rbDirs);
 
   draw({
@@ -66,7 +66,7 @@ export function draw(
     offset: number;
     lr: 0 | 1;
     tb: 0 | 1;
-  }
+  },
 ) {
   const graph = this.graph;
 

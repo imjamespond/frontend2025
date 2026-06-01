@@ -1,15 +1,14 @@
-import React, { useMemo, useRef } from "react";
+import { useXXL } from "@common/hooks/responsive";
+import { KmEmpty } from "@components";
+import { HoverEffectStyle } from "@components/HoverEffect";
+import Loading from "@components/Loading";
+import { useVirtualList } from "ahooks";
 import { ConfigProvider } from "antd";
-
+import { createStyles } from "antd-style";
+import React, { useMemo, useRef } from "react";
 import { BlockStyles } from "../styles/block";
 import { rowHeight, useHelper } from "./helper";
 import { Context, RowComponent } from "./RowComponent";
-import { HoverEffectStyle } from "@components/HoverEffect";
-import { KmEmpty } from "@components";
-import { useVirtualList } from "ahooks";
-import { createStyles } from "antd-style";
-import { useXXL } from "@common/hooks/responsive";
-import Loading from "@components/Loading";
 
 const getHeight = (i: number, length: number) => (i === length - 1 ? 50 : rowHeight);
 function FC() {

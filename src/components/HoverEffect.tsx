@@ -1,5 +1,5 @@
 import { createGlobalStyle } from "antd-style";
-import { type CSSProperties, type PropsWithChildren } from "react";
+import type { CSSProperties, PropsWithChildren } from "react";
 
 /**
  * HoverEffect 容器
